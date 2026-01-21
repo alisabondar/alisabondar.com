@@ -1,22 +1,38 @@
 'use client';
 
+import Image from 'next/image';
+import { icons } from '../constants/icons';
+import styles from './AnimatedBackground.module.css';
+
 export default function AnimatedBackground() {
   return (
-    <div className="fixed inset-0 z-0 overflow-hidden bg-zinc-900">
-      <div className="absolute -left-1/4 -top-1/4 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-violet-600/20 via-fuchsia-600/20 to-rose-600/20 blur-3xl animate-blob" />
-      <div className="absolute -right-1/4 -bottom-1/4 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-cyan-600/20 via-blue-600/20 to-indigo-600/20 blur-3xl animate-blob animation-delay-2000" />
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[300px] w-[300px] rounded-full bg-gradient-to-br from-stone-200/20 via-neutral-200/20 to-zinc-200/20 blur-3xl animate-blob animation-delay-4000" />
+    <div className={styles.container}>
+      <div className={`${styles.blob} ${styles.blob1}`} />
+      <div className={`${styles.blob} ${styles.blob2} ${styles.animationDelay2000}`} />
+      <div className={styles.blob3Wrapper}>
+        <div className={`${styles.blob} ${styles.blob3} ${styles.animationDelay4000}`} />
+      </div>
 
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, currentColor 1px, transparent 1px),
-            linear-gradient(to bottom, currentColor 1px, transparent 1px)
-          `,
-          backgroundSize: '50px 50px',
-        }}
-      />
+      {icons.map((icon, index) => (
+        <div
+          key={index}
+          className={styles.icon}
+          style={{
+            left: `${icon.x}%`,
+            top: `${icon.y}%`,
+            animationDuration: `${icon.duration}s`,
+            animationDelay: `${icon.delay}s`,
+          }}
+        >
+          <Image
+            src={icon.src}
+            alt=""
+            width={icon.size}
+            height={icon.size}
+            className="pointer-events-none"
+          />
+        </div>
+      ))}
     </div>
   );
 }
