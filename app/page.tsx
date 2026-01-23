@@ -1,26 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import AnimatedBackground from "./components/AnimatedBackground";
 import ScrollTimeline from "./components/ScrollTimeline";
 
 export default function Home() {
-  const [dynamicHeight, setDynamicHeight] = useState('400vh');
-
   useEffect(() => {
     window.scrollTo(0, 0);
-
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const windowHeight = window.innerHeight;
-      const baseHeight = 400;
-      const additionalHeight = Math.floor(scrollTop / windowHeight) * 50;
-      const newHeight = baseHeight + additionalHeight;
-      setDynamicHeight(`${newHeight}vh`);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
@@ -52,7 +38,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative z-10 transition-all duration-300" style={{ minHeight: dynamicHeight }}>
+      <section className="relative z-10" style={{ minHeight: '800vh' }}>
       </section>
 
       <section id="projects" className="relative min-h-screen z-10 flex items-center justify-center">

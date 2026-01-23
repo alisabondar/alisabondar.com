@@ -129,23 +129,34 @@ export default function ScrollTimeline() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const highlightSlowdown = 0.7;
-  const adjustedProgress = Math.pow(scrollProgress, highlightSlowdown);
-  const activeIndex = heroScrolledPast
-    ? Math.min(Math.floor(adjustedProgress * timelineItems.length), timelineItems.length - 1)
+  const numSections = 3;
+  const sectionSize = 1 / numSections;
+  const currentSection = heroScrolledPast
+    ? Math.min(Math.floor(scrollProgress / sectionSize), numSections - 1)
+    : -1;
+  const sectionProgress = heroScrolledPast && currentSection >= 0
+    ? (scrollProgress - (currentSection * sectionSize)) / sectionSize
+    : 0;
+
+  const maxVisibleEvents = Math.ceil(timelineItems.length / numSections);
+  const sectionStartIndex = currentSection >= 0 ? currentSection * maxVisibleEvents : 0;
+  const sectionEndIndex = currentSection >= 0
+    ? Math.min(sectionStartIndex + maxVisibleEvents - 1, timelineItems.length - 1)
+    : 0;
+
+  const adjustedProgress = Math.pow(sectionProgress, 0.7);
+  const activeIndex = heroScrolledPast && currentSection >= 0
+    ? Math.min(
+        sectionStartIndex + Math.floor(adjustedProgress * (sectionEndIndex - sectionStartIndex + 1)),
+        sectionEndIndex
+      )
     : -1;
 
-  const visiblePercentage = 0.3;
-  const maxVisibleEvents = Math.ceil(timelineItems.length * visiblePercentage);
-  const currentGroup = activeIndex >= 0 ? Math.floor(activeIndex / maxVisibleEvents) : 0;
-  const groupStartIndex = currentGroup * maxVisibleEvents;
-  const groupEndIndex = Math.min(groupStartIndex + maxVisibleEvents - 1, timelineItems.length - 1);
+  const sectionCenterPosition = 10 + (sectionProgress * 80);
 
-  const totalEvents = timelineItems.length;
-  const spacing = 100 / (totalEvents + 1);
-  const groupStartPosition = spacing + (groupStartIndex * spacing * 1.8);
-  const groupEndPosition = spacing + (groupEndIndex * spacing * 1.8);
-  const groupCenterPosition = (groupStartPosition + groupEndPosition) / 2;
+  const layerASpeed = 0.3;
+  const layerBSpeed = 0.6;
+  const layerCSpeed = 0.9;
 
   return (
     <div
@@ -159,7 +170,7 @@ export default function ScrollTimeline() {
               style={{
                 top: `${cursorPosition}%`,
                 height: heroScrolledPast
-                  ? `${groupCenterPosition - cursorPosition}%`
+                  ? `${sectionCenterPosition - cursorPosition}%`
                   : `${scrollProgress * (100 - cursorPosition)}%`,
                 opacity: isCursorVisible ? 1 : 0,
                 boxShadow: '0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.3)',
@@ -174,7 +185,7 @@ export default function ScrollTimeline() {
           className="absolute left-1/2 -translate-x-1/2 transition-all duration-1000 ease-in-out"
           style={{
             top: heroScrolledPast
-              ? `${groupCenterPosition}%`
+              ? `${sectionCenterPosition}%`
               : `${cursorPosition}%`,
             opacity: isCursorVisible ? 1 : 0,
           }}
@@ -188,63 +199,84 @@ export default function ScrollTimeline() {
           </div>
         </div>
 
-        {timelineItems.map((item, index) => {
-          const totalEvents = timelineItems.length;
-          const spacing = 100 / (totalEvents + 1);
-          const position = spacing + (index * spacing * 1.8);
-          const isActive = index === activeIndex;
-          const isPast = index < activeIndex;
-          const isLeft = index % 2 === 0;
+        {[0, 1, 2].map((layerIndex) => {
+          const layerEvents = timelineItems.filter((_, index) => {
+            const eventGroup = Math.floor(index / maxVisibleEvents);
+            return eventGroup === layerIndex;
+          });
+          const layerStartIndex = layerIndex * maxVisibleEvents;
+          const layerSpeed = layerIndex === 0 ? layerASpeed : layerIndex === 1 ? layerBSpeed : layerCSpeed;
 
-          const visiblePercentage = 0.3;
-          const maxVisibleEvents = Math.ceil(totalEvents * visiblePercentage);
-          const currentGroup = Math.floor(activeIndex / maxVisibleEvents);
-          const groupStartIndex = currentGroup * maxVisibleEvents;
-          const groupEndIndex = Math.min(groupStartIndex + maxVisibleEvents - 1, totalEvents - 1);
-          const isInCurrentGroup = index >= groupStartIndex && index <= groupEndIndex;
-          const isNext = index === activeIndex + 1;
-          const shouldShow = heroScrolledPast && (isInCurrentGroup || (isNext && index <= groupEndIndex + 1));
+          const isCurrentSection = currentSection === layerIndex;
+          const isPastSection = currentSection > layerIndex;
+          const sectionTransform = isCurrentSection
+            ? `translateY(${(1 - layerSpeed) * sectionProgress * 100}%)`
+            : isPastSection
+            ? `translateY(${(1 - layerSpeed) * 100}%)`
+            : 'translateY(0)';
 
           return (
             <div
-              key={index}
-              className="absolute left-1/3 transition-all duration-700 ease-out"
-              style={{
-                top: `${position}%`,
-                zIndex: 10 + index,
-                transform: `translateX(${
-                  shouldShow
-                    ? isLeft
-                      ? '-360px'
-                      : '200px'
-                    : isLeft
-                    ? '-480px'
-                    : '320px'
-                }) translateY(-50%)`,
-                opacity: shouldShow ? (isActive || isNext ? 1 : isPast ? 0.3 : 1) : 0,
-              }}
+              key={layerIndex}
+              className="absolute inset-0 transition-transform duration-300 ease-out"
+              style={{ transform: sectionTransform }}
             >
-              <div
-                className={`bg-zinc-900/90 backdrop-blur-md border rounded-xl p-5 min-w-[240px] max-w-[280px] transition-all duration-500 ${
-                  isActive
-                    ? 'border-white scale-110 shadow-2xl shadow-white/30'
-                    : isPast
-                    ? 'border-white/30 scale-95 opacity-30'
-                    : 'border-white/40 scale-95'
-                }`}
-              >
-                {item.year && (
-                  <div className="text-xs text-white/70 mb-2 font-medium">
-                    {item.year}
+              {layerEvents.map((item, localIndex) => {
+                const index = layerStartIndex + localIndex;
+                const eventsInSection = sectionEndIndex - sectionStartIndex + 1;
+                const positionInSection = eventsInSection > 1 ? localIndex / (eventsInSection - 1) : 0;
+                const position = 10 + (positionInSection * 80);
+                const isActive = index === activeIndex;
+                const isPast = index < activeIndex;
+                const isLeft = index % 2 === 0;
+
+                const isInCurrentSection = index >= sectionStartIndex && index <= sectionEndIndex;
+                const isNext = index === activeIndex + 1;
+                const shouldShow = heroScrolledPast && isCurrentSection && (isInCurrentSection || (isNext && index <= sectionEndIndex + 1));
+
+                return (
+                  <div
+                    key={index}
+                    className="absolute left-1/3 transition-all duration-700 ease-out"
+                    style={{
+                      top: `${position}%`,
+                      zIndex: 10 + index,
+                      transform: `translateX(${
+                        shouldShow
+                          ? isLeft
+                            ? '-360px'
+                            : '200px'
+                          : isLeft
+                          ? '-480px'
+                          : '320px'
+                      }) translateY(-50%)`,
+                      opacity: shouldShow ? (isActive || isNext ? 1 : isPast ? 0.3 : 1) : 0,
+                    }}
+                  >
+                    <div
+                      className={`bg-zinc-900/90 backdrop-blur-md border rounded-xl p-5 min-w-[240px] max-w-[280px] transition-all duration-500 ${
+                        isActive
+                          ? 'border-white scale-110 shadow-2xl shadow-white/30'
+                          : isPast
+                          ? 'border-white/30 scale-95 opacity-30'
+                          : 'border-white/40 scale-95'
+                      }`}
+                    >
+                      {item.year && (
+                        <div className="text-xs text-white/70 mb-2 font-medium">
+                          {item.year}
+                        </div>
+                      )}
+                      <h3 className="text-white font-bold text-lg mb-2">
+                        {item.title}
+                      </h3>
+                      <p className="text-white/80 text-sm leading-relaxed">
+                        {item.description}
+                      </p>
+                    </div>
                   </div>
-                )}
-                <h3 className="text-white font-bold text-lg mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-white/80 text-sm leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
+                );
+              })}
             </div>
           );
         })}
