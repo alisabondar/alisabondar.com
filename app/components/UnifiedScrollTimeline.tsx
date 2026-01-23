@@ -8,10 +8,11 @@ interface TimelineItem {
   year?: string;
 }
 
+// All 15 events in chronological order
 const timelineItems: TimelineItem[] = [
   {
     title: 'Graduated Virginia Tech',
-    description: 'Believing my life will begin in med school',
+    description: 'Waiting for my life to begin with an acceptance to med school',
     year: 'May 2020',
   },
   {
@@ -30,8 +31,8 @@ const timelineItems: TimelineItem[] = [
     year: 'December 2021',
   },
   {
-    title: 'Waitlisted',
-    description: ' and eventually rejected from med school :(',
+    title: 'Waitlisted for med schools',
+    description: 'guess I have to try again :(',
     year: 'May 2022',
   },
   {
@@ -45,8 +46,8 @@ const timelineItems: TimelineItem[] = [
     year: 'August 2022',
   },
   {
-    title: 'Waitlisted',
-    description: 'AGAIN from my top choice med school :((',
+    title: 'Waitlisted AGAIN',
+    description: 'hmmm... maybe I can make an impact through computer science?',
     year: 'January 2023',
   },
   {
@@ -86,41 +87,43 @@ const timelineItems: TimelineItem[] = [
   }
 ];
 
-export default function ScrollTimeline() {
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [isCursorVisible, setIsCursorVisible] = useState(false);
+export default function UnifiedScrollTimeline() {
+  const [rawProgress, setRawProgress] = useState(0);
+  const [easedProgress, setEasedProgress] = useState(0);
   const [heroScrolledPast, setHeroScrolledPast] = useState(false);
-  const [cursorPosition, setCursorPosition] = useState(70);
+  const [isCursorVisible, setIsCursorVisible] = useState(false);
 
   useEffect(() => {
+    const easeInOut = (t: number) =>
+      t < 0.5
+        ? 2 * t * t
+        : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
     const handleScroll = () => {
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
       const scrollTop = window.scrollY;
 
-      setIsCursorVisible(scrollTop > 0);
-
       const heroThreshold = windowHeight * 0.8;
-      const isHeroPast = scrollTop > heroThreshold;
-      setHeroScrolledPast(isHeroPast);
+      const isPastHero = scrollTop > heroThreshold;
+      setHeroScrolledPast(isPastHero);
 
-      if (!isHeroPast) {
-        const startPosition = 70;
-        const endPosition = 0;
-        const cursorProgress = Math.min(1, scrollTop / heroThreshold);
-        const currentPosition = startPosition - (startPosition - endPosition) * cursorProgress;
-        setCursorPosition(currentPosition);
-        setScrollProgress(0);
-      } else {
-        setCursorPosition(0);
+      // Show cursor once we start scrolling past hero
+      setIsCursorVisible(isPastHero);
 
-        const heroHeight = windowHeight;
-        const scrollableHeight = documentHeight - windowHeight;
-        const adjustedScroll = Math.max(0, scrollTop - heroHeight);
-        const maxTimelineScroll = scrollableHeight;
-        const progress = Math.min(1, adjustedScroll / maxTimelineScroll);
-        setScrollProgress(progress);
+      if (!isPastHero) {
+        setRawProgress(0);
+        setEasedProgress(0);
+        return;
       }
+
+      const heroHeight = windowHeight;
+      const scrollableHeight = documentHeight - heroHeight;
+      const adjustedScroll = Math.max(0, scrollTop - heroHeight);
+
+      const progress = Math.min(1, adjustedScroll / scrollableHeight);
+      setRawProgress(progress);
+      setEasedProgress(easeInOut(progress));
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -129,53 +132,77 @@ export default function ScrollTimeline() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const highlightSlowdown = 0.7;
-  const adjustedProgress = Math.pow(scrollProgress, highlightSlowdown);
-  const activeIndex = heroScrolledPast
-    ? Math.min(Math.floor(adjustedProgress * timelineItems.length), timelineItems.length - 1)
+  /** ---------- Timeline state ---------- */
+
+  // Calculate active index with smooth interpolation
+  const exactIndex = heroScrolledPast
+    ? easedProgress * (timelineItems.length - 1)
     : -1;
+  const activeIndex = heroScrolledPast
+    ? Math.min(Math.floor(exactIndex), timelineItems.length - 1)
+    : -1;
+  const nextIndex = heroScrolledPast
+    ? Math.min(activeIndex + 1, timelineItems.length - 1)
+    : activeIndex;
 
-  const visiblePercentage = 0.3;
-  const maxVisibleEvents = Math.ceil(timelineItems.length * visiblePercentage);
-  const currentGroup = activeIndex >= 0 ? Math.floor(activeIndex / maxVisibleEvents) : 0;
-  const groupStartIndex = currentGroup * maxVisibleEvents;
-  const groupEndIndex = Math.min(groupStartIndex + maxVisibleEvents - 1, timelineItems.length - 1);
-
+  /** ---------- Event positions ---------- */
   const totalEvents = timelineItems.length;
-  const spacing = 100 / (totalEvents + 1);
-  const groupStartPosition = spacing + (groupStartIndex * spacing * 1.8);
-  const groupEndPosition = spacing + (groupEndIndex * spacing * 1.8);
-  const groupCenterPosition = (groupStartPosition + groupEndPosition) / 2;
+  // Add padding at top and bottom (10% each) so events aren't cut off
+  const topPadding = 10;
+  const bottomPadding = 10;
+  const availableHeight = 100 - topPadding - bottomPadding;
+  // Distribute items evenly across available height
+  const spacing = availableHeight / (totalEvents - 1);
+
+  const getEventPosition = (index: number) => {
+    return topPadding + index * spacing;
+  };
+
+  /** ---------- Cursor position ---------- */
+  // Interpolate cursor position between current and next event
+  const currentEventPosition = activeIndex >= 0 ? getEventPosition(activeIndex) : topPadding;
+  const nextEventPosition = nextIndex >= 0 ? getEventPosition(nextIndex) : currentEventPosition;
+
+  // Calculate interpolation factor between events
+  const eventProgress = activeIndex >= 0
+    ? (exactIndex - activeIndex)
+    : 0;
+
+  // Smooth cursor position that follows events
+  const cursorPosition = heroScrolledPast
+    ? currentEventPosition + eventProgress * (nextEventPosition - currentEventPosition)
+    : topPadding;
+
+  // Calculate line height from first event to cursor
+  const firstEventPosition = getEventPosition(0);
+  const lineTop = firstEventPosition;
+  const lineHeight = cursorPosition - lineTop;
 
   return (
-    <div
-      className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none"
-    >
-      <div className="relative w-full h-full min-h-[600px]">
-        {heroScrolledPast && (
+    <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
+      <div className="relative w-full h-full min-h-[1400px]">
+
+        {/* Vertical line */}
+        {heroScrolledPast && lineHeight > 0 && (
           <div className="absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2">
             <div
               className="absolute left-1/2 -translate-x-1/2 w-0.5 bg-gradient-to-b from-white/60 via-white to-white/60 transition-all duration-300"
               style={{
-                top: `${cursorPosition}%`,
-                height: heroScrolledPast
-                  ? `${groupCenterPosition - cursorPosition}%`
-                  : `${scrollProgress * (100 - cursorPosition)}%`,
+                top: `${lineTop}%`,
+                height: `${lineHeight}%`,
                 opacity: isCursorVisible ? 1 : 0,
-                boxShadow: '0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.3)',
+                boxShadow:
+                  '0 0 10px rgba(255,255,255,0.5), 0 0 20px rgba(255,255,255,0.3)',
               }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/90 to-transparent animate-shimmer" />
-            </div>
+            />
           </div>
         )}
 
+        {/* Cursor */}
         <div
-          className="absolute left-1/2 -translate-x-1/2 transition-all duration-1000 ease-in-out"
+          className="absolute left-1/2 -translate-x-1/2 transition-all duration-500 ease-out"
           style={{
-            top: heroScrolledPast
-              ? `${groupCenterPosition}%`
-              : `${cursorPosition}%`,
+            top: `${cursorPosition}%`,
             opacity: isCursorVisible ? 1 : 0,
           }}
         >
@@ -188,27 +215,34 @@ export default function ScrollTimeline() {
           </div>
         </div>
 
+        {/* Timeline items */}
         {timelineItems.map((item, index) => {
-          const totalEvents = timelineItems.length;
-          const spacing = 100 / (totalEvents + 1);
-          const position = spacing + (index * spacing * 1.8);
+          const position = getEventPosition(index);
+
+          const indexDistance = index - activeIndex;
+
           const isActive = index === activeIndex;
           const isPast = index < activeIndex;
           const isLeft = index % 2 === 0;
 
-          const visiblePercentage = 0.3;
-          const maxVisibleEvents = Math.ceil(totalEvents * visiblePercentage);
-          const currentGroup = Math.floor(activeIndex / maxVisibleEvents);
-          const groupStartIndex = currentGroup * maxVisibleEvents;
-          const groupEndIndex = Math.min(groupStartIndex + maxVisibleEvents - 1, totalEvents - 1);
-          const isInCurrentGroup = index >= groupStartIndex && index <= groupEndIndex;
-          const isNext = index === activeIndex + 1;
-          const shouldShow = heroScrolledPast && (isInCurrentGroup || (isNext && index <= groupEndIndex + 1));
+          // Show more events for smoother experience
+          const MAX_VISIBLE_BEFORE = 4;
+          const MAX_VISIBLE_AFTER = 2;
+
+          const shouldShow =
+            heroScrolledPast &&
+            indexDistance >= -MAX_VISIBLE_BEFORE &&
+            indexDistance <= MAX_VISIBLE_AFTER;
+
+          // Calculate distance from cursor for smooth fade
+          const distanceFromCursor = Math.abs(position - cursorPosition);
+          const maxDistance = spacing * 2;
+          const distanceOpacity = Math.max(0, 1 - distanceFromCursor / maxDistance);
 
           return (
             <div
               key={index}
-              className="absolute left-1/3 transition-all duration-700 ease-out"
+              className="absolute left-1/3 transition-all duration-500 ease-out"
               style={{
                 top: `${position}%`,
                 zIndex: 10 + index,
@@ -221,7 +255,13 @@ export default function ScrollTimeline() {
                     ? '-480px'
                     : '320px'
                 }) translateY(-50%)`,
-                opacity: shouldShow ? (isActive || isNext ? 1 : isPast ? 0.3 : 1) : 0,
+                opacity: shouldShow
+                  ? isActive
+                    ? 1
+                    : isPast
+                    ? Math.max(0.35, distanceOpacity * 0.6)
+                    : Math.max(0.6, distanceOpacity)
+                  : 0,
               }}
             >
               <div
@@ -229,7 +269,7 @@ export default function ScrollTimeline() {
                   isActive
                     ? 'border-white scale-110 shadow-2xl shadow-white/30'
                     : isPast
-                    ? 'border-white/30 scale-95 opacity-30'
+                    ? 'border-white/30 scale-95 opacity-40'
                     : 'border-white/40 scale-95'
                 }`}
               >
@@ -248,6 +288,7 @@ export default function ScrollTimeline() {
             </div>
           );
         })}
+
       </div>
     </div>
   );
