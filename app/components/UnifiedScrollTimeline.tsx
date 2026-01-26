@@ -8,7 +8,6 @@ interface TimelineItem {
   year?: string;
 }
 
-// All 15 events in chronological order
 const timelineItems: TimelineItem[] = [
   {
     title: 'Graduated Virginia Tech',
@@ -108,7 +107,6 @@ export default function UnifiedScrollTimeline() {
       const isPastHero = scrollTop > heroThreshold;
       setHeroScrolledPast(isPastHero);
 
-      // Show cursor once we start scrolling past hero
       setIsCursorVisible(isPastHero);
 
       if (!isPastHero) {
@@ -132,9 +130,6 @@ export default function UnifiedScrollTimeline() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  /** ---------- Timeline state ---------- */
-
-  // Calculate active index with smooth interpolation
   const exactIndex = heroScrolledPast
     ? easedProgress * (timelineItems.length - 1)
     : -1;
@@ -145,35 +140,27 @@ export default function UnifiedScrollTimeline() {
     ? Math.min(activeIndex + 1, timelineItems.length - 1)
     : activeIndex;
 
-  /** ---------- Event positions ---------- */
   const totalEvents = timelineItems.length;
-  // Add padding at top and bottom (10% each) so events aren't cut off
   const topPadding = 10;
   const bottomPadding = 10;
   const availableHeight = 100 - topPadding - bottomPadding;
-  // Distribute items evenly across available height
   const spacing = availableHeight / (totalEvents - 1);
 
   const getEventPosition = (index: number) => {
     return topPadding + index * spacing;
   };
 
-  /** ---------- Cursor position ---------- */
-  // Interpolate cursor position between current and next event
   const currentEventPosition = activeIndex >= 0 ? getEventPosition(activeIndex) : topPadding;
   const nextEventPosition = nextIndex >= 0 ? getEventPosition(nextIndex) : currentEventPosition;
 
-  // Calculate interpolation factor between events
   const eventProgress = activeIndex >= 0
     ? (exactIndex - activeIndex)
     : 0;
 
-  // Smooth cursor position that follows events
   const cursorPosition = heroScrolledPast
     ? currentEventPosition + eventProgress * (nextEventPosition - currentEventPosition)
     : topPadding;
 
-  // Calculate line height from first event to cursor
   const firstEventPosition = getEventPosition(0);
   const lineTop = firstEventPosition;
   const lineHeight = cursorPosition - lineTop;
@@ -181,8 +168,6 @@ export default function UnifiedScrollTimeline() {
   return (
     <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none">
       <div className="relative w-full h-full min-h-[1400px]">
-
-        {/* Vertical line */}
         {heroScrolledPast && lineHeight > 0 && (
           <div className="absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2">
             <div
@@ -198,7 +183,6 @@ export default function UnifiedScrollTimeline() {
           </div>
         )}
 
-        {/* Cursor */}
         <div
           className="absolute left-1/2 -translate-x-1/2 transition-all duration-500 ease-out"
           style={{
@@ -215,7 +199,6 @@ export default function UnifiedScrollTimeline() {
           </div>
         </div>
 
-        {/* Timeline items */}
         {timelineItems.map((item, index) => {
           const position = getEventPosition(index);
 
@@ -225,7 +208,6 @@ export default function UnifiedScrollTimeline() {
           const isPast = index < activeIndex;
           const isLeft = index % 2 === 0;
 
-          // Show more events for smoother experience
           const MAX_VISIBLE_BEFORE = 4;
           const MAX_VISIBLE_AFTER = 2;
 
@@ -234,7 +216,6 @@ export default function UnifiedScrollTimeline() {
             indexDistance >= -MAX_VISIBLE_BEFORE &&
             indexDistance <= MAX_VISIBLE_AFTER;
 
-          // Calculate distance from cursor for smooth fade
           const distanceFromCursor = Math.abs(position - cursorPosition);
           const maxDistance = spacing * 2;
           const distanceOpacity = Math.max(0, 1 - distanceFromCursor / maxDistance);

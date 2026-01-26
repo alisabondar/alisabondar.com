@@ -8,7 +8,6 @@ interface TimelineItem {
   year?: string;
 }
 
-// Last 7 events (events 9-15)
 const timelineItems: TimelineItem[] = [
   {
     title: 'First concert at Red Rocks Amphitheatre',
@@ -65,12 +64,9 @@ export default function ScrollTimelinePart2() {
       const documentHeight = document.documentElement.scrollHeight;
       const scrollTop = window.scrollY;
 
-      // This is Part 2 of the timeline (7 items) - fits in second viewport
-      // Start when Part 1 ends (after hero + one viewport)
       const heroHeight = windowHeight;
       const part1End = heroHeight + windowHeight;
 
-      // Start when Part 1 ends
       const part2Start = part1End;
       const isPastPart2Start = scrollTop >= part2Start;
 
@@ -83,7 +79,6 @@ export default function ScrollTimelinePart2() {
         return;
       }
 
-      // Part 2 takes exactly one viewport height
       const part2ScrollableHeight = windowHeight;
       const adjustedScroll = Math.max(0, scrollTop - part2Start);
 
@@ -91,7 +86,6 @@ export default function ScrollTimelinePart2() {
       setRawProgress(progress);
       setEasedProgress(easeInOut(progress));
 
-      // Show Part 2 when we've scrolled to it
       setShouldShow(isPastPart2Start);
     };
 
@@ -112,8 +106,6 @@ export default function ScrollTimelinePart2() {
     };
   }, []);
 
-  /** ---------- Timeline state ---------- */
-
   const activeIndex = heroScrolledPast
     ? Math.min(
         Math.floor(easedProgress * timelineItems.length),
@@ -121,9 +113,6 @@ export default function ScrollTimelinePart2() {
       )
     : -1;
 
-  /** ---------- Cursor position ---------- */
-
-  // Calculate cursor position based on item positions
   const topPadding = 10;
   const bottomPadding = 10;
   const availableHeight = 100 - topPadding - bottomPadding;
@@ -142,7 +131,6 @@ export default function ScrollTimelinePart2() {
       style={{ opacity: shouldShow ? 1 : 0, visibility: shouldShow ? 'visible' : 'hidden' }}
     >
       <div className="relative w-full h-full min-h-[800px]">
-        {/* Vertical line with parallax */}
         {heroScrolledPast && (
           <div className="absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2">
             <div
@@ -159,7 +147,6 @@ export default function ScrollTimelinePart2() {
           </div>
         )}
 
-        {/* Cursor with parallax */}
         <div
           className="absolute left-1/2 transition-all duration-700 ease-out"
           style={{
@@ -177,11 +164,8 @@ export default function ScrollTimelinePart2() {
           </div>
         </div>
 
-        {/* Timeline items */}
         {timelineItems.map((item, index) => {
           const totalEvents = timelineItems.length;
-          // Distribute items evenly across viewport (0% to 100%)
-          // Add padding at top and bottom so items aren't cut off
           const topPadding = 10;
           const bottomPadding = 10;
           const availableHeight = 100 - topPadding - bottomPadding;
@@ -194,16 +178,12 @@ export default function ScrollTimelinePart2() {
           const isPast = index < activeIndex;
           const isLeft = index % 2 === 0;
 
-          // Show all items in Part 2 (all 7 items should be visible in viewport)
           const shouldShow = heroScrolledPast;
 
-          // Parallax effect: items move at different speeds based on distance from active
-          // Items further away move slower (creating depth)
-          const parallaxSpeed = 1 - Math.abs(indexDistance) * 0.15; // Closer items move faster
-          const parallaxOffset = (1 - parallaxSpeed) * easedProgress * 20; // Max 20px offset
+          const parallaxSpeed = 1 - Math.abs(indexDistance) * 0.15;
+          const parallaxOffset = (1 - parallaxSpeed) * easedProgress * 20;
           const parallaxPosition = basePosition + (isPast ? -parallaxOffset : parallaxOffset);
 
-          // Horizontal parallax: items move slightly based on scroll progress
           const horizontalParallax = Math.sin(easedProgress * Math.PI * 2) * 10 * (1 - Math.abs(indexDistance) * 0.2);
 
           return (

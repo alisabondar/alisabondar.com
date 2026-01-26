@@ -95,7 +95,6 @@ export default function ScrollTimeline() {
   useEffect(() => {
     const handleScroll = () => {
       const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
       const scrollTop = window.scrollY;
 
       setIsCursorVisible(scrollTop > 0);
@@ -115,10 +114,9 @@ export default function ScrollTimeline() {
         setCursorPosition(0);
 
         const heroHeight = windowHeight;
-        const scrollableHeight = documentHeight - windowHeight;
         const adjustedScroll = Math.max(0, scrollTop - heroHeight);
-        const maxTimelineScroll = scrollableHeight;
-        const progress = Math.min(1, adjustedScroll / maxTimelineScroll);
+        const timelineSectionHeight = windowHeight * 9.6;
+        const progress = Math.min(1.2, (adjustedScroll / timelineSectionHeight) * 1.2);
         setScrollProgress(progress);
       }
     };
@@ -135,7 +133,7 @@ export default function ScrollTimeline() {
     ? Math.min(Math.floor(scrollProgress / sectionSize), numSections - 1)
     : -1;
   const sectionProgress = heroScrolledPast && currentSection >= 0
-    ? (scrollProgress - (currentSection * sectionSize)) / sectionSize
+    ? Math.min(1.0, (scrollProgress - (currentSection * sectionSize)) / sectionSize)
     : 0;
 
   const maxVisibleEvents = Math.ceil(timelineItems.length / numSections);
@@ -152,15 +150,39 @@ export default function ScrollTimeline() {
       )
     : -1;
 
-  const sectionCenterPosition = 10 + (sectionProgress * 80);
+  const lastSectionStart = (numSections - 1) * sectionSize;
+  const phaseOutStartProgress = 0.8;
+  const fadeOutStart = lastSectionStart + (phaseOutStartProgress * sectionSize);
+  const fadeOutEnd = 1.0;
+  const fadeOutDuration = fadeOutEnd - fadeOutStart;
 
-  const layerASpeed = 0.3;
-  const layerBSpeed = 0.6;
-  const layerCSpeed = 0.9;
+  const isLastSection = currentSection === numSections - 1;
+  const fadeOutProgress = isLastSection && scrollProgress >= fadeOutStart
+    ? Math.min(1, (scrollProgress - fadeOutStart) / fadeOutDuration)
+    : 0;
+
+  const timelineOpacity = 1 - fadeOutProgress;
+
+  const getActiveEventPosition = () => {
+    if (activeIndex >= 0 && activeIndex < timelineItems.length) {
+      const eventsInSection = sectionEndIndex - sectionStartIndex + 1;
+      const localIndex = activeIndex - sectionStartIndex;
+      const positionInSection = eventsInSection > 1 ? localIndex / (eventsInSection - 1) : 0;
+      return 10 + (positionInSection * 80); // Same calculation as fixedPosition
+    }
+    return cursorPosition;
+  };
+
+  const heroLinePosition = heroScrolledPast
+    ? getActiveEventPosition()
+    : cursorPosition;
 
   return (
     <div
-      className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none"
+      className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none transition-opacity duration-1000 ease-in-out"
+      style={{
+        opacity: timelineOpacity,
+      }}
     >
       <div className="relative w-full h-full min-h-[600px]">
         {heroScrolledPast && (
@@ -169,9 +191,7 @@ export default function ScrollTimeline() {
               className="absolute left-1/2 -translate-x-1/2 w-0.5 bg-gradient-to-b from-white/60 via-white to-white/60 transition-all duration-300"
               style={{
                 top: `${cursorPosition}%`,
-                height: heroScrolledPast
-                  ? `${sectionCenterPosition - cursorPosition}%`
-                  : `${scrollProgress * (100 - cursorPosition)}%`,
+                height: `${heroLinePosition - cursorPosition}%`,
                 opacity: isCursorVisible ? 1 : 0,
                 boxShadow: '0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.3)',
               }}
@@ -184,9 +204,7 @@ export default function ScrollTimeline() {
         <div
           className="absolute left-1/2 -translate-x-1/2 transition-all duration-1000 ease-in-out"
           style={{
-            top: heroScrolledPast
-              ? `${sectionCenterPosition}%`
-              : `${cursorPosition}%`,
+            top: `${heroLinePosition}%`,
             opacity: isCursorVisible ? 1 : 0,
           }}
         >
@@ -205,61 +223,87 @@ export default function ScrollTimeline() {
             return eventGroup === layerIndex;
           });
           const layerStartIndex = layerIndex * maxVisibleEvents;
-          const layerSpeed = layerIndex === 0 ? layerASpeed : layerIndex === 1 ? layerBSpeed : layerCSpeed;
 
           const isCurrentSection = currentSection === layerIndex;
-          const isPastSection = currentSection > layerIndex;
-          const sectionTransform = isCurrentSection
-            ? `translateY(${(1 - layerSpeed) * sectionProgress * 100}%)`
-            : isPastSection
-            ? `translateY(${(1 - layerSpeed) * 100}%)`
-            : 'translateY(0)';
 
           return (
-            <div
-              key={layerIndex}
-              className="absolute inset-0 transition-transform duration-300 ease-out"
-              style={{ transform: sectionTransform }}
-            >
+            <div key={layerIndex} className="absolute inset-0">
               {layerEvents.map((item, localIndex) => {
                 const index = layerStartIndex + localIndex;
-                const eventsInSection = sectionEndIndex - sectionStartIndex + 1;
-                const positionInSection = eventsInSection > 1 ? localIndex / (eventsInSection - 1) : 0;
-                const position = 10 + (positionInSection * 80);
                 const isActive = index === activeIndex;
                 const isPast = index < activeIndex;
                 const isLeft = index % 2 === 0;
 
                 const isInCurrentSection = index >= sectionStartIndex && index <= sectionEndIndex;
-                const isNext = index === activeIndex + 1;
-                const shouldShow = heroScrolledPast && isCurrentSection && (isInCurrentSection || (isNext && index <= sectionEndIndex + 1));
+
+                const eventsInSection = sectionEndIndex - sectionStartIndex + 1;
+                const positionInSection = eventsInSection > 1 ? localIndex / (eventsInSection - 1) : 0;
+                const fixedPosition = 10 + (positionInSection * 80);
+
+                const eventPositionInSection = eventsInSection > 1
+                  ? (index - sectionStartIndex) / (eventsInSection - 1)
+                  : 0;
+
+                const phaseInDuration = 0.15;
+                const phaseInStart = eventPositionInSection * 0.2;
+                const phaseInEnd = Math.min(1, phaseInStart + phaseInDuration);
+
+                const phaseOutStart = 0.8;
+                const phaseOutEnd = 1.0;
+
+                const hasPhasedIn = isCurrentSection && isInCurrentSection && adjustedProgress >= phaseInEnd;
+                const isPhasingIn = isCurrentSection && isInCurrentSection && adjustedProgress >= phaseInStart && adjustedProgress < phaseInEnd;
+                const isVisible = hasPhasedIn && adjustedProgress < phaseOutStart;
+                const isPhasingOut = isCurrentSection && isInCurrentSection && adjustedProgress >= phaseOutStart && adjustedProgress <= phaseOutEnd;
+                const shouldBeVisible = isPhasingIn || isVisible || isPhasingOut;
+
+                const baseOpacity = isActive ? 1 : isPast ? 0.3 : 1;
+
+                let opacity = 0;
+                if (isPhasingIn) {
+                  opacity = baseOpacity * ((adjustedProgress - phaseInStart) / (phaseInEnd - phaseInStart));
+                } else if (isVisible) {
+                  opacity = baseOpacity;
+                } else if (isPhasingOut) {
+                  opacity = baseOpacity * (1 - ((adjustedProgress - phaseOutStart) / (phaseOutEnd - phaseOutStart)));
+                }
+
+                const scale = isActive ? 1.1 : isPast ? 0.95 : 1;
+
+                const horizontalOffset = isLeft ? '-360px' : '200px';
+                const horizontalOffsetHidden = isLeft ? '-480px' : '320px';
+                let currentHorizontalOffset = horizontalOffsetHidden;
+
+                if (shouldBeVisible) {
+                  if (isPhasingIn) {
+                    const slideProgress = (adjustedProgress - phaseInStart) / (phaseInEnd - phaseInStart);
+                    const offsetDiff = isLeft
+                      ? (parseInt(horizontalOffset) - parseInt(horizontalOffsetHidden))
+                      : (parseInt(horizontalOffset) - parseInt(horizontalOffsetHidden));
+                    currentHorizontalOffset = `${parseInt(horizontalOffsetHidden) + (offsetDiff * slideProgress)}px`;
+                  } else {
+                    currentHorizontalOffset = horizontalOffset;
+                  }
+                }
 
                 return (
                   <div
                     key={index}
-                    className="absolute left-1/3 transition-all duration-700 ease-out"
+                    className="absolute left-1/2 transition-all duration-700 ease-out"
                     style={{
-                      top: `${position}%`,
+                      top: `${fixedPosition}%`,
                       zIndex: 10 + index,
-                      transform: `translateX(${
-                        shouldShow
-                          ? isLeft
-                            ? '-360px'
-                            : '200px'
-                          : isLeft
-                          ? '-480px'
-                          : '320px'
-                      }) translateY(-50%)`,
-                      opacity: shouldShow ? (isActive || isNext ? 1 : isPast ? 0.3 : 1) : 0,
+                      transform: `translateX(${currentHorizontalOffset}) translateY(-50%) scale(${scale})`,
+                      opacity: opacity,
                     }}
                   >
                     <div
                       className={`bg-zinc-900/90 backdrop-blur-md border rounded-xl p-5 min-w-[240px] max-w-[280px] transition-all duration-500 ${
                         isActive
-                          ? 'border-white scale-110 shadow-2xl shadow-white/30'
+                          ? 'border-white shadow-2xl shadow-white/30'
                           : isPast
-                          ? 'border-white/30 scale-95 opacity-30'
-                          : 'border-white/40 scale-95'
+                          ? 'border-white/30'
+                          : 'border-white/40'
                       }`}
                     >
                       {item.year && (

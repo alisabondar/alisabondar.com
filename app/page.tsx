@@ -1,12 +1,85 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import AnimatedBackground from "./components/AnimatedBackground";
 import ScrollTimeline from "./components/ScrollTimeline";
+import Projects from "./components/Projects";
 
 export default function Home() {
+  const [scrollProgress, setScrollProgress] = useState(0);
+  useLayoutEffect(() => {
+    if (typeof window !== 'undefined') {
+      if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual';
+      }
+
+      const scrollToTop = () => {
+        window.scrollTo(0, 0);
+        if (document.documentElement) {
+          document.documentElement.scrollTop = 0;
+        }
+        if (document.body) {
+          document.body.scrollTop = 0;
+        }
+      };
+
+      scrollToTop();
+
+      const timeouts = [
+        setTimeout(scrollToTop, 0),
+        setTimeout(scrollToTop, 10),
+        setTimeout(scrollToTop, 50),
+        setTimeout(scrollToTop, 100),
+      ];
+
+      return () => {
+        timeouts.forEach(clearTimeout);
+      };
+    }
+  }, []);
+
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (typeof window !== 'undefined') {
+      const scrollToTop = () => {
+        window.scrollTo(0, 0);
+        if (document.documentElement) {
+          document.documentElement.scrollTop = 0;
+        }
+        if (document.body) {
+          document.body.scrollTop = 0;
+        }
+      };
+
+      scrollToTop();
+      const timeout = setTimeout(scrollToTop, 200);
+      return () => clearTimeout(timeout);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.scrollY;
+
+      const heroThreshold = windowHeight * 0.8;
+      const isHeroPast = scrollTop > heroThreshold;
+
+      if (isHeroPast) {
+        const heroHeight = windowHeight;
+        const adjustedScroll = Math.max(0, scrollTop - heroHeight);
+        const timelineSectionHeight = windowHeight * 9.6;
+        const progress = Math.min(1.2, (adjustedScroll / timelineSectionHeight) * 1.2);
+        setScrollProgress(progress);
+      } else {
+        setScrollProgress(0);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
@@ -38,12 +111,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative z-10" style={{ minHeight: '800vh' }}>
+      <section className="relative z-10" style={{ minHeight: '960vh' }}>
       </section>
 
-      <section id="projects" className="relative min-h-screen z-10 flex items-center justify-center">
-        <h2 className="text-4xl md:text-6xl font-bold text-white">Projects</h2>
-      </section>
+      <Projects scrollProgress={scrollProgress} />
     </>
   );
 }
