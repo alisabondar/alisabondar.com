@@ -219,7 +219,7 @@ export default function ScrollTimelinePart2() {
                     {item.year}
                   </div>
                 )}
-                <h3 className="text-white font-bold text-lg mb-2">
+                <h3 className="text-white font-bold text-lg mb-2 tracking-[-0.1rem]">
                   {item.title}
                 </h3>
                 <p className="text-white/80 text-sm leading-relaxed">

@@ -126,7 +126,6 @@ export default function ScrollTimeline() {
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
   const numSections = 3;
   const sectionSize = 1 / numSections;
   const currentSection = heroScrolledPast
@@ -168,7 +167,7 @@ export default function ScrollTimeline() {
       const eventsInSection = sectionEndIndex - sectionStartIndex + 1;
       const localIndex = activeIndex - sectionStartIndex;
       const positionInSection = eventsInSection > 1 ? localIndex / (eventsInSection - 1) : 0;
-      return 10 + (positionInSection * 80); // Same calculation as fixedPosition
+      return 10 + (positionInSection * 80);
     }
     return cursorPosition;
   };
@@ -185,6 +184,11 @@ export default function ScrollTimeline() {
       }}
     >
       <div className="relative w-full h-full min-h-[600px]">
+        {heroScrolledPast && (
+          <h2 className="absolute left-1/2 -translate-x-1/2 top-[-140px] text-4xl md:text-6xl font-bold text-white tracking-[-0.25rem] pointer-events-none">
+            History
+          </h2>
+        )}
         {heroScrolledPast && (
           <div className="absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2">
             <div
@@ -311,7 +315,7 @@ export default function ScrollTimeline() {
                           {item.year}
                         </div>
                       )}
-                      <h3 className="text-white font-bold text-lg mb-2">
+                      <h3 className="text-white font-bold text-lg mb-2 tracking-[-0.1rem]">
                         {item.title}
                       </h3>
                       <p className="text-white/80 text-sm leading-relaxed">

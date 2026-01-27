@@ -59,7 +59,6 @@ export default function Home() {
   useEffect(() => {
     const handleScroll = () => {
       const windowHeight = window.innerHeight;
-      const documentHeight = document.documentElement.scrollHeight;
       const scrollTop = window.scrollY;
 
       const heroThreshold = windowHeight * 0.8;
@@ -87,9 +86,9 @@ export default function Home() {
       <AnimatedBackground />
       <ScrollTimeline />
 
-      <section className="relative flex min-h-screen items-center justify-center font-sans z-10">
+      <section id="about" className="relative flex min-h-screen items-center justify-center font-sans z-10">
         <div className="relative z-10 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-[-0.25rem]">
             Hi, I&apos;m Alisa.
           </h1>
           <div className="flex justify-center mt-8">
@@ -111,7 +110,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="relative z-10" style={{ minHeight: '960vh' }}>
+      <section id="history" className="relative z-10" style={{ minHeight: '960vh' }}>
       </section>
 
       <Projects scrollProgress={scrollProgress} />
