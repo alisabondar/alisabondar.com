@@ -13,26 +13,31 @@ export default function AnimatedBackground() {
         <div className={`${styles.blob} ${styles.blob3} ${styles.animationDelay4000}`} />
       </div>
 
-      {icons.map((icon, index) => (
-        <div
-          key={index}
-          className={styles.icon}
-          style={{
-            left: `${icon.x}%`,
-            top: `${icon.y}%`,
-            animationDuration: `${icon.duration}s`,
-            animationDelay: `${icon.delay}s`,
-          }}
-        >
-          <Image
-            src={icon.src}
-            alt=""
-            width={icon.size}
-            height={icon.size}
-            className="pointer-events-none"
-          />
-        </div>
-      ))}
+      {icons.map((icon, index) => {
+        const animationClasses = [styles.iconFloat1, styles.iconFloat2, styles.iconFloat3, styles.iconFloat4];
+        const animationClass = animationClasses[index % animationClasses.length];
+
+        return (
+          <div
+            key={index}
+            className={`${styles.icon} ${animationClass}`}
+            style={{
+              left: `${icon.x}%`,
+              top: `${icon.y}%`,
+              animationDuration: `${icon.duration}s`,
+              animationDelay: `${icon.delay}s`,
+            }}
+          >
+            <Image
+              src={icon.src}
+              alt=""
+              width={icon.size}
+              height={icon.size}
+              className="pointer-events-none"
+            />
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -7,6 +7,20 @@ import Projects from "./components/Projects";
 
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [historyHeight, setHistoryHeight] = useState('960vh');
+
+  useEffect(() => {
+    const updateHistoryHeight = () => {
+      if (typeof window !== 'undefined') {
+        setHistoryHeight(window.innerWidth < 640 ? '720vh' : '960vh');
+      }
+    };
+
+    updateHistoryHeight();
+    window.addEventListener('resize', updateHistoryHeight);
+    return () => window.removeEventListener('resize', updateHistoryHeight);
+  }, []);
+
   useLayoutEffect(() => {
     if (typeof window !== 'undefined') {
       if ('scrollRestoration' in window.history) {
@@ -67,7 +81,8 @@ export default function Home() {
       if (isHeroPast) {
         const heroHeight = windowHeight;
         const adjustedScroll = Math.max(0, scrollTop - heroHeight);
-        const timelineSectionHeight = windowHeight * 9.6;
+        const timelineMultiplier = window.innerWidth < 640 ? 7.2 : 9.6;
+        const timelineSectionHeight = windowHeight * timelineMultiplier;
         const progress = Math.min(1.2, (adjustedScroll / timelineSectionHeight) * 1.2);
         setScrollProgress(progress);
       } else {
@@ -76,9 +91,13 @@ export default function Home() {
     };
 
     window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleScroll);
     handleScroll();
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
   }, []);
 
   return (
@@ -86,14 +105,14 @@ export default function Home() {
       <AnimatedBackground />
       <ScrollTimeline />
 
-      <section id="about" className="relative flex min-h-screen items-center justify-center font-sans z-10">
-        <div className="relative z-10 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-[-0.25rem]">
+      <section id="about" className="relative flex min-h-screen items-center justify-center sm:justify-center font-sans z-10 px-4">
+        <div className="relative z-10 text-center sm:text-center">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4 tracking-[-0.05rem] sm:tracking-[-0.25rem]">
             Hi, I&apos;m Alisa.
           </h1>
-          <div className="flex justify-center mt-8">
+          <div className="flex justify-center mt-6 sm:mt-8">
             <svg
-              className="w-6 h-6 text-white/80 animate-bounce"
+              className="w-5 h-5 sm:w-6 sm:h-6 text-white/80 animate-bounce"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -110,7 +129,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="history" className="relative z-10" style={{ minHeight: '960vh' }}>
+      <section id="history" className="relative z-10" style={{ minHeight: historyHeight }}>
       </section>
 
       <Projects scrollProgress={scrollProgress} />

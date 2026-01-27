@@ -76,7 +76,7 @@ export default function TableOfContents() {
   const handleClick = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      const offset = 80;
+      const offset = typeof window !== 'undefined' && window.innerWidth < 640 ? 60 : 80;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - offset;
 
@@ -88,8 +88,8 @@ export default function TableOfContents() {
   };
 
   return (
-    <nav className="fixed right-8 top-1/2 -translate-y-1/2 z-50 pointer-events-auto">
-      <ul className="flex flex-col items-end gap-4 md:gap-6">
+    <nav className="fixed right-4 sm:right-6 md:right-8 top-1/2 -translate-y-1/2 z-50 pointer-events-auto hidden sm:block">
+      <ul className="flex flex-col items-end gap-3 sm:gap-4 md:gap-6">
         {sections.map((section) => {
           const isActive = activeSection === section.id;
           return (
@@ -97,7 +97,7 @@ export default function TableOfContents() {
               <button
                 onClick={() => handleClick(section.id)}
                 className={`
-                  relative px-3 py-2 text-sm md:text-base font-medium transition-all duration-300 text-right
+                  relative px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm md:text-base font-medium transition-all duration-300 text-right
                   ${
                     isActive
                       ? 'text-white'
@@ -109,7 +109,7 @@ export default function TableOfContents() {
                 <span className="relative z-10">{section.label}</span>
                 {isActive && (
                   <span
-                    className="absolute right-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white transition-all duration-300"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 sm:w-1 h-4 sm:h-6 bg-white transition-all duration-300"
                     aria-hidden="true"
                   />
                 )}
