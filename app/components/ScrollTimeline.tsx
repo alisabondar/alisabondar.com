@@ -20,19 +20,16 @@ const timelineItems: TimelineItem[] = [
     description: 'A second hand for two cardiac surgeons and their amazing staff of nurses',
     year: 'May 2020',
   },
-  // picture
   {
     title: 'My first ski trip out west!',
     description: 'Vail is still my favorite place on earth',
     year: 'December 2020',
   },
-  // picture
   {
     title: 'Official second scrub for bypass surgery (CABG)',
     description: 'Held my first heart 🫀',
     year: 'March 2021',
   },
-  // picture
   {
     title: 'First 8hr+ road trip',
     description: 'Had an epic time skiing in Stowe, Vermont!',
@@ -48,13 +45,11 @@ const timelineItems: TimelineItem[] = [
     description: 'Another fun road trip exploring Maine!',
     year: 'July 2022',
   },
-  // picture
   {
     title: 'Time for a change - Bye bye CVOR',
     description: 'Started working as a night-shift, data assistant for the eICU team',
     year: 'August 2022',
   },
-  //picture with badge
   {
     title: 'Inspired by the intersection of technology and medicine',
     description: 'I began to study javascript and python',
@@ -65,7 +60,6 @@ const timelineItems: TimelineItem[] = [
     description: 'Added another outdoor hobby onto my list',
     year: 'April 2023',
   },
-  // picture
   {
     title: 'Enrolled into Hack Reactor',
     description: 'To learn full-stack development!',
@@ -76,31 +70,26 @@ const timelineItems: TimelineItem[] = [
     description: 'I even was chosen to be the student speaker!',
     year: 'August 2023',
   },
-  // picture of the class
   {
     title: 'Signed my first lease in New York City!',
     description: 'Yay, public transportation!',
     year: 'December 2023',
   },
-  // picture?
   {
     title: 'My first software engineering gig!',
     description: 'Woohoo, began working at AlphaSights',
     year: 'January 2024',
   },
-  //picture
   {
     title: 'My first marathon!',
     description: 'And probably my last... 🤣',
     year: 'March 2025',
   },
-  // picture
   {
     title: 'First time renting a convertible',
     description: 'To explore Nevada and California in style!',
     year: 'May 2025',
   },
-  // picture
   {
     title: 'First time playing pickleball',
     description: 'It\'s quite addicting, might have to try to learn tennis again...',
@@ -125,17 +114,16 @@ export default function ScrollTimeline() {
       const windowHeight = window.innerHeight;
       const scrollTop = window.scrollY;
 
-      setIsCursorVisible(scrollTop > 0);
-
       const heroThreshold = windowHeight * TIMELINE_CONSTANTS.HERO_THRESHOLD;
       const isHeroPast = scrollTop > heroThreshold;
       setHeroScrolledPast(isHeroPast);
 
+      setIsCursorVisible(isHeroPast);
+
       if (!isHeroPast) {
-        setCursorPosition(TIMELINE_CONSTANTS.CURSOR_START_POSITION);
         setScrollProgress(0);
       } else {
-        setCursorPosition(0);
+        setCursorPosition(10);
 
         const heroHeight = windowHeight;
         const adjustedScroll = Math.max(0, scrollTop - heroHeight);
@@ -178,6 +166,19 @@ export default function ScrollTimeline() {
     )
     : -1;
 
+  const calculatedCursorPosition = heroScrolledPast && activeIndex >= 0
+    ? (() => {
+        const eventsInSection = sectionEndIndex - sectionStartIndex + 1;
+        const positionInSection = eventsInSection > 1
+          ? (activeIndex - sectionStartIndex) / (eventsInSection - 1)
+          : 0;
+        return 10 + (positionInSection * 80);
+      })()
+    : heroScrolledPast ? 10 : cursorPosition;
+
+  const lineStartPosition = heroScrolledPast ? 10 : 0;
+  const lineHeight = calculatedCursorPosition - lineStartPosition;
+
   const lastSectionStart = (numSections - 1) * sectionSize;
   const phaseOutStartProgress = 0.8;
   const fadeOutStart = lastSectionStart + (phaseOutStartProgress * sectionSize);
@@ -212,13 +213,13 @@ export default function ScrollTimeline() {
             History
           </h2>
         )}
-        {!heroScrolledPast && (
+        {heroScrolledPast && (
         <div className="absolute left-0 sm:left-1/2 sm:-translate-x-1/2 top-0 bottom-0 w-0.5 hidden md:block">
           <div
             className="absolute left-1/2 -translate-x-1/2 w-0.5 bg-gradient-to-b from-white/60 via-white to-white/60 transition-all duration-300"
             style={{
-              top: '0%',
-              height: '100%',
+              top: `${lineStartPosition}%`,
+              height: `${Math.max(0, lineHeight)}%`,
               opacity: isCursorVisible ? 1 : 0,
               boxShadow: '0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.3)',
             }}
@@ -228,11 +229,11 @@ export default function ScrollTimeline() {
         </div>
         )}
 
-        {!heroScrolledPast && (
+        {heroScrolledPast && (
         <div
           className="absolute left-0 sm:left-1/2 sm:-translate-x-1/2 transition-all duration-1000 ease-in-out hidden md:block"
           style={{
-            top: '45%',
+            top: `${calculatedCursorPosition}%`,
             transform: 'translateY(-50%)',
             opacity: isCursorVisible ? 1 : 0,
           }}
