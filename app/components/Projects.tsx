@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useIsMobile, calculateFadeOpacity } from '../utils/responsive';
 
 interface ProjectsProps {
   scrollProgress: number;
@@ -32,24 +32,11 @@ const projects: Project[] = [
 ];
 
 export default function Projects({ scrollProgress }: ProjectsProps) {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const isMobile = useIsMobile();
 
   const fadeInStart = 1.0;
   const fadeInDuration = isMobile ? 0.1 : 0.2;
-  const opacity = scrollProgress >= fadeInStart
-    ? Math.min(1, (scrollProgress - fadeInStart) / fadeInDuration)
-    : 0;
-  const visibility = scrollProgress >= fadeInStart ? 'visible' : 'hidden';
+  const { opacity, visibility } = calculateFadeOpacity(scrollProgress, fadeInStart, fadeInDuration);
 
   return (
     <section
@@ -96,4 +83,3 @@ export default function Projects({ scrollProgress }: ProjectsProps) {
     </section>
   );
 }
-

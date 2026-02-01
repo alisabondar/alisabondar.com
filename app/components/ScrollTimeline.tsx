@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useIsMobile, TIMELINE_CONSTANTS, PHASE_TIMING, OFFSETS, getTimelineMultiplier } from '../utils/responsive';
 
 interface TimelineItem {
   title: string;
@@ -11,52 +12,63 @@ interface TimelineItem {
 const timelineItems: TimelineItem[] = [
   {
     title: 'Graduated Virginia Tech',
-    description: 'Believing my life will begin in med school',
+    description: 'With a double major in Biochemistry and Russian Language',
     year: 'May 2020',
   },
   {
-    title: 'First Job',
-    description: 'Working for two cardiac surgeons 🫨',
-    year: 'June 2020',
+    title: 'First day as a CVOR support tech',
+    description: 'A second hand for two cardiac surgeons and their amazing staff of nurses',
+    year: 'May 2020',
   },
+  // picture
+  {
+    title: 'My first ski trip out west!',
+    description: 'Vail is still my favorite place on earth',
+    year: 'December 2020',
+  },
+  // picture
   {
     title: 'Official second scrub for bypass surgery (CABG)',
     description: 'Held my first heart 🫀',
     year: 'March 2021',
   },
+  // picture
   {
-    title: 'Ski trip to Stowe, Vermont',
-    description: 'Longest road trip to date!',
+    title: 'First 8hr+ road trip',
+    description: 'Had an epic time skiing in Stowe, Vermont!',
     year: 'December 2021',
   },
   {
-    title: 'Waitlisted',
-    description: ' and eventually rejected from med school :(',
-    year: 'May 2022',
+    title: 'Surprise, I\'m no longer blind!',
+    description: 'Had my first (and hopefully last) LASIK surgery',
+    year: 'June 2022',
   },
   {
-    title: 'Hiking trip to Acadia National Park',
-    description: 'Successfully made it to the top of Precipice Trail!',
+    title: 'Successfully hiked Precipice Trail',
+    description: 'Another fun road trip exploring Maine!',
+    year: 'July 2022',
+  },
+  // picture
+  {
+    title: 'Time for a change - Bye bye CVOR',
+    description: 'Started working as a night-shift, data assistant for the eICU team',
     year: 'August 2022',
   },
+  //picture with badge
   {
-    title: 'Bye bye CVOR, hello eICU',
-    description: 'Started working full time as a night-shift, data assistant',
-    year: 'August 2022',
-  },
-  {
-    title: 'Waitlisted',
-    description: 'AGAIN from my top choice med school :((',
-    year: 'January 2023',
-  },
-  {
-    title: 'First concert at Red Rocks Amphitheatre',
-    description: 'Began to study javascript and python',
+    title: 'Inspired by the intersection of technology and medicine',
+    description: 'I began to study javascript and python',
     year: 'March 2023',
   },
   {
-    title: 'Began to pivot',
-    description: 'Enrolled into Hack Reactor to learn full-stack development',
+    title: 'My first road bike',
+    description: 'Added another outdoor hobby onto my list',
+    year: 'April 2023',
+  },
+  // picture
+  {
+    title: 'Enrolled into Hack Reactor',
+    description: 'To learn full-stack development!',
     year: 'June 2023',
   },
   {
@@ -64,20 +76,35 @@ const timelineItems: TimelineItem[] = [
     description: 'I even was chosen to be the student speaker!',
     year: 'August 2023',
   },
+  // picture of the class
   {
-    title: 'Signed a lease in New York City',
+    title: 'Signed my first lease in New York City!',
     description: 'Yay, public transportation!',
     year: 'December 2023',
   },
+  // picture?
   {
-    title: 'Began working at AlphaSights',
-    description: 'Wohoo, I did it!',
+    title: 'My first software engineering gig!',
+    description: 'Woohoo, began working at AlphaSights',
     year: 'January 2024',
   },
+  //picture
   {
-    title: 'Ran a marathon!',
-    description: 'And drank lots of wine in Napa Valley 🍷',
+    title: 'My first marathon!',
+    description: 'And probably my last... 🤣',
     year: 'March 2025',
+  },
+  // picture
+  {
+    title: 'First time renting a convertible',
+    description: 'To explore Nevada and California in style!',
+    year: 'May 2025',
+  },
+  // picture
+  {
+    title: 'First time playing pickleball',
+    description: 'It\'s quite addicting, might have to try to learn tennis again...',
+    year: 'June 2025',
   },
   {
     title: 'Searching for my next chapter',
@@ -90,19 +117,8 @@ export default function ScrollTimeline() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isCursorVisible, setIsCursorVisible] = useState(false);
   const [heroScrolledPast, setHeroScrolledPast] = useState(false);
-  const [cursorPosition, setCursorPosition] = useState(50);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const [cursorPosition, setCursorPosition] = useState<number>(TIMELINE_CONSTANTS.CURSOR_START_POSITION);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -111,19 +127,19 @@ export default function ScrollTimeline() {
 
       setIsCursorVisible(scrollTop > 0);
 
-      const heroThreshold = windowHeight * 0.8;
+      const heroThreshold = windowHeight * TIMELINE_CONSTANTS.HERO_THRESHOLD;
       const isHeroPast = scrollTop > heroThreshold;
       setHeroScrolledPast(isHeroPast);
 
       if (!isHeroPast) {
-        setCursorPosition(50);
+        setCursorPosition(TIMELINE_CONSTANTS.CURSOR_START_POSITION);
         setScrollProgress(0);
       } else {
         setCursorPosition(0);
 
         const heroHeight = windowHeight;
         const adjustedScroll = Math.max(0, scrollTop - heroHeight);
-        const timelineMultiplier = window.innerWidth < 640 ? 7.2 : 9.6;
+        const timelineMultiplier = getTimelineMultiplier(isMobile);
         const timelineSectionHeight = windowHeight * timelineMultiplier;
         const progress = Math.min(1.2, (adjustedScroll / timelineSectionHeight) * 1.2);
         setScrollProgress(progress);
@@ -138,7 +154,7 @@ export default function ScrollTimeline() {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
     };
-  }, []);
+  }, [isMobile]);
   const numSections = 3;
   const sectionSize = 1 / numSections;
   const currentSection = heroScrolledPast
@@ -157,9 +173,9 @@ export default function ScrollTimeline() {
   const adjustedProgress = Math.pow(sectionProgress, 0.7);
   const activeIndex = heroScrolledPast && currentSection >= 0
     ? Math.min(
-        sectionStartIndex + Math.floor(adjustedProgress * (sectionEndIndex - sectionStartIndex + 1)),
-        sectionEndIndex
-      )
+      sectionStartIndex + Math.floor(adjustedProgress * (sectionEndIndex - sectionStartIndex + 1)),
+      sectionEndIndex
+    )
     : -1;
 
   const lastSectionStart = (numSections - 1) * sectionSize;
@@ -175,29 +191,13 @@ export default function ScrollTimeline() {
 
   const timelineOpacity = 1 - fadeOutProgress;
 
-  const getActiveEventPosition = () => {
-    if (activeIndex >= 0 && activeIndex < timelineItems.length) {
-      const eventsInSection = sectionEndIndex - sectionStartIndex + 1;
-      const localIndex = activeIndex - sectionStartIndex;
-      const positionInSection = eventsInSection > 1 ? localIndex / (eventsInSection - 1) : 0;
-      return 10 + (positionInSection * 80);
-    }
-    return cursorPosition;
-  };
-
-  const heroLinePosition = heroScrolledPast
-    ? getActiveEventPosition()
-    : cursorPosition;
 
   return (
     <div
-      className={`fixed top-1/2 -translate-y-1/2 z-20 pointer-events-none transition-opacity duration-1000 ease-in-out ${
-        heroScrolledPast
-          ? 'left-1/2 -translate-x-1/2'
-          : 'left-4 sm:left-1/2 sm:-translate-x-1/2'
-      }`}
+      className="fixed left-4 sm:left-1/2 top-1/2 sm:-translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none transition-opacity duration-1000 ease-in-out"
       style={{
         opacity: timelineOpacity,
+        ...(heroScrolledPast && isMobile && { left: '50%', transform: 'translate(-50%, -50%)' }),
       }}
     >
       <div className="relative w-full h-full min-h-[400px] sm:min-h-[500px] md:min-h-[600px]">
@@ -214,31 +214,17 @@ export default function ScrollTimeline() {
         )}
         {!heroScrolledPast && (
         <div className="absolute left-0 sm:left-1/2 sm:-translate-x-1/2 top-0 bottom-0 w-0.5 hidden md:block">
-          {heroScrolledPast ? (
-            <div
-              className="absolute left-1/2 -translate-x-1/2 w-0.5 bg-gradient-to-b from-white/60 via-white to-white/60 transition-all duration-300"
-              style={{
-                top: `${cursorPosition}%`,
-                height: `${heroLinePosition - cursorPosition}%`,
-                opacity: isCursorVisible ? 1 : 0,
-                boxShadow: '0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.3)',
-              }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/90 to-transparent animate-shimmer" />
-            </div>
-          ) : (
-            <div
-              className="absolute left-1/2 -translate-x-1/2 w-0.5 bg-gradient-to-b from-white/60 via-white to-white/60 transition-all duration-300"
-              style={{
-                top: '0%',
-                height: '100%',
-                opacity: isCursorVisible ? 1 : 0,
-                boxShadow: '0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.3)',
-              }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/90 to-transparent animate-shimmer" />
-            </div>
-          )}
+          <div
+            className="absolute left-1/2 -translate-x-1/2 w-0.5 bg-gradient-to-b from-white/60 via-white to-white/60 transition-all duration-300"
+            style={{
+              top: '0%',
+              height: '100%',
+              opacity: isCursorVisible ? 1 : 0,
+              boxShadow: '0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(255, 255, 255, 0.3)',
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/90 to-transparent animate-shimmer" />
+          </div>
         </div>
         )}
 
@@ -276,9 +262,9 @@ export default function ScrollTimeline() {
                 const index = layerStartIndex + localIndex;
                 const isActive = index === activeIndex;
                 const isPast = index < activeIndex;
-                const isLeft = heroScrolledPast
-                  ? (isMobile ? (index % 2 === 1) : false)
-                  : (isMobile ? false : (index % 2 === 0));
+                const isLeft = isMobile
+                  ? (heroScrolledPast ? (index % 2 === 1) : false)
+                  : (index % 2 === 0);
 
                 const isInCurrentSection = index >= sectionStartIndex && index <= sectionEndIndex;
 
@@ -290,12 +276,13 @@ export default function ScrollTimeline() {
                   ? (index - sectionStartIndex) / (eventsInSection - 1)
                   : 0;
 
-                const phaseInDuration = 0.15;
-                const phaseInStart = eventPositionInSection * 0.2;
+                const phaseTiming = isMobile ? PHASE_TIMING.MOBILE : PHASE_TIMING.DESKTOP;
+                const phaseInDuration = phaseTiming.PHASE_IN_DURATION;
+                const phaseInStart = eventPositionInSection * phaseTiming.PHASE_IN_START_MULTIPLIER;
                 const phaseInEnd = Math.min(1, phaseInStart + phaseInDuration);
 
-                const phaseOutStart = 0.8;
-                const phaseOutEnd = 1.0;
+                const phaseOutStart = phaseTiming.PHASE_OUT_START;
+                const phaseOutEnd = PHASE_TIMING.PHASE_OUT_END;
 
                 const hasPhasedIn = isCurrentSection && isInCurrentSection && adjustedProgress >= phaseInEnd;
                 const isPhasingIn = isCurrentSection && isInCurrentSection && adjustedProgress >= phaseInStart && adjustedProgress < phaseInEnd;
@@ -327,32 +314,26 @@ export default function ScrollTimeline() {
                 const getResponsiveOffset = (isLeft: boolean, isHidden: boolean) => {
                   if (heroScrolledPast && isMobile) {
                     if (isHidden) {
-                      return isLeft ? '-200px' : '200px';
+                      return isLeft ? OFFSETS.MOBILE_HISTORY.LEFT_HIDDEN : OFFSETS.MOBILE_HISTORY.RIGHT_HIDDEN;
                     } else {
-                      return '0px';
+                      return OFFSETS.MOBILE_HISTORY.CENTERED;
                     }
                   }
 
-                  if (heroScrolledPast) {
-                    return '0px';
-                  }
-
                   if (isMobile) {
-                    return isHidden ? '120px' : '80px';
+                    return isHidden ? OFFSETS.MOBILE_HERO.HIDDEN : OFFSETS.MOBILE_HERO.VISIBLE;
                   } else if (typeof window !== 'undefined' && window.innerWidth < 768) {
-                    return isLeft
-                      ? (isHidden ? '-320px' : '-220px')
-                      : (isHidden ? '260px' : '140px');
+                    const tabletOffsets = isLeft ? OFFSETS.TABLET.LEFT : OFFSETS.TABLET.RIGHT;
+                    return isHidden ? tabletOffsets.HIDDEN : tabletOffsets.VISIBLE;
                   } else {
-                    return isLeft
-                      ? (isHidden ? '-480px' : '-360px')
-                      : (isHidden ? '320px' : '200px');
+                    const desktopOffsets = isLeft ? OFFSETS.DESKTOP.LEFT : OFFSETS.DESKTOP.RIGHT;
+                    return isHidden ? desktopOffsets.HIDDEN : desktopOffsets.VISIBLE;
                   }
                 };
 
                 const horizontalOffset = getResponsiveOffset(isLeft, false);
                 const horizontalOffsetHidden = getResponsiveOffset(isLeft, true);
-                let currentHorizontalOffset = horizontalOffsetHidden;
+                let currentHorizontalOffset: string = horizontalOffsetHidden;
 
                 if (isActive || (isPast && shouldBeVisible)) {
                   if (isPhasingIn) {
@@ -379,8 +360,6 @@ export default function ScrollTimeline() {
                   if (heroScrolledPast && isMobile) {
                     const horizontalOffsetValue = parseInt(currentHorizontalOffset.replace('px', ''));
                     return `translate(calc(-50% + ${horizontalOffsetValue}px), -50%) scale(${scale})`;
-                  } else if (heroScrolledPast) {
-                    return `translate(-50%, -50%) scale(${scale})`;
                   } else {
                     return `translateX(${currentHorizontalOffset}) translateY(-50%) scale(${scale})`;
                   }
@@ -389,12 +368,13 @@ export default function ScrollTimeline() {
                 return (
                   <div
                     key={index}
-                    className={`absolute transition-all duration-700 ease-out ${heroScrolledPast ? 'left-1/2' : 'left-0 sm:left-1/2'}`}
+                    className="absolute left-0 sm:left-1/2 transition-all duration-700 ease-out"
                     style={{
                       top: `${fixedPosition}%`,
                       zIndex: zIndexValue,
                       transform: getTransform(),
                       opacity: opacity,
+                      ...(heroScrolledPast && isMobile && { left: '50%' }),
                     }}
                   >
                     <div
@@ -402,9 +382,9 @@ export default function ScrollTimeline() {
                         isActive
                           ? 'border-white shadow-2xl shadow-white/30'
                           : isPast
-                          ? 'border-white/30'
-                          : 'border-white/40'
-                      }`}
+                            ? 'border-white/30'
+                            : 'border-white/40'
+                        }`}
                     >
                       {item.year && (
                         <div className="text-xs text-white/70 mb-2 font-medium">
@@ -428,4 +408,3 @@ export default function ScrollTimeline() {
     </div>
   );
 }
-

@@ -11,6 +11,7 @@ const sections: Section[] = [
   { id: 'about', label: 'Intro' },
   { id: 'history', label: 'History' },
   { id: 'projects', label: 'Projects' },
+  { id: 'connect', label: 'Connect' },
 ];
 
 export default function TableOfContents() {
@@ -121,4 +122,3 @@ export default function TableOfContents() {
     </nav>
   );
 }
-

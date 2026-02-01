@@ -4,6 +4,8 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 import AnimatedBackground from "./components/AnimatedBackground";
 import ScrollTimeline from "./components/ScrollTimeline";
 import Projects from "./components/Projects";
+import Connect from "./components/Connect";
+import { scrollToTop, getTimelineMultiplier, TIMELINE_CONSTANTS } from './utils/responsive';
 
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -12,7 +14,8 @@ export default function Home() {
   useEffect(() => {
     const updateHistoryHeight = () => {
       if (typeof window !== 'undefined') {
-        setHistoryHeight(window.innerWidth < 640 ? '720vh' : '960vh');
+        const isMobile = window.innerWidth < 640;
+        setHistoryHeight(isMobile ? '720vh' : '960vh');
       }
     };
 
@@ -26,16 +29,6 @@ export default function Home() {
       if ('scrollRestoration' in window.history) {
         window.history.scrollRestoration = 'manual';
       }
-
-      const scrollToTop = () => {
-        window.scrollTo(0, 0);
-        if (document.documentElement) {
-          document.documentElement.scrollTop = 0;
-        }
-        if (document.body) {
-          document.body.scrollTop = 0;
-        }
-      };
 
       scrollToTop();
 
@@ -54,16 +47,6 @@ export default function Home() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const scrollToTop = () => {
-        window.scrollTo(0, 0);
-        if (document.documentElement) {
-          document.documentElement.scrollTop = 0;
-        }
-        if (document.body) {
-          document.body.scrollTop = 0;
-        }
-      };
-
       scrollToTop();
       const timeout = setTimeout(scrollToTop, 200);
       return () => clearTimeout(timeout);
@@ -75,15 +58,16 @@ export default function Home() {
       const windowHeight = window.innerHeight;
       const scrollTop = window.scrollY;
 
-      const heroThreshold = windowHeight * 0.8;
+      const heroThreshold = windowHeight * TIMELINE_CONSTANTS.HERO_THRESHOLD;
       const isHeroPast = scrollTop > heroThreshold;
 
       if (isHeroPast) {
         const heroHeight = windowHeight;
         const adjustedScroll = Math.max(0, scrollTop - heroHeight);
-        const timelineMultiplier = window.innerWidth < 640 ? 7.2 : 9.6;
+        const isMobile = window.innerWidth < 640;
+        const timelineMultiplier = getTimelineMultiplier(isMobile);
         const timelineSectionHeight = windowHeight * timelineMultiplier;
-        const progress = Math.min(1.2, (adjustedScroll / timelineSectionHeight) * 1.2);
+        const progress = Math.min(1.4, (adjustedScroll / timelineSectionHeight) * 1.4);
         setScrollProgress(progress);
       } else {
         setScrollProgress(0);
@@ -133,6 +117,7 @@ export default function Home() {
       </section>
 
       <Projects scrollProgress={scrollProgress} />
+      <Connect scrollProgress={scrollProgress} />
     </>
   );
 }
