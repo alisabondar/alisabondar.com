@@ -121,14 +121,14 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
     const month = date.toLocaleString('default', { month: 'long' });
     const day = date.getDate();
     const suffix = day === 1 || day === 21 || day === 31 ? 'st' :
-                   day === 2 || day === 22 ? 'nd' :
-                   day === 3 || day === 23 ? 'rd' : 'th';
+      day === 2 || day === 22 ? 'nd' :
+        day === 3 || day === 23 ? 'rd' : 'th';
     return `${month} ${day}${suffix}`;
   };
 
   return (
     <div className="relative w-full">
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 z-10 pointer-events-auto hidden sm:block">
+      <div className="absolute right-4 sm:right-6 md:right-8 top-1/2 -translate-y-1/2 z-10 pointer-events-auto hidden sm:block">
         <ul className="flex flex-col items-end gap-3 sm:gap-4">
           {years.map((yearData) => {
             const isActive = selectedYear === yearData.year;
@@ -138,10 +138,9 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                   onClick={() => setSelectedYear(yearData.year)}
                   className={`
                     relative px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-300 text-right
-                    ${
-                      isActive
-                        ? 'text-white'
-                        : 'text-white/60 hover:text-white/80'
+                    ${isActive
+                      ? 'text-white'
+                      : 'text-white/60 hover:text-white/80'
                     }
                   `}
                   aria-label={`View ${yearData.year} contributions`}
@@ -160,96 +159,97 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
         </ul>
       </div>
 
-      <div className="w-full bg-zinc-900/90 backdrop-blur-md border border-white/40 rounded-xl p-4 sm:p-6 md:p-8 pr-16 sm:pr-20 md:pr-24">
-        <div className="mb-4 flex items-center justify-between flex-wrap gap-4">
-          <h3 className="text-white text-lg sm:text-xl font-semibold mb-1">
-            {totalContributions} contributions in {year}
-          </h3>
-          <div className="flex items-center gap-2 sm:hidden">
-            <span className="text-white/60 text-xs">Year:</span>
-            <div className="flex gap-1">
-              {years.map((yearData) => (
-                <button
-                  key={yearData.year}
-                  onClick={() => setSelectedYear(yearData.year)}
-                  className={`px-2 py-1 text-xs rounded transition-all duration-200 ${
-                    selectedYear === yearData.year
-                      ? 'bg-white/20 text-white border border-white/40'
-                      : 'bg-zinc-800/50 text-white/60 hover:text-white hover:bg-zinc-800/70 border border-white/20'
-                  }`}
-                >
-                  {yearData.year}
-                </button>
-              ))}
+      <div className="w-full px-8 py-4 sm:py-6 md:py-8 pr-[32px] flex justify-center">
+        <div className="w-full max-w-3xl">
+          <div className="mb-4 flex items-center justify-between flex-wrap gap-4">
+            <h3 className="text-white text-lg sm:text-xl font-semibold mb-1">
+              {totalContributions} contributions in {year}
+            </h3>
+            <div className="flex items-center gap-2 sm:hidden">
+              <span className="text-white/60 text-xs">Year:</span>
+              <div className="flex gap-1">
+                {years.map((yearData) => (
+                  <button
+                    key={yearData.year}
+                    onClick={() => setSelectedYear(yearData.year)}
+                    className={`px-2 py-1 text-xs rounded transition-all duration-200 ${selectedYear === yearData.year
+                        ? 'bg-white/20 text-white border border-white/40'
+                        : 'bg-zinc-800/50 text-white/60 hover:text-white hover:bg-zinc-800/70 border border-white/20'
+                      }`}
+                  >
+                    {yearData.year}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto pl-1">
+            <div className="inline-block min-w-full">
+              <div className="flex mb-2 relative" style={{ height: '15px', marginLeft: '22px' }}>
+                {monthPositions.map(({ month, position }, idx) => {
+                  const nextPosition = idx < monthPositions.length - 1
+                    ? monthPositions[idx + 1].position
+                    : weeksInYear;
+                  const cellWidth = 13; // 10px cell + 3px gap
+                  const width = (nextPosition - position) * cellWidth;
+                  return (
+                    <div
+                      key={month}
+                      className="text-white/70 text-xs absolute top-0"
+                      style={{ left: `${position * cellWidth}px`, width: `${width}px` }}
+                    >
+                      {monthLabels[month]}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="flex gap-[3px]">
+                <div className="flex flex-col gap-[3px] mr-2">
+                  {dayLabels.map((day, idx) => (
+                    <div
+                      key={day}
+                      className="text-white/50 text-[10px] flex items-center justify-end pr-1"
+                      style={{ height: '10px', width: '24px', minWidth: '24px' }}
+                    >
+                      {idx % 2 === 0 ? day : ''}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex-1">
+                  {calendar.map((week, dayIndex) => (
+                    <div key={dayIndex} className="flex gap-[3px] mb-[3px]">
+                      {week.map((contrib, weekIndex) => {
+                        if (!contrib) {
+                          return (
+                            <div
+                              key={`${dayIndex}-${weekIndex}`}
+                              className="w-[10px] h-[10px] rounded-sm"
+                            />
+                          );
+                        }
+
+                        const isHovered = hoveredDate === contrib.date;
+                        const level = contrib.level || 0;
+
+                        return (
+                          <div
+                            key={contrib.date}
+                            className={`w-[10px] h-[10px] rounded-sm transition-all duration-200 cursor-pointer relative ${isHovered ? levelHoverColors[level] : levelColors[level]
+                              } ${isHovered ? 'ring-2 ring-white/50 scale-110' : ''}`}
+                            onMouseEnter={(e) => handleCellMouseEnter(e, contrib.date)}
+                            onMouseLeave={handleCellMouseLeave}
+                          />
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
             </div>
           </div>
         </div>
-
-      <div className="overflow-x-auto">
-        <div className="inline-block min-w-full">
-          <div className="flex mb-2 relative" style={{ height: '15px', marginLeft: '22px' }}>
-            {monthPositions.map(({ month, position }, idx) => {
-              const nextPosition = idx < monthPositions.length - 1
-                ? monthPositions[idx + 1].position
-                : weeksInYear;
-              const cellWidth = 13; // 10px cell + 3px gap
-              const width = (nextPosition - position) * cellWidth;
-              return (
-                <div
-                  key={month}
-                  className="text-white/70 text-xs absolute top-0"
-                  style={{ left: `${position * cellWidth}px`, width: `${width}px` }}
-                >
-                  {monthLabels[month]}
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="flex gap-[3px]">
-            <div className="flex flex-col gap-[3px] mr-2">
-              {dayLabels.map((day, idx) => (
-                <div
-                  key={day}
-                  className="text-white/50 text-[10px] flex items-center justify-end pr-1"
-                  style={{ height: '10px', width: '20px' }}
-                >
-                  {idx % 2 === 0 ? day : ''}
-                </div>
-              ))}
-            </div>
-
-            <div className="flex-1">
-              {calendar.map((week, dayIndex) => (
-                <div key={dayIndex} className="flex gap-[3px] mb-[3px]">
-                  {week.map((contrib, weekIndex) => {
-                    if (!contrib) {
-                      return (
-                        <div
-                          key={`${dayIndex}-${weekIndex}`}
-                          className="w-[10px] h-[10px] rounded-sm"
-                        />
-                      );
-                    }
-
-                    const isHovered = hoveredDate === contrib.date;
-                    const level = contrib.level || 0;
-
-                    return (
-                      <div
-                        key={contrib.date}
-                        className={`w-[10px] h-[10px] rounded-sm transition-all duration-200 cursor-pointer relative ${
-                          isHovered ? levelHoverColors[level] : levelColors[level]
-                        } ${isHovered ? 'ring-2 ring-white/50 scale-110' : ''}`}
-                        onMouseEnter={(e) => handleCellMouseEnter(e, contrib.date)}
-                        onMouseLeave={handleCellMouseLeave}
-                      />
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
 
@@ -269,7 +269,6 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
           })()}
         </div>
       )}
-      </div>
     </div>
   );
 }

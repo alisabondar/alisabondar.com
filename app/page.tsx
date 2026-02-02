@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useState } from 'react';
 import AnimatedBackground from "./components/AnimatedBackground";
 import ScrollTimeline from "./components/ScrollTimeline";
 import Projects from "./components/Projects";
-import Connect from "./components/Connect";
+import Impact from "./components/Impact";
 import { scrollToTop, getTimelineMultiplier, TIMELINE_CONSTANTS } from './utils/responsive';
 
 export default function Home() {
@@ -117,7 +117,7 @@ export default function Home() {
       </section>
 
       <Projects scrollProgress={scrollProgress} />
-      <Connect scrollProgress={scrollProgress} />
+      <Impact scrollProgress={scrollProgress} />
     </>
   );
 }

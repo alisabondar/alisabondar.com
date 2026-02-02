@@ -11,7 +11,7 @@ const sections: Section[] = [
   { id: 'about', label: 'Intro' },
   { id: 'history', label: 'History' },
   { id: 'projects', label: 'Projects' },
-  { id: 'connect', label: 'Connect' },
+  { id: 'impact', label: 'Impact' },
 ];
 
 export default function TableOfContents() {

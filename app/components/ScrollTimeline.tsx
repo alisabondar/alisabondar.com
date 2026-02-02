@@ -1,12 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { useIsMobile, TIMELINE_CONSTANTS, PHASE_TIMING, OFFSETS, getTimelineMultiplier } from '../utils/responsive';
 
 interface TimelineItem {
   title: string;
   description: string;
   year?: string;
+  picture?: string;
 }
 
 const timelineItems: TimelineItem[] = [
@@ -19,16 +21,19 @@ const timelineItems: TimelineItem[] = [
     title: 'First day as a CVOR support tech',
     description: 'A second hand for two cardiac surgeons and their amazing staff of nurses',
     year: 'May 2020',
+    picture: 'CVOR-event.png',
   },
   {
     title: 'My first ski trip out west!',
     description: 'Vail is still my favorite place on earth',
     year: 'December 2020',
+    picture: 'skiing-event.png',
   },
   {
     title: 'Official second scrub for bypass surgery (CABG)',
     description: 'Held my first heart 🫀',
     year: 'March 2021',
+    picture: 'scrub-event.png',
   },
   {
     title: 'First 8hr+ road trip',
@@ -44,11 +49,13 @@ const timelineItems: TimelineItem[] = [
     title: 'Successfully hiked Precipice Trail',
     description: 'Another fun road trip exploring Maine!',
     year: 'July 2022',
+    picture: 'maine-event.png',
   },
   {
     title: 'Time for a change - Bye bye CVOR',
     description: 'Started working as a night-shift, data assistant for the eICU team',
     year: 'August 2022',
+    picture: 'inova-event.png',
   },
   {
     title: 'Inspired by the intersection of technology and medicine',
@@ -59,6 +66,7 @@ const timelineItems: TimelineItem[] = [
     title: 'My first road bike',
     description: 'Added another outdoor hobby onto my list',
     year: 'April 2023',
+    picture: 'bike-event.png',
   },
   {
     title: 'Enrolled into Hack Reactor',
@@ -69,26 +77,31 @@ const timelineItems: TimelineItem[] = [
     title: 'Graduated Hack Reactor',
     description: 'I even was chosen to be the student speaker!',
     year: 'August 2023',
+    picture: 'graduation-event.png',
   },
   {
     title: 'Signed my first lease in New York City!',
     description: 'Yay, public transportation!',
     year: 'December 2023',
+    picture: 'lease-event.png',
   },
   {
     title: 'My first software engineering gig!',
     description: 'Woohoo, began working at AlphaSights',
     year: 'January 2024',
+    picture: 'alphasights-event.png',
   },
   {
     title: 'My first marathon!',
     description: 'And probably my last... 🤣',
     year: 'March 2025',
+    picture: 'marathon-event.png',
   },
   {
     title: 'First time renting a convertible',
     description: 'To explore Nevada and California in style!',
     year: 'May 2025',
+    picture: 'vegas-event.png',
   },
   {
     title: 'First time playing pickleball',
@@ -134,13 +147,53 @@ export default function ScrollTimeline() {
       }
     };
 
+    // Check if history section is in view on mount/navigation
+    const checkHistorySection = () => {
+      const historySection = document.getElementById('history');
+      if (historySection) {
+        const rect = historySection.getBoundingClientRect();
+        const isInView = rect.top < window.innerHeight && rect.bottom > 0;
+        if (isInView) {
+          const windowHeight = window.innerHeight;
+          const scrollTop = window.scrollY;
+          const heroThreshold = windowHeight * TIMELINE_CONSTANTS.HERO_THRESHOLD;
+          if (scrollTop > heroThreshold) {
+            setHeroScrolledPast(true);
+            setIsCursorVisible(true);
+            // Set a minimum scrollProgress to ensure header is visible
+            const heroHeight = windowHeight;
+            const adjustedScroll = Math.max(0, scrollTop - heroHeight);
+            const timelineMultiplier = getTimelineMultiplier(isMobile);
+            const timelineSectionHeight = windowHeight * timelineMultiplier;
+            const progress = Math.min(1.2, (adjustedScroll / timelineSectionHeight) * 1.2);
+            setScrollProgress(Math.max(0.02, progress)); // Ensure at least 0.02 for header visibility
+          }
+        }
+      }
+    };
+
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleScroll);
+
+    // Check on mount and after a short delay to catch navigation
     handleScroll();
+    checkHistorySection();
+    const timeout = setTimeout(checkHistorySection, 100);
+
+    // Listen for hash changes (TOC navigation)
+    const handleHashChange = () => {
+      setTimeout(() => {
+        checkHistorySection();
+        handleScroll();
+      }, 100);
+    };
+    window.addEventListener('hashchange', handleHashChange);
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
+      window.removeEventListener('hashchange', handleHashChange);
+      clearTimeout(timeout);
     };
   }, [isMobile]);
   const numSections = 3;
@@ -206,8 +259,8 @@ export default function ScrollTimeline() {
           <h2
             className="absolute left-1/2 -translate-x-1/2 top-[-100px] sm:top-[-120px] md:top-[-140px] text-3xl sm:text-4xl md:text-6xl font-bold text-white tracking-[-0.05rem] sm:tracking-[-0.25rem] pointer-events-none transition-opacity duration-200 ease-in-out"
             style={{
-              opacity: scrollProgress >= 0 ? Math.min(1, scrollProgress / 0.02) : 0,
-              visibility: scrollProgress >= 0 ? 'visible' : 'hidden',
+              opacity: scrollProgress >= 0.02 ? Math.min(1, scrollProgress / 0.02) : 1,
+              visibility: 'visible',
             }}
           >
             History
@@ -366,6 +419,18 @@ export default function ScrollTimeline() {
                   }
                 };
 
+                const containerClass = `bg-zinc-900/90 backdrop-blur-md border rounded-xl p-4 sm:p-5 min-w-[200px] max-w-[240px] sm:min-w-[240px] sm:max-w-[280px] transition-all duration-500 ${
+                  isActive
+                    ? 'border-white shadow-2xl shadow-white/30'
+                    : isPast
+                      ? 'border-white/30'
+                      : 'border-white/40'
+                }`;
+
+                const pictureOnLeft = !isLeft;
+                const borderColor = isActive ? 'border-white' : isPast ? 'border-white/30' : 'border-white/40';
+                const shadowClass = isActive ? 'shadow-2xl shadow-white/30' : '';
+
                 return (
                   <div
                     key={index}
@@ -378,27 +443,50 @@ export default function ScrollTimeline() {
                       ...(heroScrolledPast && isMobile && { left: '50%' }),
                     }}
                   >
-                    <div
-                      className={`bg-zinc-900/90 backdrop-blur-md border rounded-xl p-4 sm:p-5 min-w-[200px] max-w-[240px] sm:min-w-[240px] sm:max-w-[280px] transition-all duration-500 ${
-                        isActive
-                          ? 'border-white shadow-2xl shadow-white/30'
-                          : isPast
-                            ? 'border-white/30'
-                            : 'border-white/40'
-                        }`}
-                    >
-                      {item.year && (
-                        <div className="text-xs text-white/70 mb-2 font-medium">
-                          {item.year}
+                    {item.picture ? (
+                      <div className={`flex ${pictureOnLeft ? 'flex-row' : 'flex-row-reverse'}`}>
+                        <div className={`bg-zinc-900/90 backdrop-blur-md ${borderColor} ${shadowClass} p-4 sm:p-5 min-w-[200px] max-w-[240px] sm:min-w-[240px] sm:max-w-[280px] h-[240px] sm:h-[280px] flex flex-col justify-between transition-all duration-500 ${
+                          pictureOnLeft ? 'rounded-l-xl rounded-r-none' : 'rounded-r-xl rounded-l-none'
+                        } ${pictureOnLeft ? 'border-r-0' : 'border-l-0'}`}>
+                          <div>
+                            {item.year && (
+                              <div className="text-sm sm:text-base text-white/70 mb-2 font-medium">
+                                {item.year}
+                              </div>
+                            )}
+                            <h3 className="text-white font-bold text-lg sm:text-xl mb-2 tracking-[-0.05rem] sm:tracking-[-0.1rem]">
+                              {item.title}
+                            </h3>
+                          </div>
+                          <p className="text-white/80 text-sm sm:text-base leading-relaxed">
+                            {item.description}
+                          </p>
                         </div>
-                      )}
-                      <h3 className="text-white font-bold text-base sm:text-lg mb-2 tracking-[-0.05rem] sm:tracking-[-0.1rem]">
-                        {item.title}
-                      </h3>
-                      <p className="text-white/80 text-xs sm:text-sm leading-relaxed">
-                        {item.description}
-                      </p>
-                    </div>
+                        <div className={`shrink-0 border ${borderColor} ${shadowClass} ${pictureOnLeft ? 'rounded-r-xl rounded-l-none border-l-0' : 'rounded-l-xl rounded-r-none border-r-0'} overflow-hidden`}>
+                          <Image
+                            src={`/${item.picture}`}
+                            alt={item.title}
+                            width={240}
+                            height={280}
+                            className="w-[200px] h-[240px] sm:w-[240px] sm:h-[280px] object-cover"
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <div className={containerClass}>
+                        {item.year && (
+                          <div className="text-sm sm:text-base text-white/70 mb-2 font-medium">
+                            {item.year}
+                          </div>
+                        )}
+                        <h3 className="text-white font-bold text-lg sm:text-xl mb-2 tracking-[-0.05rem] sm:tracking-[-0.1rem]">
+                          {item.title}
+                        </h3>
+                        <p className="text-white/80 text-sm sm:text-base leading-relaxed">
+                          {item.description}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 );
               })}

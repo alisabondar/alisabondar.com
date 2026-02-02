@@ -22,4 +22,3 @@ export const contributions2026 = [
 ];
 
 export const totalContributions2026 = 96;
-

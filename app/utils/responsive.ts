@@ -38,11 +38,11 @@ export const OFFSETS = {
   },
   TABLET: {
     LEFT: { HIDDEN: '-320px' as const, VISIBLE: '-220px' as const },
-    RIGHT: { HIDDEN: '260px' as const, VISIBLE: '140px' as const },
+    RIGHT: { HIDDEN: '260px' as const, VISIBLE: '100px' as const },
   },
   DESKTOP: {
     LEFT: { HIDDEN: '-480px' as const, VISIBLE: '-360px' as const },
-    RIGHT: { HIDDEN: '320px' as const, VISIBLE: '200px' as const },
+    RIGHT: { HIDDEN: '320px' as const, VISIBLE: '120px' as const },
   },
 };
 
@@ -87,4 +87,3 @@ export function scrollToTop() {
     document.body.scrollTop = 0;
   }
 }
-
