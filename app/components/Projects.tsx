@@ -64,16 +64,22 @@ export default function Projects({ scrollProgress }: ProjectsProps) {
               className={styles.cardLink}
             >
               <div className={`${styles.card} ${hasImage}`}>
-                <div className={styles.cardInner}>
-                  <h3 className={styles.title}>{project.title}</h3>
-                  {project.screenshot && (
-                    <Image
-                      src={project.screenshot}
-                      alt={project.title}
-                      fill
-                      className={styles.projectImage}
-                    />
-                  )}
+                <div className={styles.content}>
+                  <div className={styles.front}>
+                    <h3 className={styles.title}>{project.title}</h3>
+                  </div>
+                  <div className={styles.back}>
+                    <div className={styles.backContent}>
+                      {project.screenshot && (
+                        <Image
+                          src={project.screenshot}
+                          alt={project.title}
+                          fill
+                          className={styles.projectImage}
+                        />
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </Link>
