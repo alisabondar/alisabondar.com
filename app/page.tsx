@@ -9,13 +9,15 @@ import { scrollToTop, getTimelineMultiplier, TIMELINE_CONSTANTS } from './utils/
 
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [historyHeight, setHistoryHeight] = useState('960vh');
+  const [historyHeight, setHistoryHeight] = useState('100vh');
 
   useEffect(() => {
     const updateHistoryHeight = () => {
       if (typeof window !== 'undefined') {
         const isMobile = window.innerWidth < 640;
-        setHistoryHeight(isMobile ? '720vh' : '960vh');
+        const timelineMultiplier = getTimelineMultiplier(isMobile);
+        const height = `${timelineMultiplier * 100}vh`;
+        setHistoryHeight(height);
       }
     };
 
@@ -67,8 +69,15 @@ export default function Home() {
         const isMobile = window.innerWidth < 640;
         const timelineMultiplier = getTimelineMultiplier(isMobile);
         const timelineSectionHeight = windowHeight * timelineMultiplier;
-        const progress = Math.min(1.4, (adjustedScroll / timelineSectionHeight) * 1.4);
-        setScrollProgress(progress);
+
+        if (adjustedScroll <= timelineSectionHeight) {
+          const progress = (adjustedScroll / timelineSectionHeight) * 1.2;
+          setScrollProgress(progress);
+        } else {
+          const pastTimeline = adjustedScroll - timelineSectionHeight;
+          const additionalProgress = (pastTimeline / windowHeight) * 0.3;
+          setScrollProgress(Math.min(2.0, 1.2 + additionalProgress));
+        }
       } else {
         setScrollProgress(0);
       }
@@ -91,7 +100,7 @@ export default function Home() {
 
       <section id="about" className="relative flex min-h-screen items-center justify-center sm:justify-center font-sans z-10 px-4">
         <div className="relative z-10 text-center sm:text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4 tracking-[-0.05rem] sm:tracking-[-0.25rem]">
+          <h1 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
             Hi, I&apos;m Alisa.
           </h1>
           <div className="flex justify-center mt-6 sm:mt-8">

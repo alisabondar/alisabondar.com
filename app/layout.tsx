@@ -1,16 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Saira_Extra_Condensed } from "next/font/google";
 import "./globals.css";
 import TableOfContents from "./components/TableOfContents";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const sairaExtraCondensed = Saira_Extra_Condensed({
+  variable: "--font-saira-extra-condensed",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 export const metadata: Metadata = {
@@ -25,9 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${sairaExtraCondensed.variable} antialiased`}>
         {children}
         <TableOfContents />
       </body>

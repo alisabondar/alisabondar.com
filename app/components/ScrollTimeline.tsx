@@ -13,103 +13,103 @@ interface TimelineItem {
 
 const timelineItems: TimelineItem[] = [
   {
-    title: 'Graduated Virginia Tech',
+    title: 'Graduated Virginia Tech 🎓',
     description: 'With a double major in Biochemistry and Russian Language',
     year: 'May 2020',
   },
   {
-    title: 'First day as a CVOR support tech',
-    description: 'A second hand for two cardiac surgeons and their amazing staff of nurses',
+    title: 'First day as a CVOR support tech 🩺',
+    description: '',
     year: 'May 2020',
     picture: 'CVOR-event.png',
   },
   {
-    title: 'My first ski trip out west!',
-    description: 'Vail is still my favorite place on earth',
+    title: 'First ski trip out west! 🎿',
+    description: '',
     year: 'December 2020',
-    picture: 'skiing-event.png',
+    picture: 'colorado-event.png',
   },
   {
-    title: 'Official second scrub for bypass surgery (CABG)',
-    description: 'Held my first heart 🫀',
+    title: 'First time scrubbing in to assist 🫀',
+    description: '',
     year: 'March 2021',
     picture: 'scrub-event.png',
   },
   {
-    title: 'First 8hr+ road trip',
+    title: 'First 8hr+ road trip 🚗',
     description: 'Had an epic time skiing in Stowe, Vermont!',
     year: 'December 2021',
   },
   {
-    title: 'Surprise, I\'m no longer blind!',
-    description: 'Had my first (and hopefully last) LASIK surgery',
+    title: 'Surprise, I\'m no longer blind! 🤯',
+    description: 'Had a successful LASIK surgery',
     year: 'June 2022',
   },
   {
-    title: 'Successfully hiked Precipice Trail',
-    description: 'Another fun road trip exploring Maine!',
+    title: 'Successfully hiked Precipice Trail 🥾',
+    description: '',
     year: 'July 2022',
     picture: 'maine-event.png',
   },
   {
-    title: 'Time for a change - Bye bye CVOR',
+    title: 'Time for a change - Bye bye CVOR 💔',
     description: 'Started working as a night-shift, data assistant for the eICU team',
     year: 'August 2022',
-    picture: 'inova-event.png',
   },
   {
-    title: 'Inspired by the intersection of technology and medicine',
+    title: 'Inspired by the intersection of technology and medicine 📚',
     description: 'I began to study javascript and python',
     year: 'March 2023',
   },
   {
-    title: 'My first road bike',
-    description: 'Added another outdoor hobby onto my list',
+    title: 'First road bike 🚴',
+    description: '',
     year: 'April 2023',
     picture: 'bike-event.png',
   },
   {
-    title: 'Enrolled into Hack Reactor',
-    description: 'To learn full-stack development!',
+    title: 'Enrolled into Hack Reactor 💻',
+    description: '',
     year: 'June 2023',
+    picture: 'hackreactor-event.png',
   },
   {
-    title: 'Graduated Hack Reactor',
-    description: 'I even was chosen to be the student speaker!',
+    title: 'Graduated Hack Reactor 📆',
+    description: '',
     year: 'August 2023',
     picture: 'graduation-event.png',
   },
   {
-    title: 'Signed my first lease in New York City!',
-    description: 'Yay, public transportation!',
+    title: 'First lease signed! 🌃',
+    description: '',
     year: 'December 2023',
-    picture: 'lease-event.png',
+    picture: 'nyc-event.png',
   },
   {
-    title: 'My first software engineering gig!',
-    description: 'Woohoo, began working at AlphaSights',
+    title: 'First software engineering gig! 💼',
+    description: '',
     year: 'January 2024',
     picture: 'alphasights-event.png',
   },
   {
-    title: 'My first marathon!',
-    description: 'And probably my last... 🤣',
+    title: 'First marathon! ',
+    description: '',
     year: 'March 2025',
     picture: 'marathon-event.png',
   },
   {
-    title: 'First time renting a convertible',
-    description: 'To explore Nevada and California in style!',
+    title: 'First time renting a convertible 🌄',
+    description: '',
     year: 'May 2025',
-    picture: 'vegas-event.png',
+    picture: 'driving-event.png',
   },
   {
-    title: 'First time playing pickleball',
+    title: 'First time playing pickleball 🎾',
     description: 'It\'s quite addicting, might have to try to learn tennis again...',
     year: 'June 2025',
   },
   {
-    title: 'Searching for my next chapter',
+    title: 'Searching for my next chapter 🔍',
     description: 'What\'s next?',
     year: 'January 2026',
   }
@@ -147,7 +147,6 @@ export default function ScrollTimeline() {
       }
     };
 
-    // Check if history section is in view on mount/navigation
     const checkHistorySection = () => {
       const historySection = document.getElementById('history');
       if (historySection) {
@@ -160,13 +159,12 @@ export default function ScrollTimeline() {
           if (scrollTop > heroThreshold) {
             setHeroScrolledPast(true);
             setIsCursorVisible(true);
-            // Set a minimum scrollProgress to ensure header is visible
             const heroHeight = windowHeight;
             const adjustedScroll = Math.max(0, scrollTop - heroHeight);
             const timelineMultiplier = getTimelineMultiplier(isMobile);
             const timelineSectionHeight = windowHeight * timelineMultiplier;
             const progress = Math.min(1.2, (adjustedScroll / timelineSectionHeight) * 1.2);
-            setScrollProgress(Math.max(0.02, progress)); // Ensure at least 0.02 for header visibility
+            setScrollProgress(Math.max(0.02, progress));
           }
         }
       }
@@ -175,12 +173,10 @@ export default function ScrollTimeline() {
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleScroll);
 
-    // Check on mount and after a short delay to catch navigation
     handleScroll();
     checkHistorySection();
     const timeout = setTimeout(checkHistorySection, 100);
 
-    // Listen for hash changes (TOC navigation)
     const handleHashChange = () => {
       setTimeout(() => {
         checkHistorySection();
@@ -225,11 +221,11 @@ export default function ScrollTimeline() {
         const positionInSection = eventsInSection > 1
           ? (activeIndex - sectionStartIndex) / (eventsInSection - 1)
           : 0;
-        return 10 + (positionInSection * 80);
+        return 18 + (positionInSection * 72);
       })()
-    : heroScrolledPast ? 10 : cursorPosition;
+    : heroScrolledPast ? 18 : cursorPosition;
 
-  const lineStartPosition = heroScrolledPast ? 10 : 0;
+  const lineStartPosition = heroScrolledPast ? 18 : 0;
   const lineHeight = calculatedCursorPosition - lineStartPosition;
 
   const lastSectionStart = (numSections - 1) * sectionSize;
@@ -257,7 +253,7 @@ export default function ScrollTimeline() {
       <div className="relative w-full h-full min-h-[400px] sm:min-h-[500px] md:min-h-[600px]">
         {heroScrolledPast && (
           <h2
-            className="absolute left-1/2 -translate-x-1/2 top-[-100px] sm:top-[-120px] md:top-[-140px] text-3xl sm:text-4xl md:text-6xl font-bold text-white tracking-[-0.05rem] sm:tracking-[-0.25rem] pointer-events-none transition-opacity duration-200 ease-in-out"
+            className="absolute left-1/2 -translate-x-1/2 top-[-100px] sm:top-[-120px] md:top-[-140px] text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white pointer-events-none transition-opacity duration-200 ease-in-out"
             style={{
               opacity: scrollProgress >= 0.02 ? Math.min(1, scrollProgress / 0.02) : 1,
               visibility: 'visible',
@@ -311,7 +307,7 @@ export default function ScrollTimeline() {
           const isCurrentSection = currentSection === layerIndex;
 
           return (
-            <div key={layerIndex} className="absolute inset-0">
+            <div key={`timeline-layer-${layerIndex}`} className="absolute inset-0">
               {layerEvents.map((item, localIndex) => {
                 const index = layerStartIndex + localIndex;
                 const isActive = index === activeIndex;
@@ -324,7 +320,7 @@ export default function ScrollTimeline() {
 
                 const eventsInSection = sectionEndIndex - sectionStartIndex + 1;
                 const positionInSection = eventsInSection > 1 ? localIndex / (eventsInSection - 1) : 0;
-                const fixedPosition = 10 + (positionInSection * 80);
+                const fixedPosition = 18 + (positionInSection * 72);
 
                 const eventPositionInSection = eventsInSection > 1
                   ? (index - sectionStartIndex) / (eventsInSection - 1)
@@ -419,21 +415,10 @@ export default function ScrollTimeline() {
                   }
                 };
 
-                const containerClass = `bg-zinc-900/90 backdrop-blur-md border rounded-xl p-4 sm:p-5 min-w-[200px] max-w-[240px] sm:min-w-[240px] sm:max-w-[280px] transition-all duration-500 ${
-                  isActive
-                    ? 'border-white shadow-2xl shadow-white/30'
-                    : isPast
-                      ? 'border-white/30'
-                      : 'border-white/40'
-                }`;
-
-                const pictureOnLeft = !isLeft;
-                const borderColor = isActive ? 'border-white' : isPast ? 'border-white/30' : 'border-white/40';
-                const shadowClass = isActive ? 'shadow-2xl shadow-white/30' : '';
 
                 return (
                   <div
-                    key={index}
+                    key={`timeline-${layerIndex}-${index}`}
                     className="absolute left-0 sm:left-1/2 transition-all duration-700 ease-out"
                     style={{
                       top: `${fixedPosition}%`,
@@ -444,47 +429,158 @@ export default function ScrollTimeline() {
                     }}
                   >
                     {item.picture ? (
-                      <div className={`flex ${pictureOnLeft ? 'flex-row' : 'flex-row-reverse'}`}>
-                        <div className={`bg-zinc-900/90 backdrop-blur-md ${borderColor} ${shadowClass} p-4 sm:p-5 min-w-[200px] max-w-[240px] sm:min-w-[240px] sm:max-w-[280px] h-[240px] sm:h-[280px] flex flex-col justify-between transition-all duration-500 ${
-                          pictureOnLeft ? 'rounded-l-xl rounded-r-none' : 'rounded-r-xl rounded-l-none'
-                        } ${pictureOnLeft ? 'border-r-0' : 'border-l-0'}`}>
-                          <div>
-                            {item.year && (
-                              <div className="text-sm sm:text-base text-white/70 mb-2 font-medium">
-                                {item.year}
-                              </div>
-                            )}
-                            <h3 className="text-white font-bold text-lg sm:text-xl mb-2 tracking-[-0.05rem] sm:tracking-[-0.1rem]">
-                              {item.title}
-                            </h3>
-                          </div>
-                          <p className="text-white/80 text-sm sm:text-base leading-relaxed">
-                            {item.description}
-                          </p>
-                        </div>
-                        <div className={`shrink-0 border ${borderColor} ${shadowClass} ${pictureOnLeft ? 'rounded-r-xl rounded-l-none border-l-0' : 'rounded-l-xl rounded-r-none border-r-0'} overflow-hidden`}>
+                      <div
+                        className="relative transition-all duration-500 bg-zinc-900/90 backdrop-blur-md"
+                        style={{
+                          width: '20em',
+                          height: '26em',
+                          boxShadow: '0px 1px 13px rgba(0,0,0,0.1)',
+                          padding: '0.5em',
+                          paddingBottom: '6em',
+                        }}
+                      >
+                        <div
+                          className="image"
+                          style={{
+                            background: 'rgb(241, 241, 241)',
+                            width: 'calc(100% - 1em)',
+                            height: 'calc(100% - 6em - 0.5em)',
+                            display: 'grid',
+                            placeItems: 'center',
+                            position: 'absolute',
+                            top: '0.5em',
+                            left: '0.5em',
+                            right: '0.5em',
+                            overflow: 'hidden',
+                          }}
+                        >
                           <Image
                             src={`/${item.picture}`}
                             alt={item.title}
-                            width={240}
-                            height={280}
-                            className="w-[200px] h-[240px] sm:w-[240px] sm:h-[280px] object-cover"
+                            width={190}
+                            height={240}
+                            className="w-full h-full object-cover"
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                            }}
                           />
+                        </div>
+                        <div
+                          className="absolute left-0 bottom-0 w-full"
+                          style={{
+                            paddingTop: '1.25em',
+                            paddingLeft: '1.25em',
+                            paddingBottom: '0.625em',
+                            zIndex: 10,
+                          }}
+                        >
+                          <h3
+                            className="title"
+                            style={{
+                              fontSize: item.description ? '1.25em' : '1.5em',
+                              position: 'absolute',
+                              left: '0.625em',
+                              bottom: item.description ? '3.5em' : '2em',
+                              fontWeight: 700,
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              margin: 0,
+                              maxWidth: 'calc(100% - 1.25em)',
+                            }}
+                          >
+                            {item.title}
+                          </h3>
+                          {item.description ? (
+                            <p
+                              style={{
+                                fontSize: '1.25em',
+                                position: 'absolute',
+                                left: '0.625em',
+                                bottom: '2em',
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                margin: 0,
+                                maxWidth: 'calc(100% - 1.25em)',
+                                lineHeight: '1.3',
+                              }}
+                            >
+                              {item.description}
+                            </p>
+                          ) : null}
+                          {item.year && (
+                            <div
+                              className="price"
+                              style={{
+                                fontSize: '1.25em',
+                                position: 'absolute',
+                                left: '0.625em',
+                                bottom: '0.625em',
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                margin: 0,
+                                fontWeight: 700,
+                              }}
+                            >
+                              {item.year}
+                            </div>
+                          )}
                         </div>
                       </div>
                     ) : (
-                      <div className={containerClass}>
-                        {item.year && (
-                          <div className="text-sm sm:text-base text-white/70 mb-2 font-medium">
-                            {item.year}
-                          </div>
-                        )}
-                        <h3 className="text-white font-bold text-lg sm:text-xl mb-2 tracking-[-0.05rem] sm:tracking-[-0.1rem]">
-                          {item.title}
-                        </h3>
-                        <p className="text-white/80 text-sm sm:text-base leading-relaxed">
-                          {item.description}
-                        </p>
+                      <div
+                        className="relative transition-all duration-500 bg-zinc-900/90 backdrop-blur-md"
+                        style={{
+                          width: '18em',
+                          boxShadow: '0px 1px 13px rgba(0,0,0,0.1)',
+                          padding: '1em 1.25em',
+                          paddingTop: '1.25em',
+                          paddingBottom: '1.25em',
+                        }}
+                      >
+                        <div
+                          className="w-full flex flex-col"
+                          style={{
+                            gap: '0.5em',
+                            minWidth: 0,
+                          }}
+                        >
+                          <h3
+                            className="title"
+                            style={{
+                              fontSize: item.description ? '1.35em' : '1.65em',
+                              fontWeight: 700,
+                              color: 'rgba(255, 255, 255, 0.7)',
+                              margin: 0,
+                            }}
+                          >
+                            {item.title}
+                          </h3>
+                          {item.description && (
+                            <p
+                              style={{
+                                fontSize: '1.2em',
+                                color: 'rgba(255, 255, 255, 0.8)',
+                                margin: 0,
+                                lineHeight: '1.3',
+                              }}
+                            >
+                              {item.description}
+                            </p>
+                          )}
+                          {item.year && (
+                            <div
+                              className="price"
+                              style={{
+                                fontSize: '1.35em',
+                                fontWeight: 700,
+                                color: 'rgba(255, 255, 255, 0.7)',
+                                margin: 0,
+                                marginTop: 'auto',
+                              }}
+                            >
+                              {item.year}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>

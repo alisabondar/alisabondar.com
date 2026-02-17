@@ -210,7 +210,6 @@ export default function Impact({ scrollProgress }: ImpactProps) {
     const paths = signatureRef.current.querySelectorAll('path');
     if (paths.length === 0) return;
 
-    // Calculate total path lengths and set up animation
     const pathLengths: number[] = [];
     paths.forEach((path) => {
       const length = path.getTotalLength();
@@ -218,27 +217,21 @@ export default function Impact({ scrollProgress }: ImpactProps) {
     });
 
     const resetAndAnimate = () => {
-      // Clear any existing animation timeouts
       animationTimeoutsRef.current.forEach(timeout => clearTimeout(timeout));
       animationTimeoutsRef.current = [];
 
-      // Reset all paths to invisible
       paths.forEach((path, index) => {
         const pathElement = path as SVGPathElement;
         const length = pathLengths[index];
-        // Force immediate reset without transition
         pathElement.style.transition = 'none';
         pathElement.style.strokeDasharray = `${length}`;
         pathElement.style.strokeDashoffset = `${length}`;
       });
 
-      // Small delay to ensure reset is applied before starting animation
       const resetTimeout = setTimeout(() => {
-        // Animation order: dash first, then A, then lisa, then flourish
-        // path[0] = dash, path[1] = A, path[2] = lisa, path[3] = flourish
         const animationOrder = Array.from({ length: paths.length }, (_, i) => i);
-        const dashDuration = 100; // 0.1 seconds for dash - very fast
-        const otherDuration = 400; // 0.4 seconds for other paths
+        const dashDuration = 100;
+        const otherDuration = 400;
 
         animationOrder.forEach((pathIndex, orderIndex) => {
           if (pathIndex < paths.length) {
@@ -246,14 +239,13 @@ export default function Impact({ scrollProgress }: ImpactProps) {
             const isDash = pathIndex === 0;
             const duration = isDash ? dashDuration : otherDuration;
 
-            // Calculate delay: dash starts at 0, others wait for previous to complete
             let delay = 0;
             if (orderIndex === 0) {
-              delay = 0; // Dash starts immediately
+              delay = 0;
             } else if (orderIndex === 1) {
-              delay = dashDuration; // A starts after dash completes
+              delay = dashDuration;
             } else {
-              delay = dashDuration + (orderIndex - 1) * otherDuration; // Others wait for previous
+              delay = dashDuration + (orderIndex - 1) * otherDuration;
             }
 
             const animTimeout = setTimeout(() => {
@@ -264,12 +256,11 @@ export default function Impact({ scrollProgress }: ImpactProps) {
             animationTimeoutsRef.current.push(animTimeout);
           }
         });
-      }, 100); // Small delay to ensure reset is complete
+      }, 100);
 
       animationTimeoutsRef.current.push(resetTimeout);
     };
 
-    // Initial setup
     paths.forEach((path, index) => {
       const pathElement = path as SVGPathElement;
       const length = pathLengths[index];
@@ -277,25 +268,20 @@ export default function Impact({ scrollProgress }: ImpactProps) {
       pathElement.style.strokeDashoffset = `${length}`;
     });
 
-    // Trigger animation when signature comes into view
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            // Clear any existing interval
             if (animationIntervalRef.current) {
               clearInterval(animationIntervalRef.current);
             }
 
-            // Start the animation
             resetAndAnimate();
 
-            // Loop every 15 seconds
             animationIntervalRef.current = setInterval(() => {
               resetAndAnimate();
             }, 5000);
           } else {
-            // Stop animation when out of view
             if (animationIntervalRef.current) {
               clearInterval(animationIntervalRef.current);
               animationIntervalRef.current = null;
@@ -334,13 +320,14 @@ export default function Impact({ scrollProgress }: ImpactProps) {
       `}</style>
       <section
         id="impact"
-        className="relative min-h-screen z-30 flex flex-col items-center pt-16 sm:pt-20 px-4 sm:px-6 md:px-12 pb-8 transition-opacity duration-1000 ease-in-out"
+        className="relative min-h-screen z-30 flex flex-col items-center px-4 sm:px-6 md:px-12 pb-8 transition-opacity duration-1000 ease-in-out"
         style={{
           opacity,
           visibility,
+          paddingTop: '80px',
         }}
       >
-      <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-2 tracking-[-0.05rem] sm:tracking-[-0.25rem]">
+      <h2 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-2">
         Impact
       </h2>
 
@@ -405,7 +392,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
 
                 return (
                   <div
-                    key={jobIndex}
+                    key={`job-${jobIndex}-${job.company}`}
                     ref={isLastJob ? (el) => { lastJobRef.current = el; } : undefined}
                     className="transition-opacity duration-700 ease-out"
                     style={{
@@ -421,11 +408,11 @@ export default function Impact({ scrollProgress }: ImpactProps) {
                         opacity: headerOpacities[jobIndex] || 0,
                       }}
                     >
-                      <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent tracking-[-0.05rem] sm:tracking-[-0.1rem]">
+                      <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-white/90 to-white/70 bg-clip-text text-transparent">
                         {job.company}
                       </h3>
                       <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                        <span className="text-base sm:text-lg md:text-xl text-white/90 font-semibold tracking-[-0.05rem] px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
+                        <span className="text-base sm:text-lg md:text-xl text-white/90 font-semibold px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20">
                           {job.role}
                         </span>
                         <span className="text-sm sm:text-base md:text-lg text-white/60 font-light italic">
@@ -439,16 +426,16 @@ export default function Impact({ scrollProgress }: ImpactProps) {
                         const currentAchievementIndex = achievementIndex + index;
                         return (
                           <li
-                            key={index}
+                            key={`achievement-${currentAchievementIndex}-${jobIndex}`}
                             ref={(el) => {
                               achievementRefs.current[currentAchievementIndex] = el;
                             }}
-                            className="relative flex items-start gap-4 sm:gap-5 transition-opacity duration-700 ease-out"
+                            className="relative flex items-center gap-4 sm:gap-5 transition-opacity duration-700 ease-out"
                             style={{
                               opacity: achievementOpacities[currentAchievementIndex] || 0,
                             }}
                           >
-                            <div className="shrink-0 mt-1.5 sm:mt-2 flex items-center justify-center">
+                            <div className="shrink-0 flex items-center justify-center">
                               <svg
                                 className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white"
                                 fill="currentColor"
@@ -464,7 +451,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
                                 <circle cx="12" cy="10" r="1.5" fill="rgba(24, 24, 27, 1)" />
                               </svg>
                             </div>
-                            <p className="text-sm sm:text-base md:text-lg text-white/85 leading-relaxed tracking-[-0.02rem]">
+                            <p className="text-lg sm:text-xl md:text-2xl font-semibold text-white/85 leading-relaxed tracking-[-0.02rem]">
                               {text}
                             </p>
                           </li>
@@ -482,7 +469,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
       <div className="w-full px-4" style={{ marginBottom: '30vh' }}>
         <div className="text-center">
           <div className="inline-block">
-            <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-8 sm:mb-10 md:mb-12 tracking-[-0.05rem] sm:tracking-[-0.25rem]">
+            <h2 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-8 sm:mb-10 md:mb-12">
               Your future favorite coworker,
             </h2>
             <div className="pt-8 sm:pt-10 md:pt-12 flex justify-end">
@@ -511,13 +498,13 @@ export default function Impact({ scrollProgress }: ImpactProps) {
         </div>
 
         <div className="flex items-center justify-center gap-4 sm:gap-5 md:gap-6 mt-10 sm:mt-12 md:mt-16">
-          {contactLinks.map((link, index) => {
+          {contactLinks.map((link) => {
             const IconComponent = () => {
               switch (link.icon) {
                 case 'email':
                   return (
                     <svg
-                      className="w-5 h-5 sm:w-6 sm:h-6 md:w-6 md:h-6"
+                      className="w-6 h-6 sm:w-7 sm:h-7 md:w-7 md:h-7"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -534,7 +521,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
                 case 'linkedin':
                   return (
                     <svg
-                      className="w-5 h-5 sm:w-6 sm:h-6 md:w-6 md:h-6"
+                      className="w-6 h-6 sm:w-7 sm:h-7 md:w-7 md:h-7"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                       xmlns="http://www.w3.org/2000/svg"
@@ -545,7 +532,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
                 case 'github':
                   return (
                     <svg
-                      className="w-5 h-5 sm:w-6 sm:h-6 md:w-6 md:h-6"
+                      className="w-6 h-6 sm:w-7 sm:h-7 md:w-7 md:h-7"
                       fill="currentColor"
                       viewBox="0 0 24 24"
                       xmlns="http://www.w3.org/2000/svg"
@@ -560,7 +547,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
                 case 'resume':
                   return (
                     <svg
-                      className="w-5 h-5 sm:w-6 sm:h-6 md:w-6 md:h-6"
+                      className="w-6 h-6 sm:w-7 sm:h-7 md:w-7 md:h-7"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -581,11 +568,11 @@ export default function Impact({ scrollProgress }: ImpactProps) {
 
             return (
               <a
-                key={index}
+                key={link.url}
                 href={link.url}
                 target={link.icon === 'resume' ? '_blank' : '_blank'}
                 rel="noopener noreferrer"
-                className="group flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-12 md:h-12 bg-zinc-900/40 backdrop-blur-md border border-white/30 rounded-xl transition-all duration-500 hover:border-white/60 hover:shadow-2xl hover:shadow-white/20 hover:scale-110 text-white hover:text-white/90"
+                className="group flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 md:w-14 md:h-14 bg-zinc-900/40 backdrop-blur-md border border-white/30 rounded-xl transition-all duration-500 hover:border-white/60 hover:shadow-2xl hover:shadow-white/20 hover:scale-110 text-white hover:text-white/90"
                 aria-label={link.label}
               >
                 <IconComponent />

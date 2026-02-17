@@ -77,7 +77,7 @@ export default function TableOfContents() {
   const handleClick = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      const offset = typeof window !== 'undefined' && window.innerWidth < 640 ? 60 : 80;
+      const offset = 80;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - offset;
 
@@ -98,7 +98,7 @@ export default function TableOfContents() {
               <button
                 onClick={() => handleClick(section.id)}
                 className={`
-                  relative px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm md:text-base font-medium transition-all duration-300 text-right
+                  relative px-2 sm:px-3 py-1.5 sm:py-2 text-base sm:text-lg md:text-xl font-medium transition-all duration-300 text-right
                   ${
                     isActive
                       ? 'text-white'

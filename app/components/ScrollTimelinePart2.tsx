@@ -215,14 +215,14 @@ export default function ScrollTimelinePart2() {
                 }`}
               >
                 {item.year && (
-                  <div className="text-xs text-white/70 mb-2 font-medium">
+                  <div className="text-sm text-white/70 mb-2 font-medium">
                     {item.year}
                   </div>
                 )}
-                <h3 className="text-white font-bold text-lg mb-2 tracking-[-0.1rem]">
+                <h3 className="text-white font-bold text-lg mb-2">
                   {item.title}
                 </h3>
-                <p className="text-white/80 text-sm leading-relaxed">
+                <p className="text-white/80 text-base leading-relaxed">
                   {item.description}
                 </p>
               </div>

@@ -38,12 +38,45 @@ const levelHoverColors = [
 ];
 
 export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps) {
-  const [selectedYear, setSelectedYear] = useState<number>(years[0]?.year || new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number } | null>(null);
   const hoveredCellRef = useRef<HTMLDivElement | null>(null);
 
-  const selectedYearData = years.find(y => y.year === selectedYear) || years[0];
+  const getAllContributions = (): ContributionData[] => {
+    const allContribs: ContributionData[] = [];
+    years.forEach(yearData => {
+      allContribs.push(...yearData.contributions);
+    });
+    return allContribs;
+  };
+
+  const getLatest12Months = (): { contributions: ContributionData[]; totalContributions: number } => {
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    const twelveMonthsAgo = new Date(today);
+    twelveMonthsAgo.setMonth(twelveMonthsAgo.getMonth() - 12);
+    twelveMonthsAgo.setHours(0, 0, 0, 0);
+
+    const allContribs = getAllContributions();
+    const latest12MonthsContribs = allContribs.filter(contrib => {
+      const contribDate = new Date(contrib.date + 'T00:00:00');
+      return contribDate >= twelveMonthsAgo && contribDate <= today;
+    });
+
+    const totalContributions = latest12MonthsContribs.reduce((sum, contrib) => sum + contrib.count, 0);
+
+    return {
+      contributions: latest12MonthsContribs,
+      totalContributions
+    };
+  };
+
+  const latest12MonthsData = getLatest12Months();
+  const selectedYearData = selectedYear === null
+    ? { year: null, contributions: latest12MonthsData.contributions, totalContributions: latest12MonthsData.totalContributions }
+    : years.find(y => y.year === selectedYear) || years[0];
+
   const { year, contributions, totalContributions } = selectedYearData;
 
   const contributionMap = new Map<string, ContributionData>();
@@ -51,29 +84,40 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
     contributionMap.set(contrib.date, contrib);
   });
 
-  const firstDayOfYear = new Date(year, 0, 1);
-  const firstDayOfWeek = firstDayOfYear.getDay();
+  let startDate: Date;
+  let endDate: Date;
 
-  const firstSunday = new Date(firstDayOfYear);
+  if (year === null) {
+    endDate = new Date();
+    endDate.setHours(23, 59, 59, 999);
+    startDate = new Date(endDate);
+    startDate.setMonth(startDate.getMonth() - 12);
+    startDate.setHours(0, 0, 0, 0);
+  } else {
+    startDate = new Date(year, 0, 1);
+    endDate = new Date(year, 11, 31);
+    endDate.setHours(23, 59, 59, 999);
+  }
+
+  const firstDayOfWeek = startDate.getDay();
+  const firstSunday = new Date(startDate);
   firstSunday.setDate(firstSunday.getDate() - firstDayOfWeek);
 
-  const lastDayOfYear = new Date(year, 11, 31);
-
-  const totalWeeks = Math.ceil((lastDayOfYear.getTime() - firstSunday.getTime()) / (1000 * 60 * 60 * 24 * 7)) + 1;
+  const totalWeeks = Math.ceil((endDate.getTime() - firstSunday.getTime()) / (1000 * 60 * 60 * 24 * 7)) + 1;
   const weeksInYear = Math.min(totalWeeks, 53);
 
   const calendar: (ContributionData | null)[][] = [];
 
   for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
     const row: (ContributionData | null)[] = [];
-    const startDate = new Date(firstSunday);
-    startDate.setDate(startDate.getDate() + dayOfWeek);
+    const rowStartDate = new Date(firstSunday);
+    rowStartDate.setDate(rowStartDate.getDate() + dayOfWeek);
 
     for (let weekIndex = 0; weekIndex < weeksInYear; weekIndex++) {
-      const currentDate = new Date(startDate);
+      const currentDate = new Date(rowStartDate);
       currentDate.setDate(currentDate.getDate() + weekIndex * 7);
 
-      if (currentDate >= firstDayOfYear && currentDate <= lastDayOfYear) {
+      if (currentDate >= startDate && currentDate <= endDate) {
         const dateStr = currentDate.toISOString().split('T')[0];
         const contrib = contributionMap.get(dateStr) || { date: dateStr, level: 0, count: 0 };
         row.push(contrib);
@@ -85,17 +129,18 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
   }
 
   const monthPositions: { month: number; position: number }[] = [];
-  const seenMonths = new Set<number>();
+  const seenMonthKeys = new Set<string>();
 
   for (let weekIndex = 0; weekIndex < weeksInYear; weekIndex++) {
     const testDate = new Date(firstSunday);
     testDate.setDate(testDate.getDate() + weekIndex * 7);
 
-    if (testDate >= firstDayOfYear && testDate <= lastDayOfYear) {
+    if (testDate >= startDate && testDate <= endDate) {
       const month = testDate.getMonth();
-      if (!seenMonths.has(month)) {
+      const monthKey = `${testDate.getFullYear()}-${month}`;
+      if (!seenMonthKeys.has(monthKey)) {
         monthPositions.push({ month, position: weekIndex });
-        seenMonths.add(month);
+        seenMonthKeys.add(monthKey);
       }
     }
   }
@@ -130,6 +175,27 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
     <div className="relative w-full">
       <div className="absolute right-4 sm:right-6 md:right-8 top-1/2 -translate-y-1/2 z-10 pointer-events-auto hidden sm:block">
         <ul className="flex flex-col items-end gap-3 sm:gap-4">
+          <li>
+            <button
+              onClick={() => setSelectedYear(null)}
+              className={`
+                relative px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-300 text-right
+                ${selectedYear === null
+                  ? 'text-white'
+                  : 'text-white/60 hover:text-white/80'
+                }
+              `}
+              aria-label="View latest 12 months contributions"
+            >
+              <span className="relative z-10">12M</span>
+              {selectedYear === null && (
+                <span
+                  className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 sm:w-1 h-4 sm:h-6 bg-white transition-all duration-300"
+                  aria-hidden="true"
+                />
+              )}
+            </button>
+          </li>
           {years.map((yearData) => {
             const isActive = selectedYear === yearData.year;
             return (
@@ -163,11 +229,20 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
         <div className="w-full max-w-3xl">
           <div className="mb-4 flex items-center justify-between flex-wrap gap-4">
             <h3 className="text-white text-lg sm:text-xl font-semibold mb-1">
-              {totalContributions} contributions in {year}
+              {totalContributions} contributions {year === null ? 'in the last 12 months' : `in ${year}`}
             </h3>
             <div className="flex items-center gap-2 sm:hidden">
-              <span className="text-white/60 text-xs">Year:</span>
+              <span className="text-white/60 text-xs">View:</span>
               <div className="flex gap-1">
+                <button
+                  onClick={() => setSelectedYear(null)}
+                  className={`px-2 py-1 text-xs rounded transition-all duration-200 ${selectedYear === null
+                      ? 'bg-white/20 text-white border border-white/40'
+                      : 'bg-zinc-800/50 text-white/60 hover:text-white hover:bg-zinc-800/70 border border-white/20'
+                    }`}
+                >
+                  12M
+                </button>
                 {years.map((yearData) => (
                   <button
                     key={yearData.year}
@@ -191,11 +266,11 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                   const nextPosition = idx < monthPositions.length - 1
                     ? monthPositions[idx + 1].position
                     : weeksInYear;
-                  const cellWidth = 13; // 10px cell + 3px gap
+                  const cellWidth = 13;
                   const width = (nextPosition - position) * cellWidth;
                   return (
                     <div
-                      key={month}
+                      key={`month-${idx}-${position}`}
                       className="text-white/70 text-xs absolute top-0"
                       style={{ left: `${position * cellWidth}px`, width: `${width}px` }}
                     >
@@ -209,7 +284,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                 <div className="flex flex-col gap-[3px] mr-2">
                   {dayLabels.map((day, idx) => (
                     <div
-                      key={day}
+                      key={`day-${idx}`}
                       className="text-white/50 text-[10px] flex items-center justify-end pr-1"
                       style={{ height: '10px', width: '24px', minWidth: '24px' }}
                     >
@@ -220,7 +295,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
 
                 <div className="flex-1">
                   {calendar.map((week, dayIndex) => (
-                    <div key={dayIndex} className="flex gap-[3px] mb-[3px]">
+                    <div key={`calendar-week-${dayIndex}`} className="flex gap-[3px] mb-[3px]">
                       {week.map((contrib, weekIndex) => {
                         if (!contrib) {
                           return (

@@ -1,0 +1,115 @@
+.cardLink {
+  width: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+.card {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  height: 350px;
+  background: #171717;
+  position: relative;
+  display: flex;
+  place-content: center;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0px 0px 3px 1px #00000088;
+}
+
+.card.hasImage::before {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 130%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    #2563eb 8%,
+    #e11d48 92%,
+    transparent 100%
+  );
+  animation: rotBGimg 6s linear infinite;
+  animation-play-state: paused;
+  opacity: 0;
+  transition: opacity 300ms ease-in-out;
+}
+
+.card.hasImage:hover::before {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  background: #171717;
+  inset: 5px;
+  border-radius: 5px;
+  z-index: 1;
+}
+
+@keyframes rotBGimg {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.cardInner {
+  position: absolute;
+  inset: 5px;
+  border-radius: 5px;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.projectImage {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 300ms ease-in-out;
+  object-fit: cover;
+  z-index: 0;
+  border-radius: 5px;
+}
+
+.card:hover .projectImage {
+  opacity: 1;
+}
+
+.title {
+  position: relative;
+  z-index: 10;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 300ms ease-in-out;
+}
+
+.card:hover .title {
+  opacity: 0;
+}
+
+@media (max-width: 640px) {
+  .card {
+    height: 300px;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+}
