@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useIsMobile, calculateFadeOpacity } from '../utils/responsive';
+import Polaroid from './Polaroid';
 import styles from './Projects.module.css';
 
 interface ProjectsProps {
@@ -34,26 +34,37 @@ const projects: Project[] = [
 
 export default function Projects({ scrollProgress }: ProjectsProps) {
   const isMobile = useIsMobile();
+  const sectionFadeInStart = 0.68;
+  const sectionFadeInDuration = 0.06;
+  const { opacity: sectionOpacity, visibility } = calculateFadeOpacity(
+    scrollProgress,
+    sectionFadeInStart,
+    sectionFadeInDuration
+  );
 
-  const fadeInStart = 0.8;
-  const fadeInDuration = isMobile ? 0.1 : 0.2;
-  const { opacity, visibility } = calculateFadeOpacity(scrollProgress, fadeInStart, fadeInDuration);
+  const projectFadeStarts = [0.68, 0.74, 0.8];
+  const projectFadeDuration = isMobile ? 0.1 : 0.12;
 
   return (
     <section
       id="projects"
-      className="relative min-h-screen z-30 flex flex-col items-center px-4 sm:px-6 md:px-12 md:pr-16 lg:pr-32 transition-opacity duration-1000 ease-in-out"
+      className="relative z-30 flex flex-col items-center px-4 sm:px-6 md:px-12 md:pr-20 lg:pr-36 pt-20 transition-opacity duration-1000 ease-in-out"
       style={{
-        opacity,
+        opacity: sectionOpacity,
         visibility,
-        paddingTop: '80px',
       }}
     >
-      <h2 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-12 sm:mb-16 md:mb-32">Projects</h2>
+      <h2 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-8 sm:mb-10 md:mb-12">
+        Projects
+      </h2>
 
-      <div className="w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-10 md:gap-12">
+      <div className={`${styles.section} ${styles.polaroidsContainer}`}>
         {projects.map((project, index) => {
-          const hasImage = project.screenshot ? styles.hasImage : '';
+          const { opacity } = calculateFadeOpacity(
+            scrollProgress,
+            projectFadeStarts[index],
+            projectFadeDuration
+          );
 
           return (
             <Link
@@ -61,26 +72,16 @@ export default function Projects({ scrollProgress }: ProjectsProps) {
               href={project.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={styles.cardLink}
+              className={styles.polaroidWrapper}
+              style={{ opacity }}
             >
-              <div className={`${styles.card} ${hasImage}`}>
-                <div className={styles.content}>
-                  <div className={styles.front}>
-                    <h3 className={styles.title}>{project.title}</h3>
-                  </div>
-                  <div className={styles.back}>
-                    <div className={styles.backContent}>
-                      {project.screenshot && (
-                        <Image
-                          src={project.screenshot}
-                          alt={project.title}
-                          fill
-                          className={styles.projectImage}
-                        />
-                      )}
-                    </div>
-                  </div>
-                </div>
+              <div className={styles.polaroidInner}>
+              <Polaroid
+                variant="project"
+                title={project.title}
+                image={project.screenshot}
+                enableMouseTilt
+              />
               </div>
             </Link>
           );

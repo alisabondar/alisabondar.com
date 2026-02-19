@@ -9,7 +9,7 @@ interface Section {
 
 const sections: Section[] = [
   { id: 'about', label: 'Intro' },
-  { id: 'history', label: 'History' },
+  { id: 'journey', label: 'Journey' },
   { id: 'projects', label: 'Projects' },
   { id: 'impact', label: 'Impact' },
 ];
@@ -98,11 +98,11 @@ export default function TableOfContents() {
               <button
                 onClick={() => handleClick(section.id)}
                 className={`
-                  relative px-2 sm:px-3 py-1.5 sm:py-2 text-base sm:text-lg md:text-xl font-medium transition-all duration-300 text-right
+                  relative px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base md:text-lg font-medium transition-all duration-300 text-right
                   ${
                     isActive
                       ? 'text-white'
-                      : 'text-white/60 hover:text-white/80'
+                      : 'text-white/40 hover:text-white/65'
                   }
                 `}
                 aria-label={`Navigate to ${section.label} section`}

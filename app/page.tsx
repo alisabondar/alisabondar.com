@@ -2,28 +2,28 @@
 
 import { useEffect, useLayoutEffect, useState } from 'react';
 import AnimatedBackground from "./components/AnimatedBackground";
-import ScrollTimeline from "./components/ScrollTimeline";
+import Journey from "./components/Journey";
 import Projects from "./components/Projects";
 import Impact from "./components/Impact";
-import { scrollToTop, getTimelineMultiplier, TIMELINE_CONSTANTS } from './utils/responsive';
+import { scrollToTop, getTimelineMultiplier } from './utils/responsive';
 
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [historyHeight, setHistoryHeight] = useState('100vh');
+  const [journeyHeight, setJourneyHeight] = useState('100vh');
 
   useEffect(() => {
-    const updateHistoryHeight = () => {
+    const updateJourneyHeight = () => {
       if (typeof window !== 'undefined') {
         const isMobile = window.innerWidth < 640;
         const timelineMultiplier = getTimelineMultiplier(isMobile);
         const height = `${timelineMultiplier * 100}vh`;
-        setHistoryHeight(height);
+        setJourneyHeight(height);
       }
     };
 
-    updateHistoryHeight();
-    window.addEventListener('resize', updateHistoryHeight);
-    return () => window.removeEventListener('resize', updateHistoryHeight);
+    updateJourneyHeight();
+    window.addEventListener('resize', updateJourneyHeight);
+    return () => window.removeEventListener('resize', updateJourneyHeight);
   }, []);
 
   useLayoutEffect(() => {
@@ -59,27 +59,17 @@ export default function Home() {
     const handleScroll = () => {
       const windowHeight = window.innerHeight;
       const scrollTop = window.scrollY;
+      const isMobile = window.innerWidth < 640;
+      const timelineMultiplier = getTimelineMultiplier(isMobile);
+      const timelineSectionHeight = windowHeight * timelineMultiplier;
 
-      const heroThreshold = windowHeight * TIMELINE_CONSTANTS.HERO_THRESHOLD;
-      const isHeroPast = scrollTop > heroThreshold;
-
-      if (isHeroPast) {
-        const heroHeight = windowHeight;
-        const adjustedScroll = Math.max(0, scrollTop - heroHeight);
-        const isMobile = window.innerWidth < 640;
-        const timelineMultiplier = getTimelineMultiplier(isMobile);
-        const timelineSectionHeight = windowHeight * timelineMultiplier;
-
-        if (adjustedScroll <= timelineSectionHeight) {
-          const progress = (adjustedScroll / timelineSectionHeight) * 1.2;
-          setScrollProgress(progress);
-        } else {
-          const pastTimeline = adjustedScroll - timelineSectionHeight;
-          const additionalProgress = (pastTimeline / windowHeight) * 0.3;
-          setScrollProgress(Math.min(2.0, 1.2 + additionalProgress));
-        }
+      if (scrollTop <= timelineSectionHeight) {
+        const progress = (scrollTop / timelineSectionHeight) * 1.2;
+        setScrollProgress(progress);
       } else {
-        setScrollProgress(0);
+        const pastTimeline = scrollTop - timelineSectionHeight;
+        const additionalProgress = (pastTimeline / windowHeight) * 0.3;
+        setScrollProgress(Math.min(2.0, 1.2 + additionalProgress));
       }
     };
 
@@ -96,7 +86,7 @@ export default function Home() {
   return (
     <>
       <AnimatedBackground />
-      <ScrollTimeline />
+      <Journey scrollProgress={scrollProgress} />
 
       <section id="about" className="relative flex min-h-screen items-center justify-center sm:justify-center font-sans z-10 px-4">
         <div className="relative z-10 text-center sm:text-center">
@@ -122,7 +112,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="history" className="relative z-10" style={{ minHeight: historyHeight }}>
+      <section id="journey" className="relative z-10" style={{ minHeight: journeyHeight }}>
       </section>
 
       <Projects scrollProgress={scrollProgress} />

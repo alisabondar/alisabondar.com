@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
-import { Saira_Extra_Condensed } from "next/font/google";
+import { Geist, Story_Script } from "next/font/google";
 import "./globals.css";
 import TableOfContents from "./components/TableOfContents";
 
-const sairaExtraCondensed = Saira_Extra_Condensed({
-  variable: "--font-saira-extra-condensed",
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
+
+const storyScript = Story_Script({
+  weight: "400",
+  variable: "--font-story-script",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -20,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${sairaExtraCondensed.variable} antialiased`}>
+    <html lang="en" className={`${geistSans.variable} ${storyScript.variable}`}>
+      <body className="font-sans antialiased">
         {children}
         <TableOfContents />
       </body>

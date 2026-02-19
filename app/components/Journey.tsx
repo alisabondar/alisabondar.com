@@ -1,0 +1,334 @@
+'use client';
+
+import { useIsMobile, PHASE_TIMING } from '../utils/responsive';
+import Polaroid from './Polaroid';
+import styles from './Journey.module.css';
+
+const EVENT_HEIGHT_VH = 18;
+const INTRO_EVENTS = 4;
+const STRIP_TOP_OFFSET_VH = 30;
+const FOCUS_MULTIPLIER = 1.35;
+
+const EVENT_PLACEMENTS: { left: number; rotate: number }[] = [
+  { left: 32, rotate: -3 },
+  { left: 72, rotate: 2 },
+  { left: 40, rotate: -4 },
+  { left: 65, rotate: 1 },
+  { left: 50, rotate: -2 },
+  { left: 35, rotate: 3 },
+  { left: 68, rotate: 0 },
+  { left: 42, rotate: -1 },
+  { left: 75, rotate: 4 },
+  { left: 28, rotate: -5 },
+  { left: 58, rotate: 2 },
+  { left: 38, rotate: -3 },
+  { left: 72, rotate: 1 },
+  { left: 45, rotate: -2 },
+  { left: 55, rotate: 0 },
+  { left: 52, rotate: 3 },
+  { left: 62, rotate: -1 },
+  { left: 40, rotate: 2 },
+];
+
+function getPlacement(index: number): { left: number; rotate: number } {
+  return EVENT_PLACEMENTS[Math.min(index, EVENT_PLACEMENTS.length - 1)] ?? EVENT_PLACEMENTS[0];
+}
+
+interface TimelineItem {
+  title: string;
+  description: string;
+  year?: string;
+  picture?: string;
+}
+
+const timelineItems: TimelineItem[] = [
+  {
+    title: 'Graduated Virginia Tech!',
+    description: 'With a double major in Biochemistry and Russian Language',
+    year: 'May 2020',
+  },
+  {
+    title: 'First day working at the CVOR',
+    description: '',
+    year: 'May 2020',
+    picture: 'CVOR-event.png',
+  },
+  {
+    title: 'First ski trip out west! 🎿',
+    description: '',
+    year: 'December 2020',
+    picture: 'colorado-event.png',
+  },
+  {
+    title: 'First time scrubbing in to assist',
+    description: '',
+    year: 'March 2021',
+    picture: 'scrub-event.png',
+  },
+  {
+    title: 'First 8hr+ road trip',
+    description: 'Had an epic time skiing in Stowe, Vermont!',
+    year: 'December 2021',
+  },
+  {
+    title: 'Surprise, I\'m not blind 🤯',
+    description: 'Had a successful LASIK surgery',
+    year: 'June 2022',
+  },
+  {
+    title: 'Visited Acadia National Park 🌿',
+    description: '',
+    year: 'July 2022',
+    picture: 'maine-event.png',
+  },
+  {
+    title: 'Bye bye CVOR',
+    description: 'Started working as a night-shift, data assistant for an eICU team',
+    year: 'August 2022',
+  },
+  {
+    title: 'Inspired by the intersection of technology and medicine',
+    description: 'I began to study javascript and python',
+    year: 'March 2023',
+  },
+  {
+    title: 'First road bike',
+    description: '',
+    year: 'April 2023',
+    picture: 'bike-event.png',
+  },
+  {
+    title: 'Enrolled into Hack Reactor 💻',
+    description: '',
+    year: 'June 2023',
+    picture: 'hackreactor-event.png',
+  },
+  {
+    title: 'Graduated Hack Reactor 📓',
+    description: '',
+    year: 'August 2023',
+    picture: 'graduation-event.png',
+  },
+  {
+    title: 'First lease signed! 🌃',
+    description: '',
+    year: 'December 2023',
+    picture: 'nyc-event.png',
+  },
+  {
+    title: 'First software engineering gig!',
+    description: '',
+    year: 'January 2024',
+    picture: 'alphasights-event.png',
+  },
+  {
+    title: 'First marathon! ',
+    description: '',
+    year: 'March 2025',
+    picture: 'marathon-event.png',
+  },
+  {
+    title: 'First time renting a convertible',
+    description: '',
+    year: 'May 2025',
+    picture: 'driving-event.png',
+  },
+  {
+    title: 'First time playing pickleball',
+    description: 'It\'s quite addicting, might have to try to learn tennis again...',
+    year: 'June 2025',
+  },
+  {
+    title: 'Searching for my next chapter 🔍',
+    description: 'What\'s next?',
+    year: 'January 2026',
+  }
+];
+
+const JOURNEY_SHOW_START = 0.12;
+const ENTRANCE_DURATION = 0.08;
+const HEADER_FROZEN_DURATION = 0.35;
+const PARALLAX_START = ENTRANCE_DURATION + HEADER_FROZEN_DURATION;
+const LAST_EVENT_HOLD = 0.2;
+const SCROLL_AWAY_DURATION = 0.12;
+
+interface JourneyProps {
+  scrollProgress: number;
+}
+
+export default function Journey({ scrollProgress }: JourneyProps) {
+  const isMobile = useIsMobile();
+  const heroScrolledPast = scrollProgress >= JOURNEY_SHOW_START;
+
+  const journeyLocalProgress = heroScrolledPast
+    ? Math.min(1.2, (scrollProgress - JOURNEY_SHOW_START) / (1.0 - JOURNEY_SHOW_START) * 1.2)
+    : 0;
+
+  const totalEvents = timelineItems.length;
+  const phaseTiming = isMobile ? PHASE_TIMING.MOBILE : PHASE_TIMING.DESKTOP;
+
+  const enterProgress = Math.max(0, Math.min(1, (scrollProgress - JOURNEY_SHOW_START) / ENTRANCE_DURATION));
+  const entranceTranslateY = (1 - enterProgress) * 80;
+
+  const isIntroPhase = journeyLocalProgress < PARALLAX_START;
+  const parallaxProgress = isIntroPhase ? 0 : Math.min(1, (journeyLocalProgress - PARALLAX_START) / (1 - PARALLAX_START));
+  const parallaxEventCount = totalEvents - INTRO_EVENTS;
+  const frozenPhaseProgress = isIntroPhase && journeyLocalProgress >= ENTRANCE_DURATION
+    ? (journeyLocalProgress - ENTRANCE_DURATION) / HEADER_FROZEN_DURATION
+    : 0;
+
+  const rawFocus = isIntroPhase
+    ? enterProgress < 1
+      ? 0
+      : frozenPhaseProgress * 4
+    : INTRO_EVENTS + parallaxProgress * parallaxEventCount * FOCUS_MULTIPLIER;
+
+  const headerFadeInStart = 0;
+  const headerFadeInDuration = 0.06;
+  const headerFadeInOpacity = journeyLocalProgress >= headerFadeInStart
+    ? Math.min(1, (journeyLocalProgress - headerFadeInStart) / headerFadeInDuration)
+    : 0;
+  const headerFadeOutOpacity = Math.max(0, 1 - parallaxProgress * 2);
+  const headerOpacity = isIntroPhase ? headerFadeInOpacity : headerFadeOutOpacity;
+
+  const stripHeight = STRIP_TOP_OFFSET_VH + totalEvents * EVENT_HEIGHT_VH;
+  const atLastEvent = !isIntroPhase && rawFocus >= totalEvents - 0.5;
+  const scrollAwayProgress = atLastEvent
+    ? Math.min(1, Math.max(0, (rawFocus - (totalEvents - 1) - LAST_EVENT_HOLD) / SCROLL_AWAY_DURATION))
+    : 0;
+  const displayRawFocus = atLastEvent && scrollAwayProgress === 0 ? totalEvents - 1 : rawFocus;
+  const displayFocusIndex = heroScrolledPast
+    ? Math.min(totalEvents - 1, Math.max(0, Math.floor(displayRawFocus)))
+    : 0;
+
+  const timelineOpacity = scrollAwayProgress <= 0 ? 1 : Math.max(0, 1 - scrollAwayProgress * 3);
+
+  const baseStripY = Math.max(
+    -(stripHeight - 100),
+    Math.min(0, -(STRIP_TOP_OFFSET_VH + displayRawFocus * EVENT_HEIGHT_VH - 50))
+  );
+  const scrollAwayOffset = -scrollAwayProgress * 120;
+  const stripTranslateY = baseStripY + scrollAwayOffset;
+
+  const headerTranslateY = baseStripY * 8;
+
+  return (
+    <div
+      className={`fixed left-4 right-4 sm:right-20 md:right-24 sm:left-1/2 sm:-translate-x-1/2 h-screen z-20 pointer-events-none transition-opacity duration-1000 ease-in-out ${styles.journeyViewport}`}
+      style={{ opacity: timelineOpacity }}
+    >
+      {heroScrolledPast && (
+        <div
+          className="absolute inset-0 transition-opacity duration-500 ease-out"
+          style={{
+            transform: `translateY(${entranceTranslateY}vh)`,
+            opacity: Math.min(1, enterProgress * 2),
+            transition: 'transform 0.2s ease-out',
+          }}
+        >
+          <h2
+            className={`${styles.journeyHeader} text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white`}
+            style={{
+              transform: `translateX(-50%) translateY(${headerTranslateY}px)`,
+              opacity: headerOpacity,
+              transition: 'opacity 1s ease-in-out',
+            }}
+          >
+            Journey
+          </h2>
+          <div className={styles.eventsZone}>
+        <div
+          className={styles.eventsScroll}
+          style={{
+            height: `${stripHeight}vh`,
+            transform: `translateY(${stripTranslateY}vh)`,
+          }}
+        >
+        {heroScrolledPast &&
+          timelineItems.map((item, index) => {
+            const placement = getPlacement(index);
+            const leftPercent = isMobile ? 50 : placement.left;
+
+            const eventProgress = rawFocus - index;
+            const phaseInStart = 0;
+            const phaseInEnd = (isIntroPhase && index < INTRO_EVENTS)
+              ? 0.25
+              : phaseTiming.PHASE_IN_DURATION;
+
+            const hasPhasedIn = eventProgress >= phaseInEnd;
+            const isPhasingIn = eventProgress >= phaseInStart && eventProgress < phaseInEnd;
+            const shouldShow = (isIntroPhase && index >= INTRO_EVENTS)
+              ? false
+              : (hasPhasedIn || isPhasingIn);
+
+            let opacity = 0;
+            if (isPhasingIn) {
+              opacity = (eventProgress - phaseInStart) / (phaseInEnd - phaseInStart);
+            } else if (hasPhasedIn) {
+              const distanceFromFocus = index - displayFocusIndex;
+              opacity = Math.abs(distanceFromFocus) < 0.5 ? 1 : Math.max(0.2, 0.6 - Math.abs(distanceFromFocus) * 0.15);
+            }
+
+            const isFocused = Math.abs(index - displayFocusIndex) < 0.5;
+            const scale = isFocused ? 1.1 : 0.95;
+            const zIndexValue = isFocused ? 1000 : 100 + index;
+
+            const topValue = STRIP_TOP_OFFSET_VH + index * EVENT_HEIGHT_VH;
+
+            return (
+              <div
+                key={`journey-${index}`}
+                className={`absolute transition-opacity duration-500 ease-out pointer-events-auto ${styles.eventCardOuter}`}
+                style={{
+                  top: `${topValue}vh`,
+                  left: `${leftPercent}%`,
+                  zIndex: zIndexValue,
+                  transform: `translate(-50%, -50%) rotate(${placement.rotate}deg) scale(${scale})`,
+                  opacity: shouldShow ? opacity : 0,
+                }}
+              >
+                    {item.picture ? (
+                      <Polaroid
+                        variant="portrait"
+                        title={item.title}
+                        image={`/${item.picture}`}
+                        description={item.description}
+                        year={item.year}
+                        enableMouseTilt
+                      />
+                    ) : (
+                      <div className={styles.eventCardWrapper}>
+                      <div className={styles.tapedCard}>
+                        <div className={styles.tape} aria-hidden />
+                      <div className={`${styles.stickyContainer} transition-all duration-500`}>
+                        <div className={styles.stickyOuter}>
+                          <div className={styles.sticky}>
+                            <div
+                              className={`${styles.stickyContent} ${
+                                [styles.paleLavender, styles.paleBlue, styles.paleGray, styles.palePink][index % 4]
+                              }`}
+                            >
+                              <h3 className={styles.stickyTitle}>{item.title}</h3>
+                              {item.description ? (
+                                <p className={styles.stickyDescription}>{item.description}</p>
+                              ) : null}
+                              {item.year ? (
+                                <div className={styles.stickyYear}>{item.year}</div>
+                              ) : null}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      </div>
+                      </div>
+                    )}
+                  </div>
+                );
+          })}
+        </div>
+      </div>
+        </div>
+      )}
+    </div>
+  );
+}

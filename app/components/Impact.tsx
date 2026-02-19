@@ -88,16 +88,18 @@ const jobs: Job[] = [
 
 export default function Impact({ scrollProgress }: ImpactProps) {
   const isMobile = useIsMobile();
-  const careerHistoryRef = useRef<HTMLDivElement>(null);
+  const careerJourneyRef = useRef<HTMLDivElement>(null);
   const [graphBackgroundOpacity, setGraphBackgroundOpacity] = useState(1);
   const achievementRefs = useRef<(HTMLLIElement | null)[]>([]);
   const headerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const lastJobRef = useRef<HTMLDivElement | null>(null);
+  const sentimentRef = useRef<HTMLDivElement | null>(null);
   const totalAchievements = jobs.reduce((sum, job) => sum + job.achievements.length, 0);
   const [achievementOpacities, setAchievementOpacities] = useState<number[]>(Array(totalAchievements).fill(0));
   const [headerOpacities, setHeaderOpacities] = useState<number[]>(Array(jobs.length).fill(1));
   const [lastJobOpacity, setLastJobOpacity] = useState(1);
   const [jobsContainerOpacity, setJobsContainerOpacity] = useState(1);
+  const [sentimentOpacity, setSentimentOpacity] = useState(0);
   const signatureRef = useRef<SVGSVGElement>(null);
   const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const animationTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
@@ -108,9 +110,9 @@ export default function Impact({ scrollProgress }: ImpactProps) {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (!careerHistoryRef.current) return;
+      if (!careerJourneyRef.current) return;
 
-      const careerSection = careerHistoryRef.current;
+      const careerSection = careerJourneyRef.current;
       const rect = careerSection.getBoundingClientRect();
       const windowHeight = window.innerHeight;
 
@@ -173,24 +175,25 @@ export default function Impact({ scrollProgress }: ImpactProps) {
       if (lastJobRef.current) {
         const lastJobRect = lastJobRef.current.getBoundingClientRect();
         const lastJobBottom = lastJobRect.bottom;
-        const windowHeight = window.innerHeight;
+        const wh = window.innerHeight;
 
-        const fadeOutStart = windowHeight * 0.5;
-        const fadeOutEnd = windowHeight * 0.3;
-        const fadeOutDistance = fadeOutStart - fadeOutEnd;
+        const holdEnd = wh * 0.18;
+        const fadeOutEnd = wh * 0.02;
+        const fadeDistance = holdEnd - fadeOutEnd;
 
         let opacity = 1;
-        if (lastJobBottom > fadeOutStart) {
+        if (lastJobBottom > holdEnd) {
           opacity = 1;
         } else if (lastJobBottom < fadeOutEnd) {
           opacity = 0;
         } else {
-          const fadeProgress = (fadeOutStart - lastJobBottom) / fadeOutDistance;
+          const fadeProgress = (holdEnd - lastJobBottom) / fadeDistance;
           opacity = 1 - fadeProgress;
         }
 
         setLastJobOpacity(opacity);
         setJobsContainerOpacity(opacity);
+        setSentimentOpacity(1 - opacity);
       }
     };
 
@@ -320,14 +323,15 @@ export default function Impact({ scrollProgress }: ImpactProps) {
       `}</style>
       <section
         id="impact"
-        className="relative min-h-screen z-30 flex flex-col items-center px-4 sm:px-6 md:px-12 pb-8 transition-opacity duration-1000 ease-in-out"
+        className="relative min-h-screen z-30 flex flex-col items-center px-4 sm:px-6 md:px-12 transition-opacity duration-1000 ease-in-out"
         style={{
           opacity,
           visibility,
           paddingTop: '80px',
+          paddingBottom: 0,
         }}
       >
-      <h2 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-2">
+      <h2 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-12 sm:mb-16">
         Impact
       </h2>
 
@@ -378,7 +382,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
           </div>
 
           <div
-            ref={careerHistoryRef}
+            ref={careerJourneyRef}
             className="relative z-10"
           >
             <div className="space-y-8 sm:space-y-10 md:space-y-12 px-4 sm:px-6 md:px-8 pb-16 sm:pb-20 md:pb-24 pt-6 sm:pt-8">
@@ -451,7 +455,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
                                 <circle cx="12" cy="10" r="1.5" fill="rgba(24, 24, 27, 1)" />
                               </svg>
                             </div>
-                            <p className="text-lg sm:text-xl md:text-2xl font-semibold text-white/85 leading-relaxed tracking-[-0.02rem]">
+                            <p className="text-base sm:text-lg md:text-xl font-normal text-white/85 leading-relaxed tracking-[-0.02rem]">
                               {text}
                             </p>
                           </li>
@@ -466,7 +470,14 @@ export default function Impact({ scrollProgress }: ImpactProps) {
         </div>
       </div>
 
-      <div className="w-full px-4" style={{ marginBottom: '30vh' }}>
+      <div
+        ref={sentimentRef}
+        className="w-full h-screen flex flex-col items-center justify-center px-4 transition-opacity duration-700 ease-out"
+        style={{
+          opacity: sentimentOpacity,
+          visibility: sentimentOpacity > 0 ? 'visible' : 'hidden',
+        }}
+      >
         <div className="text-center">
           <div className="inline-block">
             <h2 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-8 sm:mb-10 md:mb-12">
@@ -570,7 +581,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
               <a
                 key={link.url}
                 href={link.url}
-                target={link.icon === 'resume' ? '_blank' : '_blank'}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 md:w-14 md:h-14 bg-zinc-900/40 backdrop-blur-md border border-white/30 rounded-xl transition-all duration-500 hover:border-white/60 hover:shadow-2xl hover:shadow-white/20 hover:scale-110 text-white hover:text-white/90"
                 aria-label={link.label}
