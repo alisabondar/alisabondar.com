@@ -1,13 +1,15 @@
 'use client';
 
 import { useIsMobile, PHASE_TIMING } from '../utils/responsive';
+import { useTilt } from '../utils/useTilt';
 import Polaroid from './Polaroid';
 import styles from './Journey.module.css';
 
 const EVENT_HEIGHT_VH = 18;
 const INTRO_EVENTS = 4;
 const STRIP_TOP_OFFSET_VH = 30;
-const FOCUS_MULTIPLIER = 1.35;
+const STRIP_END_PADDING_VH = 80;
+const FOCUS_MULTIPLIER = 1.0;
 
 const EVENT_PLACEMENTS: { left: number; rotate: number }[] = [
   { left: 32, rotate: -3 },
@@ -138,22 +140,48 @@ const timelineItems: TimelineItem[] = [
     description: 'It\'s quite addicting, might have to try to learn tennis again...',
     year: 'June 2025',
   },
-  {
-    title: 'Searching for my next chapter 🔍',
-    description: 'What\'s next?',
-    year: 'January 2026',
-  }
+  // replace with something recent
+  // {
+  //   title: 'Searching for my next chapter 🔍',
+  //   description: 'What\'s next?',
+  //   year: 'January 2026',
+  // }
 ];
 
-const JOURNEY_SHOW_START = 0.12;
-const ENTRANCE_DURATION = 0.08;
+const JOURNEY_SHOW_START = 0.08;
+const CROSSFADE_END = 0.22;
+const JOURNEY_HIDE_START = 0.84;
+const JOURNEY_HIDE_DURATION = 0.16;
+const ENTRANCE_DURATION = CROSSFADE_END - JOURNEY_SHOW_START;
 const HEADER_FROZEN_DURATION = 0.35;
 const PARALLAX_START = ENTRANCE_DURATION + HEADER_FROZEN_DURATION;
-const LAST_EVENT_HOLD = 0.2;
-const SCROLL_AWAY_DURATION = 0.12;
 
 interface JourneyProps {
   scrollProgress: number;
+}
+
+function StickyNote({ item, index, styles: s }: { item: TimelineItem; index: number; styles: Record<string, string> }) {
+  const { ref: tiltRef, style: tiltStyle } = useTilt(true);
+  return (
+    <div ref={tiltRef} className={s.eventCardWrapper} style={tiltStyle}>
+      <div className={s.tapedCard}>
+        <div className={s.tape} aria-hidden />
+        <div className={`${s.stickyContainer} transition-all duration-500`}>
+          <div className={s.stickyOuter}>
+            <div className={s.sticky}>
+              <div className={`${s.stickyContent} ${
+                [s.paleLavender, s.paleBlue, s.paleGray, s.palePink][index % 4]
+              }`}>
+                <h3 className={s.stickyTitle}>{item.title}</h3>
+                {item.description ? <p className={s.stickyDescription}>{item.description}</p> : null}
+                {item.year ? <div className={s.stickyYear}>{item.year}</div> : null}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function Journey({ scrollProgress }: JourneyProps) {
@@ -161,7 +189,7 @@ export default function Journey({ scrollProgress }: JourneyProps) {
   const heroScrolledPast = scrollProgress >= JOURNEY_SHOW_START;
 
   const journeyLocalProgress = heroScrolledPast
-    ? Math.min(1.2, (scrollProgress - JOURNEY_SHOW_START) / (1.0 - JOURNEY_SHOW_START) * 1.2)
+    ? Math.min(1.2, ((scrollProgress - JOURNEY_SHOW_START) / (1.0 - JOURNEY_SHOW_START)) * 1.2)
     : 0;
 
   const totalEvents = timelineItems.length;
@@ -191,31 +219,34 @@ export default function Journey({ scrollProgress }: JourneyProps) {
   const headerFadeOutOpacity = Math.max(0, 1 - parallaxProgress * 2);
   const headerOpacity = isIntroPhase ? headerFadeInOpacity : headerFadeOutOpacity;
 
-  const stripHeight = STRIP_TOP_OFFSET_VH + totalEvents * EVENT_HEIGHT_VH;
+  const stripHeight = STRIP_TOP_OFFSET_VH + totalEvents * EVENT_HEIGHT_VH + STRIP_END_PADDING_VH;
   const atLastEvent = !isIntroPhase && rawFocus >= totalEvents - 0.5;
-  const scrollAwayProgress = atLastEvent
-    ? Math.min(1, Math.max(0, (rawFocus - (totalEvents - 1) - LAST_EVENT_HOLD) / SCROLL_AWAY_DURATION))
-    : 0;
-  const displayRawFocus = atLastEvent && scrollAwayProgress === 0 ? totalEvents - 1 : rawFocus;
+  const displayRawFocus = atLastEvent ? totalEvents - 1 : rawFocus;
   const displayFocusIndex = heroScrolledPast
     ? Math.min(totalEvents - 1, Math.max(0, Math.floor(displayRawFocus)))
     : 0;
-
-  const timelineOpacity = scrollAwayProgress <= 0 ? 1 : Math.max(0, 1 - scrollAwayProgress * 3);
 
   const baseStripY = Math.max(
     -(stripHeight - 100),
     Math.min(0, -(STRIP_TOP_OFFSET_VH + displayRawFocus * EVENT_HEIGHT_VH - 50))
   );
-  const scrollAwayOffset = -scrollAwayProgress * 120;
-  const stripTranslateY = baseStripY + scrollAwayOffset;
+  const stripTranslateY = baseStripY;
 
   const headerTranslateY = baseStripY * 8;
 
+  const journeyHideProgress = Math.min(
+    1,
+    Math.max(0, (scrollProgress - JOURNEY_HIDE_START) / JOURNEY_HIDE_DURATION)
+  );
+  const viewportOpacity = 1 - journeyHideProgress;
+
   return (
     <div
-      className={`fixed left-4 right-4 sm:right-20 md:right-24 sm:left-1/2 sm:-translate-x-1/2 h-screen z-20 pointer-events-none transition-opacity duration-1000 ease-in-out ${styles.journeyViewport}`}
-      style={{ opacity: timelineOpacity }}
+      className={`fixed left-4 right-4 sm:right-20 md:right-24 sm:left-1/2 sm:-translate-x-1/2 h-screen z-20 pointer-events-none transition-opacity duration-500 ease-out ${styles.journeyViewport}`}
+      style={{
+        opacity: viewportOpacity,
+        visibility: viewportOpacity <= 0 ? 'hidden' : 'visible',
+      }}
     >
       {heroScrolledPast && (
         <div
@@ -297,30 +328,7 @@ export default function Journey({ scrollProgress }: JourneyProps) {
                         enableMouseTilt
                       />
                     ) : (
-                      <div className={styles.eventCardWrapper}>
-                      <div className={styles.tapedCard}>
-                        <div className={styles.tape} aria-hidden />
-                      <div className={`${styles.stickyContainer} transition-all duration-500`}>
-                        <div className={styles.stickyOuter}>
-                          <div className={styles.sticky}>
-                            <div
-                              className={`${styles.stickyContent} ${
-                                [styles.paleLavender, styles.paleBlue, styles.paleGray, styles.palePink][index % 4]
-                              }`}
-                            >
-                              <h3 className={styles.stickyTitle}>{item.title}</h3>
-                              {item.description ? (
-                                <p className={styles.stickyDescription}>{item.description}</p>
-                              ) : null}
-                              {item.year ? (
-                                <div className={styles.stickyYear}>{item.year}</div>
-                              ) : null}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      </div>
-                      </div>
+                      <StickyNote item={item} index={index} styles={styles} />
                     )}
                   </div>
                 );

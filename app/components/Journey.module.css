@@ -11,7 +11,7 @@
   text-align: center;
   pointer-events: none;
   margin: 0;
-  transition: transform 0.15s ease-out;
+  transition: transform 0.25s ease-out;
 }
 
 .eventsZone {
@@ -27,30 +27,22 @@
   position: absolute;
   left: 0;
   right: 0;
-  transition: transform 0.12s ease-out;
+  transition: transform 0.2s ease-out;
 }
 
 .eventCardOuter {
   perspective: 500px;
   transform-style: preserve-3d;
+  isolation: isolate;
+}
+
+.eventCardOuter:hover {
+  z-index: 2000 !important;
 }
 
 .eventCardWrapper {
   transform-style: preserve-3d;
-  cursor: pointer;
-  transition: transform 0.15s ease-out;
   display: inline-block;
-}
-
-.eventCardWrapper:hover {
-  animation: jiggle 0.4s ease-in-out;
-}
-
-@keyframes jiggle {
-  0%, 100% { transform: rotateX(0) rotateY(0) scale(1); }
-  25% { transform: rotateX(-1deg) rotateY(2deg) scale(1.02); }
-  50% { transform: rotateX(1deg) rotateY(-1deg) scale(1.02); }
-  75% { transform: rotateX(0.5deg) rotateY(1deg) scale(1.01); }
 }
 
 .tapedCard {

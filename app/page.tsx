@@ -7,6 +7,9 @@ import Projects from "./components/Projects";
 import Impact from "./components/Impact";
 import { scrollToTop, getTimelineMultiplier } from './utils/responsive';
 
+const JOURNEY_SHOW_START = 0.08;
+const CROSSFADE_END = 0.22;
+const SCROLL_DESENSITIZE = 1.5;
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [journeyHeight, setJourneyHeight] = useState('100vh');
@@ -62,12 +65,13 @@ export default function Home() {
       const isMobile = window.innerWidth < 640;
       const timelineMultiplier = getTimelineMultiplier(isMobile);
       const timelineSectionHeight = windowHeight * timelineMultiplier;
+      const effectiveScrollRange = timelineSectionHeight * SCROLL_DESENSITIZE;
 
-      if (scrollTop <= timelineSectionHeight) {
-        const progress = (scrollTop / timelineSectionHeight) * 1.2;
+      if (scrollTop <= effectiveScrollRange) {
+        const progress = (scrollTop / effectiveScrollRange) * 1.2;
         setScrollProgress(progress);
       } else {
-        const pastTimeline = scrollTop - timelineSectionHeight;
+        const pastTimeline = scrollTop - effectiveScrollRange;
         const additionalProgress = (pastTimeline / windowHeight) * 0.3;
         setScrollProgress(Math.min(2.0, 1.2 + additionalProgress));
       }
@@ -90,24 +94,37 @@ export default function Home() {
 
       <section id="about" className="relative flex min-h-screen items-center justify-center sm:justify-center font-sans z-10 px-4">
         <div className="relative z-10 text-center sm:text-center">
-          <h1 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
-            Hi, I&apos;m Alisa.
-          </h1>
-          <div className="flex justify-center mt-6 sm:mt-8">
-            <svg
-              className="w-5 h-5 sm:w-6 sm:h-6 text-white/80 animate-bounce"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 14l-7 7m0 0l-7-7m7 7V3"
-              />
-            </svg>
+          <div
+            className="transition-opacity duration-500 ease-out"
+            style={{
+              opacity:
+                scrollProgress < JOURNEY_SHOW_START
+                  ? 1
+                  : scrollProgress > CROSSFADE_END
+                    ? 0
+                    : 1 - (scrollProgress - JOURNEY_SHOW_START) / (CROSSFADE_END - JOURNEY_SHOW_START),
+              visibility: scrollProgress > CROSSFADE_END ? 'hidden' : 'visible',
+            }}
+          >
+            <h1 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
+              Hi, I&apos;m Alisa.
+            </h1>
+            <div className="flex justify-center mt-6 sm:mt-8">
+              <svg
+                className="w-5 h-5 sm:w-6 sm:h-6 text-white/80 animate-bounce"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                />
+              </svg>
+            </div>
           </div>
         </div>
       </section>

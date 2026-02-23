@@ -1,7 +1,7 @@
 'use client';
 
-import { useRef, useCallback, useEffect } from 'react';
 import Image from 'next/image';
+import { useTilt } from '../utils/useTilt';
 import styles from './Polaroid.module.css';
 
 type PolaroidVariant = 'portrait' | 'landscape' | 'project';
@@ -16,9 +16,6 @@ interface PolaroidProps {
   className?: string;
 }
 
-const MOUSE_TILT_MULTIPLE = 20;
-const MAX_TILT_DEG = 12;
-
 export default function Polaroid({
   variant,
   title,
@@ -30,49 +27,16 @@ export default function Polaroid({
 }: PolaroidProps) {
   const isLandscape = variant === 'landscape';
   const isProject = variant === 'project';
-  const wrapperRef = useRef<HTMLDivElement>(null);
-
-  const rafRef = useRef<number | null>(null);
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    const el = wrapperRef.current;
-    if (!el) return;
-    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      rafRef.current = null;
-      const box = el.getBoundingClientRect();
-      const calcX = -(e.clientY - box.y - box.height / 2) / MOUSE_TILT_MULTIPLE;
-      const calcY = (e.clientX - box.x - box.width / 2) / MOUSE_TILT_MULTIPLE;
-      const clamp = (n: number) => Math.max(-MAX_TILT_DEG, Math.min(MAX_TILT_DEG, n));
-      el.style.transform = `rotateX(${clamp(calcX)}deg) rotateY(${clamp(calcY)}deg)`;
-    });
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    const el = wrapperRef.current;
-    if (!el) return;
-    el.style.transform = 'rotateX(0) rotateY(0)';
-  }, []);
-
-  useEffect(() => {
-    if (!enableMouseTilt) return;
-    const el = wrapperRef.current;
-    if (!el) return;
-    el.addEventListener('mousemove', handleMouseMove);
-    el.addEventListener('mouseleave', handleMouseLeave);
-    return () => {
-      el.removeEventListener('mousemove', handleMouseMove);
-      el.removeEventListener('mouseleave', handleMouseLeave);
-    };
-  }, [enableMouseTilt, handleMouseMove, handleMouseLeave]);
+  const { ref: tiltRef, style: tiltStyle } = useTilt(enableMouseTilt);
 
   return (
     <div
       className={`${styles.cardOuter} ${className}`}
     >
       <div
-        ref={wrapperRef}
+        ref={tiltRef}
         className={styles.cardWrapper}
-        style={enableMouseTilt ? { transition: 'transform 0.25s cubic-bezier(0.25, 0.1, 0.25, 1)' } : undefined}
+        style={tiltStyle}
       >
         <div className={styles.tapedCard}>
           <div className={styles.tape} aria-hidden />

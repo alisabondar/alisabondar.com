@@ -1,6 +1,3 @@
-// Parsed GitHub contribution data for 2026
-// Format: { date: 'YYYY-MM-DD', level: 0-4, count: number }
-
 export const contributions2026 = [
   { date: '2026-01-02', level: 1, count: 2 },
   { date: '2026-01-05', level: 1, count: 2 },
@@ -13,12 +10,28 @@ export const contributions2026 = [
   { date: '2026-01-14', level: 3, count: 8 },
   { date: '2026-01-15', level: 2, count: 4 },
   { date: '2026-01-19', level: 1, count: 2 },
-  { date: '2026-01-20', level: 3, count: 6 },
+  { date: '2026-01-20', level: 2, count: 9 },
   { date: '2026-01-21', level: 4, count: 10 },
   { date: '2026-01-22', level: 4, count: 10 },
   { date: '2026-01-23', level: 3, count: 7 },
   { date: '2026-01-26', level: 3, count: 7 },
   { date: '2026-01-27', level: 2, count: 3 },
+  { date: '2026-01-28', level: 3, count: 14 },
+  { date: '2026-01-29', level: 2, count: 9 },
+  { date: '2026-01-30', level: 2, count: 6 },
+  { date: '2026-02-01', level: 1, count: 2 },
+  { date: '2026-02-02', level: 1, count: 2 },
+  { date: '2026-02-03', level: 1, count: 3 },
+  { date: '2026-02-04', level: 1, count: 3 },
+  { date: '2026-02-05', level: 2, count: 7 },
+  { date: '2026-02-06', level: 2, count: 9 },
+  { date: '2026-02-09', level: 2, count: 10 },
+  { date: '2026-02-10', level: 4, count: 22 },
+  { date: '2026-02-11', level: 2, count: 8 },
+  { date: '2026-02-17', level: 2, count: 10 },
+  { date: '2026-02-18', level: 1, count: 5 },
+  { date: '2026-02-20', level: 2, count: 9 },
+  { date: '2026-02-23', level: 1, count: 4 },
 ];
 
-export const totalContributions2026 = 96;
+export const totalContributions2026 = 222;

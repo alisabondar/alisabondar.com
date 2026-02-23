@@ -1,12 +1,11 @@
 .cardOuter {
   perspective: 500px;
   transform-style: preserve-3d;
+  isolation: isolate;
 }
 
 .cardWrapper {
   transform-style: preserve-3d;
-  cursor: pointer;
-  transition: transform 0.15s ease-out;
   display: inline-block;
 }
 

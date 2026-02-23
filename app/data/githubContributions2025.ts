@@ -1,6 +1,3 @@
-// Parsed GitHub contribution data for 2025
-// Format: { date: 'YYYY-MM-DD', level: 0-4, count: number }
-
 export const contributions2025 = [
   { date: '2025-01-02', level: 2, count: 5 },
   { date: '2025-01-03', level: 1, count: 4 },

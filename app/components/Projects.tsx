@@ -34,21 +34,21 @@ const projects: Project[] = [
 
 export default function Projects({ scrollProgress }: ProjectsProps) {
   const isMobile = useIsMobile();
-  const sectionFadeInStart = 0.68;
-  const sectionFadeInDuration = 0.06;
+  const sectionFadeInStart = 0.84;
+  const sectionFadeInDuration = 0.16;
   const { opacity: sectionOpacity, visibility } = calculateFadeOpacity(
     scrollProgress,
     sectionFadeInStart,
     sectionFadeInDuration
   );
 
-  const projectFadeStarts = [0.68, 0.74, 0.8];
+  const projectFadeStarts = [0.86, 0.90, 0.94];
   const projectFadeDuration = isMobile ? 0.1 : 0.12;
 
   return (
     <section
       id="projects"
-      className="relative z-30 flex flex-col items-center px-4 sm:px-6 md:px-12 md:pr-20 lg:pr-36 pt-20 transition-opacity duration-1000 ease-in-out"
+      className="relative z-30 flex flex-col items-center px-4 sm:px-6 md:px-12 md:pr-20 lg:pr-36 pt-20 transition-opacity duration-700 ease-out"
       style={{
         opacity: sectionOpacity,
         visibility,
