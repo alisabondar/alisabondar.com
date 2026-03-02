@@ -56,7 +56,7 @@ export default function Polaroid({
                 <div
                   className={styles.placeholder}
                   style={{
-                    fontFamily: 'var(--font-story-script), cursive, sans-serif',
+                    fontFamily: 'var(--font-permanent-marker), cursive, sans-serif',
                     letterSpacing: 'normal',
                   }}
                 >

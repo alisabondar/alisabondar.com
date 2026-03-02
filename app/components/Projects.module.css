@@ -61,20 +61,15 @@
 @media (max-width: 640px) {
   .polaroidsContainer {
     display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 2rem;
     padding: 1rem 0;
     min-height: auto;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
   }
 
   .polaroidWrapper {
     position: relative;
-    flex-shrink: 0;
   }
 
   .polaroidWrapper:nth-child(1),

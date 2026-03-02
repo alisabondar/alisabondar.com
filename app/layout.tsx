@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Story_Script } from "next/font/google";
+import { Geist, Story_Script, Permanent_Marker } from "next/font/google";
 import "./globals.css";
 import TableOfContents from "./components/TableOfContents";
 
@@ -14,6 +14,12 @@ const storyScript = Story_Script({
   subsets: ["latin"],
 });
 
+const permanentMarker = Permanent_Marker({
+  weight: "400",
+  variable: "--font-permanent-marker",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "Alisa Bondar",
   description: "Alisa Bondar's portfolio",
@@ -25,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${storyScript.variable}`}>
+    <html lang="en" className={`${geistSans.variable} ${storyScript.variable} ${permanentMarker.variable}`}>
       <body className="font-sans antialiased">
         {children}
         <TableOfContents />

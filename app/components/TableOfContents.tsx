@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { getTimelineMultiplier } from '../utils/responsive';
 
 interface Section {
   id: string;
@@ -75,6 +76,23 @@ export default function TableOfContents() {
   }, []);
 
   const handleClick = (sectionId: string) => {
+    if (sectionId === 'journey') {
+      const windowHeight = window.innerHeight;
+      const isMobile = window.innerWidth < 640;
+      const timelineMultiplier = getTimelineMultiplier(isMobile);
+      const SCROLL_DESENSITIZE = 1.5;
+      const effectiveScrollRange = windowHeight * timelineMultiplier * SCROLL_DESENSITIZE;
+
+      const targetScrollProgress = 0.25;
+      const targetTop = (targetScrollProgress / 1.2) * effectiveScrollRange;
+
+      window.scrollTo({
+        top: targetTop,
+        behavior: 'smooth',
+      });
+      return;
+    }
+
     const element = document.getElementById(sectionId);
     if (element) {
       const offset = 80;

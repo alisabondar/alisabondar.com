@@ -5,7 +5,7 @@ import { useTilt } from '../utils/useTilt';
 import Polaroid from './Polaroid';
 import styles from './Journey.module.css';
 
-const EVENT_HEIGHT_VH = 18;
+const EVENT_HEIGHT_VH = 20;
 const INTRO_EVENTS = 4;
 const STRIP_TOP_OFFSET_VH = 30;
 const STRIP_END_PADDING_VH = 80;
@@ -26,132 +26,129 @@ const EVENT_PLACEMENTS: { left: number; rotate: number }[] = [
   { left: 38, rotate: -3 },
   { left: 72, rotate: 1 },
   { left: 45, rotate: -2 },
-  { left: 55, rotate: 0 },
-  { left: 52, rotate: 3 },
-  { left: 62, rotate: -1 },
+  { left: 30, rotate: 0 },
+  { left: 55, rotate: 3 },
+  { left: 78, rotate: -1 },
   { left: 40, rotate: 2 },
+  { left: 48, rotate: -2 },
+  { left: 70, rotate: 3 },
 ];
 
 function getPlacement(index: number): { left: number; rotate: number } {
-  return EVENT_PLACEMENTS[Math.min(index, EVENT_PLACEMENTS.length - 1)] ?? EVENT_PLACEMENTS[0];
+  return EVENT_PLACEMENTS[index % EVENT_PLACEMENTS.length] ?? EVENT_PLACEMENTS[0];
 }
 
 interface TimelineItem {
   title: string;
-  description: string;
   year?: string;
   picture?: string;
 }
 
 const timelineItems: TimelineItem[] = [
   {
-    title: 'Graduated Virginia Tech!',
-    description: 'With a double major in Biochemistry and Russian Language',
+    title: 'Graduated Virginia Tech with a double major!',
     year: 'May 2020',
   },
   {
     title: 'First day working at the CVOR',
-    description: '',
     year: 'May 2020',
     picture: 'CVOR-event.png',
   },
   {
     title: 'First ski trip out west! 🎿',
-    description: '',
     year: 'December 2020',
     picture: 'colorado-event.png',
   },
   {
     title: 'First time scrubbing in to assist',
-    description: '',
     year: 'March 2021',
     picture: 'scrub-event.png',
   },
   {
-    title: 'First 8hr+ road trip',
-    description: 'Had an epic time skiing in Stowe, Vermont!',
+    title: 'First 8hr+ road trip to Stowe, VT',
     year: 'December 2021',
   },
   {
-    title: 'Surprise, I\'m not blind 🤯',
-    description: 'Had a successful LASIK surgery',
+    title: 'Ditching the contacts post LASIK surgery 🤯',
     year: 'June 2022',
   },
   {
     title: 'Visited Acadia National Park 🌿',
-    description: '',
     year: 'July 2022',
     picture: 'maine-event.png',
   },
   {
-    title: 'Bye bye CVOR',
-    description: 'Started working as a night-shift, data assistant for an eICU team',
+    title: 'Bye bye CVOR, hello eICU',
     year: 'August 2022',
   },
   {
-    title: 'Inspired by the intersection of technology and medicine',
-    description: 'I began to study javascript and python',
+    title: 'Started to study javascript and python',
     year: 'March 2023',
   },
   {
     title: 'First road bike',
-    description: '',
     year: 'April 2023',
     picture: 'bike-event.png',
   },
   {
     title: 'Enrolled into Hack Reactor 💻',
-    description: '',
     year: 'June 2023',
     picture: 'hackreactor-event.png',
   },
   {
     title: 'Graduated Hack Reactor 📓',
-    description: '',
     year: 'August 2023',
     picture: 'graduation-event.png',
   },
   {
     title: 'First lease signed! 🌃',
-    description: '',
     year: 'December 2023',
     picture: 'nyc-event.png',
   },
   {
     title: 'First software engineering gig!',
-    description: '',
     year: 'January 2024',
     picture: 'alphasights-event.png',
   },
   {
     title: 'First marathon! ',
-    description: '',
     year: 'March 2025',
     picture: 'marathon-event.png',
   },
   {
     title: 'First time renting a convertible',
-    description: '',
     year: 'May 2025',
     picture: 'driving-event.png',
   },
   {
     title: 'First time playing pickleball',
-    description: 'It\'s quite addicting, might have to try to learn tennis again...',
     year: 'June 2025',
   },
-  // replace with something recent
-  // {
-  //   title: 'Searching for my next chapter 🔍',
-  //   description: 'What\'s next?',
-  //   year: 'January 2026',
-  // }
+  {
+    title: 'First solo headstand in yoga',
+    year: 'August 2025',
+  },
+  {
+    title: 'Visited Boston',
+    year: 'September 2025',
+    picture: 'boston.png',
+  },
+  {
+    title: 'Spent most of the holiday season baking!',
+    picture: 'pie.png',
+    year: 'December 2025',
+  },
+  {
+    title: 'First time ice skating on a lake!',
+    picture: 'skating.png',
+    year: 'February 2026',
+  }
 ];
 
 const JOURNEY_SHOW_START = 0.08;
 const CROSSFADE_END = 0.22;
 const JOURNEY_HIDE_START = 0.84;
-const JOURNEY_HIDE_DURATION = 0.16;
+const JOURNEY_HIDE_DURATION = 0.24;
 const ENTRANCE_DURATION = CROSSFADE_END - JOURNEY_SHOW_START;
 const HEADER_FROZEN_DURATION = 0.35;
 const PARALLAX_START = ENTRANCE_DURATION + HEADER_FROZEN_DURATION;
@@ -173,7 +170,6 @@ function StickyNote({ item, index, styles: s }: { item: TimelineItem; index: num
                 [s.paleLavender, s.paleBlue, s.paleGray, s.palePink][index % 4]
               }`}>
                 <h3 className={s.stickyTitle}>{item.title}</h3>
-                {item.description ? <p className={s.stickyDescription}>{item.description}</p> : null}
                 {item.year ? <div className={s.stickyYear}>{item.year}</div> : null}
               </div>
             </div>
@@ -323,7 +319,6 @@ export default function Journey({ scrollProgress }: JourneyProps) {
                         variant="portrait"
                         title={item.title}
                         image={`/${item.picture}`}
-                        description={item.description}
                         year={item.year}
                         enableMouseTilt
                       />
