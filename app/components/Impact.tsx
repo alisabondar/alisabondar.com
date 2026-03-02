@@ -197,7 +197,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll);
     handleScroll();
 

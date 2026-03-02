@@ -58,10 +58,11 @@
   transform: translate(-50%, -50%) rotate(-2deg);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .polaroidsContainer {
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap;
     align-items: center;
     gap: 2rem;
     padding: 1rem 0;
@@ -69,14 +70,16 @@
   }
 
   .polaroidWrapper {
-    position: relative;
+    position: relative !important;
+    width: 100%;
+    max-width: 320px;
   }
 
   .polaroidWrapper:nth-child(1),
   .polaroidWrapper:nth-child(2),
   .polaroidWrapper:nth-child(3) {
-    top: auto;
-    left: auto;
-    transform: none;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
   }
 }

@@ -59,7 +59,9 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
+    let rafId: number | null = null;
+
+    const updateScrollProgress = () => {
       const windowHeight = window.innerHeight;
       const scrollTop = window.scrollY;
       const isMobile = window.innerWidth < 640;
@@ -75,13 +77,20 @@ export default function Home() {
         const additionalProgress = (pastTimeline / windowHeight) * 0.3;
         setScrollProgress(Math.min(2.0, 1.2 + additionalProgress));
       }
+      rafId = null;
     };
 
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(updateScrollProgress);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll);
     handleScroll();
 
     return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
     };

@@ -28,13 +28,15 @@ export default function AnimatedBackground() {
               animationDelay: `${icon.delay}s`,
             }}
           >
-            <Image
-              src={icon.src}
-              alt=""
-              width={icon.size}
-              height={icon.size}
-              className="pointer-events-none"
-            />
+            <div className={styles.iconInner}>
+              <Image
+                src={icon.src}
+                alt=""
+                width={icon.size}
+                height={icon.size}
+                className="pointer-events-none"
+              />
+            </div>
           </div>
         );
       })}

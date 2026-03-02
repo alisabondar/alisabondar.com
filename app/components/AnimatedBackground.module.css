@@ -252,26 +252,51 @@
   animation-delay: 3.7s;
 }
 
+@keyframes iconFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
 .icon {
   position: absolute;
-  opacity: 0.3;
+  opacity: 0;
   filter: brightness(0) invert(1);
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
+  animation: iconFadeIn 1.2s ease-out forwards;
+}
+
+.iconInner {
+  display: inline-block;
+}
+
+@media (max-width: 640px) {
+  .icon {
+    animation: iconFadeIn 1.2s ease-out forwards !important;
+  }
+
+  .iconInner {
+    transform: scale(0.5);
+    transform-origin: center center;
+  }
 }
 
 .iconFloat1 {
-  animation: float 9s ease-in-out 0s infinite;
+  animation: iconFadeIn 1.2s ease-out forwards, float 9s ease-in-out 1.2s infinite;
 }
 
 .iconFloat2 {
-  animation: float2 8s ease-in-out 1.2s infinite;
+  animation: iconFadeIn 1.2s ease-out forwards, float2 8s ease-in-out 1.2s infinite;
 }
 
 .iconFloat3 {
-  animation: float3 10s ease-in-out 2.5s infinite;
+  animation: iconFadeIn 1.2s ease-out forwards, float3 10s ease-in-out 2.5s infinite;
 }
 
 .iconFloat4 {
-  animation: float4 9.5s ease-in-out 0.8s infinite;
+  animation: iconFadeIn 1.2s ease-out forwards, float4 9.5s ease-in-out 0.8s infinite;
 }
