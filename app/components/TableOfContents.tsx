@@ -119,8 +119,8 @@ export default function TableOfContents() {
                   relative px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base md:text-lg font-medium transition-all duration-300 text-right
                   ${
                     isActive
-                      ? 'text-white'
-                      : 'text-white/40 hover:text-white/65'
+                      ? 'text-black'
+                      : 'text-black/40 hover:text-black/65'
                   }
                 `}
                 aria-label={`Navigate to ${section.label} section`}

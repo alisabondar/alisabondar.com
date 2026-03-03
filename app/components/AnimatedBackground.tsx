@@ -7,11 +7,7 @@ import styles from './AnimatedBackground.module.css';
 export default function AnimatedBackground() {
   return (
     <div className={styles.container}>
-      <div className={`${styles.blob} ${styles.blob1}`} />
-      <div className={`${styles.blob} ${styles.blob2} ${styles.animationDelay2000}`} />
-      <div className={styles.blob3Wrapper}>
-        <div className={`${styles.blob} ${styles.blob3} ${styles.animationDelay4000}`} />
-      </div>
+      <div className={styles.svgBackground} aria-hidden />
 
       {icons.map((icon, index) => {
         const animationClasses = [styles.iconFloat1, styles.iconFloat2, styles.iconFloat3, styles.iconFloat4];

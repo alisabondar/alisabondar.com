@@ -22,18 +22,18 @@ const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Se
 const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const levelColors = [
-  'bg-zinc-800/50',
-  'bg-green-900/60',
-  'bg-green-800/70',
-  'bg-green-700/80',
-  'bg-green-600/90'
+  'bg-zinc-200/80',
+  'bg-green-200/80',
+  'bg-green-300/90',
+  'bg-green-400',
+  'bg-green-500'
 ];
 
 const levelHoverColors = [
-  'bg-zinc-800',
-  'bg-green-900',
-  'bg-green-800',
-  'bg-green-700',
+  'bg-zinc-300',
+  'bg-green-300',
+  'bg-green-400',
+  'bg-green-500',
   'bg-green-600'
 ];
 
@@ -181,8 +181,8 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
               className={`
                 relative px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-300 text-right
                 ${selectedYear === null
-                  ? 'text-white'
-                  : 'text-white/60 hover:text-white/80'
+                  ? 'text-black'
+                  : 'text-black/60 hover:text-black/80'
                 }
               `}
               aria-label="View latest 12 months contributions"
@@ -190,7 +190,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
               <span className="relative z-10">12M</span>
               {selectedYear === null && (
                 <span
-                  className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 sm:w-1 h-4 sm:h-6 bg-white transition-all duration-300"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 sm:w-1 h-4 sm:h-6 bg-black transition-all duration-300"
                   aria-hidden="true"
                 />
               )}
@@ -205,8 +205,8 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                   className={`
                     relative px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-300 text-right
                     ${isActive
-                      ? 'text-white'
-                      : 'text-white/60 hover:text-white/80'
+                      ? 'text-black'
+                      : 'text-black/60 hover:text-black/80'
                     }
                   `}
                   aria-label={`View ${yearData.year} contributions`}
@@ -214,7 +214,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                   <span className="relative z-10">{yearData.year}</span>
                   {isActive && (
                     <span
-                      className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 sm:w-1 h-4 sm:h-6 bg-white transition-all duration-300"
+                      className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 sm:w-1 h-4 sm:h-6 bg-black transition-all duration-300"
                       aria-hidden="true"
                     />
                   )}
@@ -228,17 +228,17 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
       <div className="w-full px-8 py-4 sm:py-6 md:py-8 pr-[32px] flex justify-center">
         <div className="w-full max-w-3xl">
           <div className="mb-4 flex items-center justify-between flex-wrap gap-4">
-            <h3 className="text-white text-lg sm:text-xl font-semibold mb-1">
+            <h3 className="text-black text-lg sm:text-xl font-semibold mb-1">
               {totalContributions} contributions {year === null ? 'in the last 12 months' : `in ${year}`}
             </h3>
             <div className="flex items-center gap-2 sm:hidden">
-              <span className="text-white/60 text-xs">View:</span>
+              <span className="text-black/60 text-xs">View:</span>
               <div className="flex gap-1">
                 <button
                   onClick={() => setSelectedYear(null)}
                   className={`px-2 py-1 text-xs rounded transition-all duration-200 ${selectedYear === null
-                      ? 'bg-white/20 text-white border border-white/40'
-                      : 'bg-zinc-800/50 text-white/60 hover:text-white hover:bg-zinc-800/70 border border-white/20'
+                      ? 'bg-black/10 text-black border border-black/30'
+                      : 'bg-white/60 text-black/60 hover:text-black hover:bg-white/80 border border-black/20'
                     }`}
                 >
                   12M
@@ -248,8 +248,8 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                     key={yearData.year}
                     onClick={() => setSelectedYear(yearData.year)}
                     className={`px-2 py-1 text-xs rounded transition-all duration-200 ${selectedYear === yearData.year
-                        ? 'bg-white/20 text-white border border-white/40'
-                        : 'bg-zinc-800/50 text-white/60 hover:text-white hover:bg-zinc-800/70 border border-white/20'
+                        ? 'bg-black/10 text-black border border-black/30'
+                        : 'bg-white/60 text-black/60 hover:text-black hover:bg-white/80 border border-black/20'
                       }`}
                   >
                     {yearData.year}
@@ -271,7 +271,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                   return (
                     <div
                       key={`month-${idx}-${position}`}
-                      className="text-white/70 text-xs absolute top-0"
+                      className="text-black/70 text-xs absolute top-0"
                       style={{ left: `${position * cellWidth}px`, width: `${width}px` }}
                     >
                       {monthLabels[month]}
@@ -285,7 +285,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                   {dayLabels.map((day, idx) => (
                     <div
                       key={`day-${idx}`}
-                      className="text-white/50 text-[10px] flex items-center justify-end pr-1"
+                      className="text-black/50 text-[10px] flex items-center justify-end pr-1"
                       style={{ height: '10px', width: '24px', minWidth: '24px' }}
                     >
                       {idx % 2 === 0 ? day : ''}
@@ -301,7 +301,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                           return (
                             <div
                               key={`${dayIndex}-${weekIndex}`}
-                              className="w-[10px] h-[10px] rounded-sm"
+                              className="w-[10px] h-[10px] rounded-sm border border-black/40"
                             />
                           );
                         }
@@ -312,8 +312,8 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                         return (
                           <div
                             key={contrib.date}
-                            className={`w-[10px] h-[10px] rounded-sm transition-all duration-200 cursor-pointer relative ${isHovered ? levelHoverColors[level] : levelColors[level]
-                              } ${isHovered ? 'ring-2 ring-white/50 scale-110' : ''}`}
+                            className={`w-[10px] h-[10px] rounded-sm border border-black/40 transition-all duration-200 cursor-pointer relative ${isHovered ? levelHoverColors[level] : levelColors[level]
+                              } ${isHovered ? 'ring-2 ring-black scale-110' : ''}`}
                             onMouseEnter={(e) => handleCellMouseEnter(e, contrib.date)}
                             onMouseLeave={handleCellMouseLeave}
                           />
@@ -330,7 +330,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
 
       {hoveredDate && tooltipPosition && (
         <div
-          className="fixed z-50 bg-zinc-800 border border-white/40 rounded px-2 py-1 text-white text-xs pointer-events-none whitespace-nowrap"
+          className="fixed z-50 bg-white/95 border border-black/20 rounded px-2 py-1 text-black text-xs pointer-events-none whitespace-nowrap shadow-lg"
           style={{
             left: `${tooltipPosition.x}px`,
             top: `${tooltipPosition.y}px`,

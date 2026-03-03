@@ -11,6 +11,7 @@ const STRIP_TOP_OFFSET_VH = 30;
 const STRIP_END_PADDING_VH = 80;
 const FOCUS_MULTIPLIER = 1.0;
 
+
 const EVENT_PLACEMENTS: { left: number; rotate: number }[] = [
   { left: 32, rotate: -3 },
   { left: 72, rotate: 2 },
@@ -254,7 +255,7 @@ export default function Journey({ scrollProgress }: JourneyProps) {
           }}
         >
           <h2
-            className={`${styles.journeyHeader} text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white`}
+            className={`${styles.journeyHeader} text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black`}
             style={{
               transform: `translateX(-50%) translateY(${headerTranslateY}px)`,
               opacity: headerOpacity,
