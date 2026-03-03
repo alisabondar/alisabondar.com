@@ -5,11 +5,10 @@ import AnimatedBackground from "./components/AnimatedBackground";
 import Journey from "./components/Journey";
 import Projects from "./components/Projects";
 import Impact from "./components/Impact";
-import { scrollToTop, getTimelineMultiplier } from './utils/responsive';
+import { scrollToTop, getTimelineMultiplier, SCROLL_DESENSITIZE } from './utils/responsive';
 
 const JOURNEY_SHOW_START = 0.08;
 const CROSSFADE_END = 0.22;
-const SCROLL_DESENSITIZE = 1.5;
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [journeyHeight, setJourneyHeight] = useState('100vh');
@@ -65,8 +64,9 @@ export default function Home() {
       const scrollTop = window.scrollY;
       const isMobile = window.innerWidth < 640;
       const timelineMultiplier = getTimelineMultiplier(isMobile);
+      const scrollDesensitize = isMobile ? SCROLL_DESENSITIZE.MOBILE : SCROLL_DESENSITIZE.DESKTOP;
       const timelineSectionHeight = windowHeight * timelineMultiplier;
-      const effectiveScrollRange = timelineSectionHeight * SCROLL_DESENSITIZE;
+      const effectiveScrollRange = timelineSectionHeight * scrollDesensitize;
 
       if (scrollTop <= effectiveScrollRange) {
         const progress = (scrollTop / effectiveScrollRange) * 1.2;

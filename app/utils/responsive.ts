@@ -5,13 +5,18 @@ export const BREAKPOINTS = {
 } as const;
 
 export const TIMELINE_CONSTANTS = {
-  MOBILE_MULTIPLIER: 1.3,
+  MOBILE_MULTIPLIER: 1.6,
   DESKTOP_MULTIPLIER: 1.5,
+} as const;
+
+export const SCROLL_DESENSITIZE = {
+  MOBILE: 2.2,
+  DESKTOP: 1.5,
 } as const;
 
 export const PHASE_TIMING = {
   MOBILE: {
-    PHASE_IN_DURATION: 0.1,
+    PHASE_IN_DURATION: 0.32,
     PHASE_IN_START_MULTIPLIER: 0.15,
     PHASE_OUT_START: 0.75,
   },

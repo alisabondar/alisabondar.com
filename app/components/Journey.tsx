@@ -299,7 +299,7 @@ export default function Journey({ scrollProgress }: JourneyProps) {
 
             const isFocused = Math.abs(index - displayFocusIndex) < 0.5;
             const scale = isFocused ? 1.1 : 0.95;
-            const zIndexValue = isFocused ? 1000 : 100 + index;
+            const zIndexValue = 100 + index;
 
             const topValue = STRIP_TOP_OFFSET_VH + index * EVENT_HEIGHT_VH;
 
