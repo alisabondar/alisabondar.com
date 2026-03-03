@@ -306,7 +306,7 @@ export default function Journey({ scrollProgress }: JourneyProps) {
             return (
               <div
                 key={`journey-${index}`}
-                className={`absolute transition-opacity duration-500 ease-out pointer-events-auto ${styles.eventCardOuter}`}
+                className={`absolute pointer-events-auto ${styles.eventCardOuter} ${isMobile ? styles.eventCardMobile : styles.eventCardDesktop}`}
                 style={{
                   top: `${topValue}vh`,
                   left: `${leftPercent}%`,
