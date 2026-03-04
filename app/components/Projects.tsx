@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useIsMobile, calculateFadeOpacity } from '../utils/responsive';
+import { calculateFadeOpacity } from '../utils/responsive';
 import Polaroid from './Polaroid';
 import styles from './Projects.module.css';
 
@@ -33,17 +33,16 @@ const projects: Project[] = [
 ];
 
 export default function Projects({ scrollProgress }: ProjectsProps) {
-  const isMobile = useIsMobile();
-  const sectionFadeInStart = 0.84;
-  const sectionFadeInDuration = 0.16;
+  const sectionFadeInStart = 0.92;
+  const sectionFadeInDuration = 0.1;
   const { opacity: sectionOpacity, visibility } = calculateFadeOpacity(
     scrollProgress,
     sectionFadeInStart,
     sectionFadeInDuration
   );
 
-  const projectFadeStarts = [0.86, 0.90, 0.94];
-  const projectFadeDuration = isMobile ? 0.1 : 0.12;
+  const projectFadeStarts = [0.94, 0.96, 0.98];
+  const projectFadeDuration = 0.12;
 
   return (
     <section

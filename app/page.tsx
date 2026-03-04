@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState, useRef } from 'react';
 import AnimatedBackground from "./components/AnimatedBackground";
 import Journey from "./components/Journey";
 import Projects from "./components/Projects";
@@ -9,9 +9,11 @@ import { scrollToTop, getTimelineMultiplier, SCROLL_DESENSITIZE } from './utils/
 
 const JOURNEY_SHOW_START = 0.08;
 const CROSSFADE_END = 0.22;
+
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [journeyHeight, setJourneyHeight] = useState('100vh');
+  const journeyEndMarkerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const updateJourneyHeight = () => {
@@ -66,7 +68,14 @@ export default function Home() {
       const timelineMultiplier = getTimelineMultiplier(isMobile);
       const scrollDesensitize = isMobile ? SCROLL_DESENSITIZE.MOBILE : SCROLL_DESENSITIZE.DESKTOP;
       const timelineSectionHeight = windowHeight * timelineMultiplier;
-      const effectiveScrollRange = timelineSectionHeight * scrollDesensitize;
+      const fallbackScrollRange = timelineSectionHeight * scrollDesensitize;
+
+      const marker = journeyEndMarkerRef.current;
+      const markerOffsetTop = marker
+        ? marker.getBoundingClientRect().top + scrollTop
+        : 0;
+      const effectiveScrollRange =
+        markerOffsetTop > 0 ? markerOffsetTop : fallbackScrollRange;
 
       if (scrollTop <= effectiveScrollRange) {
         const progress = (scrollTop / effectiveScrollRange) * 1.2;
@@ -141,7 +150,13 @@ export default function Home() {
         id="journey"
         className="relative z-10"
         style={{ minHeight: journeyHeight }}
-      />
+      >
+        <div
+          ref={journeyEndMarkerRef}
+          className="absolute bottom-0 left-0 right-0 h-0 w-full"
+          aria-hidden
+        />
+      </section>
 
       <Projects scrollProgress={scrollProgress} />
       <Impact scrollProgress={scrollProgress} />

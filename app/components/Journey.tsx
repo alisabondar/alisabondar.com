@@ -149,10 +149,10 @@ const timelineItems: TimelineItem[] = [
 const JOURNEY_SHOW_START = 0.08;
 const CROSSFADE_END = 0.22;
 const JOURNEY_HIDE_START = 0.84;
-const JOURNEY_HIDE_DURATION = 0.24;
+const JOURNEY_HIDE_DURATION = 0.08;
 const ENTRANCE_DURATION = CROSSFADE_END - JOURNEY_SHOW_START;
 const HEADER_FROZEN_DURATION = 0.35;
-const PARALLAX_START = ENTRANCE_DURATION + HEADER_FROZEN_DURATION;
+const HEADER_FROZEN_DURATION_MOBILE = 0.48;
 
 interface JourneyProps {
   scrollProgress: number;
@@ -195,11 +195,13 @@ export default function Journey({ scrollProgress }: JourneyProps) {
   const enterProgress = Math.max(0, Math.min(1, (scrollProgress - JOURNEY_SHOW_START) / ENTRANCE_DURATION));
   const entranceTranslateY = (1 - enterProgress) * 80;
 
-  const isIntroPhase = journeyLocalProgress < PARALLAX_START;
-  const parallaxProgress = isIntroPhase ? 0 : Math.min(1, (journeyLocalProgress - PARALLAX_START) / (1 - PARALLAX_START));
+  const headerFrozenDuration = isMobile ? HEADER_FROZEN_DURATION_MOBILE : HEADER_FROZEN_DURATION;
+  const parallaxStart = ENTRANCE_DURATION + headerFrozenDuration;
+  const isIntroPhase = journeyLocalProgress < parallaxStart;
+  const parallaxProgress = isIntroPhase ? 0 : Math.min(1, (journeyLocalProgress - parallaxStart) / (1 - parallaxStart));
   const parallaxEventCount = totalEvents - INTRO_EVENTS;
   const frozenPhaseProgress = isIntroPhase && journeyLocalProgress >= ENTRANCE_DURATION
-    ? (journeyLocalProgress - ENTRANCE_DURATION) / HEADER_FROZEN_DURATION
+    ? (journeyLocalProgress - ENTRANCE_DURATION) / headerFrozenDuration
     : 0;
 
   const rawFocus = isIntroPhase
@@ -209,7 +211,7 @@ export default function Journey({ scrollProgress }: JourneyProps) {
     : INTRO_EVENTS + parallaxProgress * parallaxEventCount * FOCUS_MULTIPLIER;
 
   const headerFadeInStart = 0;
-  const headerFadeInDuration = 0.06;
+  const headerFadeInDuration = isMobile ? 0.18 : 0.06;
   const headerFadeInOpacity = journeyLocalProgress >= headerFadeInStart
     ? Math.min(1, (journeyLocalProgress - headerFadeInStart) / headerFadeInDuration)
     : 0;
@@ -231,9 +233,11 @@ export default function Journey({ scrollProgress }: JourneyProps) {
 
   const headerTranslateY = baseStripY * 8;
 
+  const journeyHideStart = JOURNEY_HIDE_START;
+  const journeyHideDuration = JOURNEY_HIDE_DURATION;
   const journeyHideProgress = Math.min(
     1,
-    Math.max(0, (scrollProgress - JOURNEY_HIDE_START) / JOURNEY_HIDE_DURATION)
+    Math.max(0, (scrollProgress - journeyHideStart) / journeyHideDuration)
   );
   const viewportOpacity = 1 - journeyHideProgress;
 
@@ -255,11 +259,10 @@ export default function Journey({ scrollProgress }: JourneyProps) {
           }}
         >
           <h2
-            className={`${styles.journeyHeader} text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black`}
+            className={`${styles.journeyHeader} ${isMobile ? styles.journeyHeaderMobile : styles.journeyHeaderDesktop} text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black`}
             style={{
               transform: `translateX(-50%) translateY(${headerTranslateY}px)`,
               opacity: headerOpacity,
-              transition: 'opacity 1s ease-in-out',
             }}
           >
             Journey
@@ -279,8 +282,9 @@ export default function Journey({ scrollProgress }: JourneyProps) {
 
             const eventProgress = rawFocus - index;
             const phaseInStart = 0;
+            const introPhaseInEnd = 'INTRO_PHASE_IN_END' in phaseTiming ? phaseTiming.INTRO_PHASE_IN_END : 0.25;
             const phaseInEnd = (isIntroPhase && index < INTRO_EVENTS)
-              ? 0.25
+              ? introPhaseInEnd
               : phaseTiming.PHASE_IN_DURATION;
 
             const hasPhasedIn = eventProgress >= phaseInEnd;

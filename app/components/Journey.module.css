@@ -14,6 +14,14 @@
   transition: transform 0.25s ease-out;
 }
 
+.journeyHeaderMobile {
+  transition: none;
+}
+
+.journeyHeaderDesktop {
+  transition: opacity 1s ease-in-out;
+}
+
 .eventsZone {
   position: absolute;
   top: 0;

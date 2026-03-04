@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import GitHubActivityGraph from './GitHubActivityGraph';
-import { useIsMobile, calculateFadeOpacity } from '../utils/responsive';
+import { useIsMobile, calculateFadeOpacity, useViewportFade } from '../utils/responsive';
 import { contributions2023, totalContributions2023 } from '../data/githubContributions2023';
 import { contributions2024, totalContributions2024 } from '../data/githubContributions2024';
 import { contributions2025, totalContributions2025 } from '../data/githubContributions2025';
@@ -54,14 +54,15 @@ const jobs: Job[] = [
     role: 'Software Engineer',
     period: '2024 - Present',
     achievements: [
-      'Completed 300+ tasks spanning bug fixes, robust feature builds, and new microservices',
-      'Contributed to a backend, Ruby monolith breakdown into polished microservices',
-      'Early contributor to the company&apos;s first AI integration, enabling tailored client communications and doubling workforce productivity and credit revenue',
-      'Contributed to the launch of a new external, responsive, and accessible product serving 10K+ users, with a 30% return rate within 60 days of registration',
-      'Helped capture 1.8x more structured data, improving internal data mapping accuracy and strengthening ancillary client offerings',
-      'Implemented AWS Cognito authentication, supporting ~70% magic link, ~20% Google, and ~10% LinkedIn logins',
-      'Investigated and optimized N+1 queries in our backend',
-      'Partnered with adjacent teams on analytics integration, feature enhancements, and new endpoints',
+      'Shipped 400+ production changes across debugging, feature development, and new microservices while maintaining platform reliability and delivery velocity.',
+      'Published internal Implementation Design Documents for the following projects: a step-by-step monolith breakdown, an AI outreach initiative, a structured data capture framework, and a social login project.',
+      'Led the evolution of a Ruby monolith into domain-aligned microservices, improving maintainability, deployment speed, and independent scalability.',
+      'Co-architected the company\'s first AI-integrated outreach system, doubling workforce productivity and driving 2× credit revenue.',
+      'Redesigned structured data capture flows, increasing usable data volume 1.8× and improving downstream client outputs.',
+      'Architected authentication via AWS Cognito, implementing multi-provider login to reduce onboarding friction while maintaining secure identity controls.',
+      'Co-engineered a responsive, accessible external product serving 10K+ users, achieving a 30% 60-day return rate.',
+      'Resolved backend performance bottlenecks (including N+1 queries), improving latency and system throughput under load.',
+      'Led cross-team API and analytics design, aligning technical decisions with product metrics and long-term platform evolution.',
     ],
   },
   {
@@ -88,6 +89,7 @@ const jobs: Job[] = [
 
 export default function Impact({ scrollProgress }: ImpactProps) {
   const isMobile = useIsMobile();
+  const sectionRef = useRef<HTMLElement>(null);
   const careerJourneyRef = useRef<HTMLDivElement>(null);
   const [graphBackgroundOpacity, setGraphBackgroundOpacity] = useState(1);
   const achievementRefs = useRef<(HTMLLIElement | null)[]>([]);
@@ -104,9 +106,10 @@ export default function Impact({ scrollProgress }: ImpactProps) {
   const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const animationTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
-  const fadeInStart = 1.2;
-  const fadeInDuration = isMobile ? 0.1 : 0.2;
-  const { opacity, visibility } = calculateFadeOpacity(scrollProgress, fadeInStart, fadeInDuration);
+  const viewportFade = useViewportFade(sectionRef, { startAt: 0.88, fullAt: 0.55 });
+  const scrollFade = calculateFadeOpacity(scrollProgress, 1.2, 0.2);
+  const opacity = isMobile ? viewportFade.opacity : scrollFade.opacity;
+  const visibility = isMobile ? viewportFade.visibility : scrollFade.visibility;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -322,6 +325,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
         }
       `}</style>
       <section
+        ref={sectionRef}
         id="impact"
         className="relative min-h-screen z-30 flex flex-col items-center px-4 sm:px-6 md:px-12 transition-opacity duration-1000 ease-in-out"
         style={{
@@ -354,7 +358,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
             }}
           />
 
-          <div className="relative z-10">
+          <div className="relative z-10 pt-3 sm:pt-4 md:pt-5">
             <GitHubActivityGraph
               years={[
                 {

@@ -19,7 +19,9 @@ interface GitHubActivityGraphProps {
 }
 
 const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+const STATIC_MONTH_WEEK_INDEX = [0, 4, 8, 13, 17, 22, 26, 30, 35, 39, 43, 48];
+const FIXED_WEEKS = 53;
 
 const levelColors = [
   'bg-zinc-200/80',
@@ -103,9 +105,6 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
   const firstSunday = new Date(startDate);
   firstSunday.setDate(firstSunday.getDate() - firstDayOfWeek);
 
-  const totalWeeks = Math.ceil((endDate.getTime() - firstSunday.getTime()) / (1000 * 60 * 60 * 24 * 7)) + 1;
-  const weeksInYear = Math.min(totalWeeks, 53);
-
   const calendar: (ContributionData | null)[][] = [];
 
   for (let dayOfWeek = 0; dayOfWeek < 7; dayOfWeek++) {
@@ -113,7 +112,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
     const rowStartDate = new Date(firstSunday);
     rowStartDate.setDate(rowStartDate.getDate() + dayOfWeek);
 
-    for (let weekIndex = 0; weekIndex < weeksInYear; weekIndex++) {
+    for (let weekIndex = 0; weekIndex < FIXED_WEEKS; weekIndex++) {
       const currentDate = new Date(rowStartDate);
       currentDate.setDate(currentDate.getDate() + weekIndex * 7);
 
@@ -128,22 +127,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
     calendar.push(row);
   }
 
-  const monthPositions: { month: number; position: number }[] = [];
-  const seenMonthKeys = new Set<string>();
-
-  for (let weekIndex = 0; weekIndex < weeksInYear; weekIndex++) {
-    const testDate = new Date(firstSunday);
-    testDate.setDate(testDate.getDate() + weekIndex * 7);
-
-    if (testDate >= startDate && testDate <= endDate) {
-      const month = testDate.getMonth();
-      const monthKey = `${testDate.getFullYear()}-${month}`;
-      if (!seenMonthKeys.has(monthKey)) {
-        monthPositions.push({ month, position: weekIndex });
-        seenMonthKeys.add(monthKey);
-      }
-    }
-  }
+  const monthPositions: { month: number; position: number }[] = STATIC_MONTH_WEEK_INDEX.map((position, month) => ({ month, position }));
 
   const handleCellMouseEnter = (e: React.MouseEvent<HTMLDivElement>, date: string) => {
     setHoveredDate(date);
@@ -173,13 +157,13 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
 
   return (
     <div className="relative w-full">
-      <div className="absolute right-4 sm:right-6 md:right-8 top-1/2 -translate-y-1/2 z-10 pointer-events-auto hidden sm:block">
-        <ul className="flex flex-col items-end gap-3 sm:gap-4">
+      <div className="absolute right-4 sm:right-6 md:right-8 bottom-0 pb-8 z-10 pointer-events-auto hidden sm:block">
+        <ul className="flex flex-col items-end gap-1 sm:gap-1.5">
           <li>
             <button
               onClick={() => setSelectedYear(null)}
               className={`
-                relative px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-300 text-right
+                relative px-1.5 sm:px-2 py-1 sm:py-1 text-[10px] sm:text-xs font-medium transition-all duration-300 text-right
                 ${selectedYear === null
                   ? 'text-black'
                   : 'text-black/60 hover:text-black/80'
@@ -190,7 +174,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
               <span className="relative z-10">12M</span>
               {selectedYear === null && (
                 <span
-                  className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 sm:w-1 h-4 sm:h-6 bg-black transition-all duration-300"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-3 sm:h-4 bg-black transition-all duration-300"
                   aria-hidden="true"
                 />
               )}
@@ -203,7 +187,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                 <button
                   onClick={() => setSelectedYear(yearData.year)}
                   className={`
-                    relative px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium transition-all duration-300 text-right
+                    relative px-1.5 sm:px-2 py-1 sm:py-1 text-[10px] sm:text-xs font-medium transition-all duration-300 text-right
                     ${isActive
                       ? 'text-black'
                       : 'text-black/60 hover:text-black/80'
@@ -214,7 +198,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                   <span className="relative z-10">{yearData.year}</span>
                   {isActive && (
                     <span
-                      className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 sm:w-1 h-4 sm:h-6 bg-black transition-all duration-300"
+                      className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-3 sm:h-4 bg-black transition-all duration-300"
                       aria-hidden="true"
                     />
                   )}
@@ -231,41 +215,15 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
             <h3 className="text-black text-lg sm:text-xl font-semibold mb-1">
               {totalContributions} contributions {year === null ? 'in the last 12 months' : `in ${year}`}
             </h3>
-            <div className="flex items-center gap-2 sm:hidden">
-              <span className="text-black/60 text-xs">View:</span>
-              <div className="flex gap-1">
-                <button
-                  onClick={() => setSelectedYear(null)}
-                  className={`px-2 py-1 text-xs rounded transition-all duration-200 ${selectedYear === null
-                      ? 'bg-black/10 text-black border border-black/30'
-                      : 'bg-white/60 text-black/60 hover:text-black hover:bg-white/80 border border-black/20'
-                    }`}
-                >
-                  12M
-                </button>
-                {years.map((yearData) => (
-                  <button
-                    key={yearData.year}
-                    onClick={() => setSelectedYear(yearData.year)}
-                    className={`px-2 py-1 text-xs rounded transition-all duration-200 ${selectedYear === yearData.year
-                        ? 'bg-black/10 text-black border border-black/30'
-                        : 'bg-white/60 text-black/60 hover:text-black hover:bg-white/80 border border-black/20'
-                      }`}
-                  >
-                    {yearData.year}
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
 
           <div className="overflow-x-auto pl-1">
             <div className="inline-block min-w-full">
-              <div className="flex mb-2 relative" style={{ height: '15px', marginLeft: '22px' }}>
+              <div className="flex mb-2 relative" style={{ height: '15px' }}>
                 {monthPositions.map(({ month, position }, idx) => {
                   const nextPosition = idx < monthPositions.length - 1
                     ? monthPositions[idx + 1].position
-                    : weeksInYear;
+                    : FIXED_WEEKS;
                   const cellWidth = 13;
                   const width = (nextPosition - position) * cellWidth;
                   return (
@@ -281,18 +239,6 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
               </div>
 
               <div className="flex gap-[3px]">
-                <div className="flex flex-col gap-[3px] mr-2">
-                  {dayLabels.map((day, idx) => (
-                    <div
-                      key={`day-${idx}`}
-                      className="text-black/50 text-[10px] flex items-center justify-end pr-1"
-                      style={{ height: '10px', width: '24px', minWidth: '24px' }}
-                    >
-                      {idx % 2 === 0 ? day : ''}
-                    </div>
-                  ))}
-                </div>
-
                 <div className="flex-1">
                   {calendar.map((week, dayIndex) => (
                     <div key={`calendar-week-${dayIndex}`} className="flex gap-[3px] mb-[3px]">
@@ -322,28 +268,57 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 flex items-center justify-end gap-1.5 sm:hidden">
+            <span className="text-black/60 text-[10px]">View:</span>
+            <div className="flex gap-0.5">
+              <button
+                onClick={() => setSelectedYear(null)}
+                className={`px-1.5 py-0.5 text-[10px] rounded transition-all duration-200 ${selectedYear === null
+                    ? 'bg-black/10 text-black border border-black/30'
+                    : 'bg-white/60 text-black/60 hover:text-black hover:bg-white/80 border border-black/20'
+                  }`}
+              >
+                12M
+              </button>
+              {years.map((yearData) => (
+                <button
+                  key={yearData.year}
+                  onClick={() => setSelectedYear(yearData.year)}
+                  className={`px-1.5 py-0.5 text-[10px] rounded transition-all duration-200 ${selectedYear === yearData.year
+                      ? 'bg-black/10 text-black border border-black/30'
+                      : 'bg-white/60 text-black/60 hover:text-black hover:bg-white/80 border border-black/20'
+                    }`}
+                >
+                  {yearData.year}
+                </button>
+              ))}
             </div>
           </div>
         </div>
-        </div>
       </div>
 
-      {hoveredDate && tooltipPosition && (
-        <div
-          className="fixed z-50 bg-white/95 border border-black/20 rounded px-2 py-1 text-black text-xs pointer-events-none whitespace-nowrap shadow-lg"
-          style={{
-            left: `${tooltipPosition.x}px`,
-            top: `${tooltipPosition.y}px`,
-            transform: 'translate(-50%, -100%)',
-          }}
-        >
-          {(() => {
-            const contrib = contributionMap.get(hoveredDate);
-            const count = contrib?.count || 0;
-            return `${count} ${count === 1 ? 'contribution' : 'contributions'} on ${formatDate(hoveredDate)}`;
-          })()}
-        </div>
-      )}
+      {hoveredDate && tooltipPosition
+        ? (
+            <div
+              className="fixed z-50 bg-white/95 border border-black/20 rounded px-2 py-1 text-black text-xs pointer-events-none whitespace-nowrap shadow-lg"
+              style={{
+                left: `${tooltipPosition.x}px`,
+                top: `${tooltipPosition.y}px`,
+                transform: 'translate(-50%, -100%)',
+              }}
+            >
+              {(() => {
+                const contrib = contributionMap.get(hoveredDate);
+                const count = contrib?.count ?? 0;
+                return `${count} ${count === 1 ? 'contribution' : 'contributions'} on ${formatDate(hoveredDate ?? '')}`;
+              })()}
+            </div>
+          )
+        : null}
     </div>
   );
 }
