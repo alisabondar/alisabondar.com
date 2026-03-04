@@ -219,7 +219,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
 
           <div className="overflow-x-auto pl-1">
             <div className="inline-block min-w-full">
-              <div className="flex mb-2 relative" style={{ height: '15px' }}>
+              <div className="flex mb-2 relative" style={{ height: '15px', marginLeft: '22px' }}>
                 {monthPositions.map(({ month, position }, idx) => {
                   const nextPosition = idx < monthPositions.length - 1
                     ? monthPositions[idx + 1].position

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getTimelineMultiplier } from '../utils/responsive';
 
 interface Section {
@@ -15,13 +15,20 @@ const sections: Section[] = [
   { id: 'impact', label: 'Impact' },
 ];
 
+/** Match Journey header position: top 50px, horizontally centered */
+const HEADER_OFFSET_PX = 50;
+const SECTION_TOP_PADDING_PX = 80; /* pt-20 / paddingTop for Projects & Impact */
+const SMOOTH_SCROLL_DURATION_MS = 1000;
+
 export default function TableOfContents() {
   const [activeSection, setActiveSection] = useState<string>('about');
+  const isScrollingRef = useRef(false);
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
 
     const updateActiveSection = () => {
+      if (isScrollingRef.current) return;
       const scrollPosition = window.scrollY + window.innerHeight * 0.3;
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -76,13 +83,15 @@ export default function TableOfContents() {
   }, []);
 
   const handleClick = (sectionId: string) => {
+    setActiveSection(sectionId);
+    isScrollingRef.current = true;
+
     if (sectionId === 'journey') {
       const windowHeight = window.innerHeight;
       const isMobile = window.innerWidth < 640;
       const timelineMultiplier = getTimelineMultiplier(isMobile);
       const SCROLL_DESENSITIZE = 1.5;
       const effectiveScrollRange = windowHeight * timelineMultiplier * SCROLL_DESENSITIZE;
-
       const targetScrollProgress = 0.25;
       const targetTop = (targetScrollProgress / 1.2) * effectiveScrollRange;
 
@@ -90,20 +99,24 @@ export default function TableOfContents() {
         top: targetTop,
         behavior: 'smooth',
       });
-      return;
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const elementPosition = element.getBoundingClientRect().top;
+        const sectionTopInDoc = elementPosition + window.pageYOffset;
+        /* Scroll so header (section top + padding) lands at HEADER_OFFSET_PX from viewport top */
+        const offsetPosition = sectionTopInDoc + SECTION_TOP_PADDING_PX - HEADER_OFFSET_PX;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+      }
     }
 
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const offset = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
-    }
+    setTimeout(() => {
+      isScrollingRef.current = false;
+    }, SMOOTH_SCROLL_DURATION_MS);
   };
 
   return (
