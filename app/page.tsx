@@ -109,7 +109,7 @@ export default function Home() {
       <AnimatedBackground />
       <Journey scrollProgress={scrollProgress} />
 
-      <section id="about" className="relative flex min-h-screen items-center justify-center sm:justify-center font-sans z-10 px-4">
+      <section id="about" className="relative flex min-h-screen min-h-dvh items-center justify-center sm:justify-center font-sans z-10 px-4">
         <div className="relative z-10 text-center sm:text-center">
           <div
             className="transition-opacity duration-500 ease-out"

@@ -194,6 +194,8 @@ export default function Journey({ scrollProgress }: JourneyProps) {
 
   const enterProgress = Math.max(0, Math.min(1, (scrollProgress - JOURNEY_SHOW_START) / ENTRANCE_DURATION));
   const entranceTranslateY = (1 - enterProgress) * 80;
+  const effectiveEnterProgress = isMobile ? (heroScrolledPast ? 1 : 0) : enterProgress;
+  const effectiveEntranceTranslateY = isMobile ? (heroScrolledPast ? 0 : 80) : entranceTranslateY;
 
   const headerFrozenDuration = isMobile ? HEADER_FROZEN_DURATION_MOBILE : HEADER_FROZEN_DURATION;
   const parallaxStart = ENTRANCE_DURATION + headerFrozenDuration;
@@ -205,7 +207,7 @@ export default function Journey({ scrollProgress }: JourneyProps) {
     : 0;
 
   const rawFocus = isIntroPhase
-    ? enterProgress < 1
+    ? effectiveEnterProgress < 1
       ? 0
       : frozenPhaseProgress * 4
     : INTRO_EVENTS + parallaxProgress * parallaxEventCount * FOCUS_MULTIPLIER;
@@ -253,9 +255,9 @@ export default function Journey({ scrollProgress }: JourneyProps) {
         <div
           className="absolute inset-0 transition-opacity duration-500 ease-out"
           style={{
-            transform: `translateY(${entranceTranslateY}vh)`,
-            opacity: Math.min(1, enterProgress * 2),
-            transition: 'transform 0.2s ease-out',
+            transform: `translateY(${effectiveEntranceTranslateY}vh)`,
+            opacity: Math.min(1, effectiveEnterProgress * 2),
+            transition: isMobile ? 'none' : 'transform 0.2s ease-out',
           }}
         >
           <h2
