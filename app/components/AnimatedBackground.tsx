@@ -3,11 +3,9 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import { icons } from '../constants/icons';
-import { useIsMobile } from '../utils/responsive';
 import styles from './AnimatedBackground.module.css';
 
 export default function AnimatedBackground() {
-  const isMobile = useIsMobile();
   const [iconsReady, setIconsReady] = useState(false);
   const loadedCount = useRef(0);
 
@@ -27,9 +25,8 @@ export default function AnimatedBackground() {
     <div className={styles.container}>
       <div className={styles.svgBackground} aria-hidden />
 
-      {!isMobile && (
-        <div
-          className={styles.iconsWrap}
+      <div
+        className={styles.iconsWrap}
           aria-hidden
           style={{ visibility: iconsReady ? 'visible' : 'hidden' }}
         >
@@ -63,7 +60,6 @@ export default function AnimatedBackground() {
             );
           })}
         </div>
-      )}
     </div>
   );
 }

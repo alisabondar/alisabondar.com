@@ -27,6 +27,7 @@ html {
 @media (hover: none) and (pointer: coarse) {
   html {
     scroll-behavior: auto;
+    touch-action: pan-y;
   }
 }
 

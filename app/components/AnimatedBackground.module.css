@@ -96,12 +96,22 @@
   inset: 0;
   z-index: 0;
   overflow: hidden;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .iconsWrap {
   position: absolute;
   inset: 0;
   pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .iconsWrap {
+    display: none !important;
+    visibility: hidden !important;
+  }
 }
 
 @keyframes iconFadeIn {
