@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Story_Script, Permanent_Marker } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import TableOfContents from "./components/TableOfContents";
 
@@ -35,6 +36,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         {children}
         <TableOfContents />
+        <Analytics />
       </body>
     </html>
   );
