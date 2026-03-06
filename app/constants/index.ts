@@ -39,6 +39,12 @@ export const EVENT_PLACEMENTS: { left: number; rotate: number }[] = [
 
 export const JOURNEY_HIDE_START = 0.98;
 export const JOURNEY_HIDE_DURATION = 0.06;
+
+export const JOURNEY_SCROLL_UP_START_MOBILE = 0.85;
+export const JOURNEY_FADE_START_MOBILE = 0.9;
+export const JOURNEY_FADE_DURATION_MOBILE = 0.12;
+export const PROJECTS_FADE_IN_START_MOBILE = 0.85;
+
 export const ENTRANCE_DURATION = CROSSFADE_END - JOURNEY_SHOW_START;
 export const HEADER_FROZEN_DURATION = 0.35;
 export const HEADER_FROZEN_DURATION_MOBILE = 0.48;
