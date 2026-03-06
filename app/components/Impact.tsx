@@ -1,14 +1,31 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import GitHubActivityGraph from './GitHubActivityGraph';
+import { GitHubActivityGraph } from './GitHubActivityGraph';
 import { useTheme } from '../context/ThemeContext';
 import { useIsMobile, calculateFadeOpacity, useViewportFade } from '../utils/responsive';
 import { contributions2023, totalContributions2023 } from '../data/githubContributions2023';
 import { contributions2024, totalContributions2024 } from '../data/githubContributions2024';
 import { contributions2025, totalContributions2025 } from '../data/githubContributions2025';
 import { contributions2026, totalContributions2026 } from '../data/githubContributions2026';
-import type { ImpactProps, ContactLink, Job } from '../types';
+import styles from './Impact.module.css';
+
+export interface ContactLink {
+  label: string;
+  url: string;
+  icon?: string;
+}
+
+export interface Job {
+  company: string;
+  role: string;
+  period: string;
+  achievements: string[];
+}
+
+export interface ImpactProps {
+  scrollProgress: number;
+}
 
 const contactLinks: ContactLink[] = [
   {
@@ -72,7 +89,7 @@ const jobs: Job[] = [
   },
 ];
 
-export default function Impact({ scrollProgress }: ImpactProps) {
+export const Impact = ({ scrollProgress }: ImpactProps) => {
   const { theme } = useTheme();
   const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
@@ -298,22 +315,10 @@ export default function Impact({ scrollProgress }: ImpactProps) {
 
   return (
     <>
-      <style>{`
-        @keyframes bulletSpin {
-          from {
-            transform: rotate(0deg) scale(0.8);
-            opacity: 0;
-          }
-          to {
-            transform: rotate(360deg) scale(1);
-            opacity: 1;
-          }
-        }
-      `}</style>
       <section
         ref={sectionRef}
         id="impact"
-        className="relative min-h-screen z-30 flex flex-col items-center px-4 sm:px-6 md:px-12 transition-opacity duration-1000 ease-in-out"
+        className={styles.section}
         style={{
           opacity,
           visibility,
@@ -321,19 +326,19 @@ export default function Impact({ scrollProgress }: ImpactProps) {
           paddingBottom: 0,
         }}
       >
-      <h2 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black dark:text-zinc-200 mb-12 sm:mb-16">
+      <h2 className={styles.heading}>
         Impact
       </h2>
 
-      <div className="w-full max-w-4xl relative">
+      <div className={styles.container}>
         <div
-          className="w-full relative rounded-xl overflow-hidden transition-opacity duration-700 ease-out"
+          className={styles.jobsWrap}
           style={{
             opacity: jobsContainerOpacity,
           }}
         >
           <div
-            className="absolute inset-0 backdrop-blur-md transition-all duration-500 pointer-events-none"
+            className={styles.backdrop}
             style={{
               background: theme === 'dark'
                 ? `linear-gradient(to bottom,
@@ -351,7 +356,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
             }}
           />
 
-          <div className="relative z-10">
+          <div className={styles.graphWrap}>
             <GitHubActivityGraph
               years={[
                 {
@@ -380,9 +385,9 @@ export default function Impact({ scrollProgress }: ImpactProps) {
 
           <div
             ref={careerJourneyRef}
-            className="relative z-10"
+            className={styles.careerWrap}
           >
-            <div className="space-y-8 sm:space-y-10 md:space-y-12 px-4 sm:px-6 md:px-8 pb-16 sm:pb-20 md:pb-24 pt-6 sm:pt-8">
+            <div className={styles.jobsInner}>
               {jobs.map((job, jobIndex) => {
                 let achievementIndex = 0;
                 for (let i = 0; i < jobIndex; i++) {
@@ -395,7 +400,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
                   <div
                     key={`job-${jobIndex}-${job.company}`}
                     ref={isLastJob ? (el) => { lastJobRef.current = el; } : undefined}
-                    className="transition-opacity duration-700 ease-out"
+                    className={styles.jobBlock}
                     style={{
                       opacity: isLastJob ? lastJobOpacity : 1,
                     }}
@@ -404,25 +409,25 @@ export default function Impact({ scrollProgress }: ImpactProps) {
                       ref={(el) => {
                         headerRefs.current[jobIndex] = el;
                       }}
-                      className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-2 sm:gap-4 mb-4 sm:mb-6 transition-opacity duration-700 ease-out"
+                      className={styles.jobHeader}
                       style={{
                         opacity: headerOpacities[jobIndex] || 0,
                       }}
                     >
-                      <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-black via-black/90 to-black/70 dark:from-zinc-200 dark:via-zinc-200/90 dark:to-zinc-300/70 bg-clip-text text-transparent">
+                      <h3 className={styles.companyName}>
                         {job.company}
                       </h3>
-                      <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                        <span className="text-base sm:text-lg md:text-xl text-black/90 dark:text-zinc-200 font-semibold px-3 py-1 rounded-full bg-black/5 dark:bg-zinc-700/50 backdrop-blur-sm border border-black/20 dark:border-zinc-600/50">
+                      <div className={styles.meta}>
+                        <span className={styles.role}>
                           {job.role}
                         </span>
-                        <span className="text-sm sm:text-base md:text-lg text-black/60 dark:text-zinc-400 font-light italic">
+                        <span className={styles.period}>
                           {job.period}
                         </span>
                       </div>
                     </div>
 
-                    <ul className="space-y-4 sm:space-y-5 md:space-y-6">
+                    <ul className={styles.achievementList}>
                       {job.achievements.map((text, index) => {
                         const currentAchievementIndex = achievementIndex + index;
                         return (
@@ -431,28 +436,23 @@ export default function Impact({ scrollProgress }: ImpactProps) {
                             ref={(el) => {
                               achievementRefs.current[currentAchievementIndex] = el;
                             }}
-                            className="relative flex items-center gap-4 sm:gap-5 transition-opacity duration-700 ease-out"
+                            className={styles.achievementItem}
                             style={{
                               opacity: achievementOpacities[currentAchievementIndex] || 0,
                             }}
                           >
-                            <div className="shrink-0 flex items-center justify-center">
+                            <div className={styles.bulletWrap}>
                               <svg
-                                className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-black dark:text-zinc-200"
+                                className={achievementOpacities[currentAchievementIndex] > 0 ? `${styles.bulletIcon} ${styles.bulletIconAnimated}` : styles.bulletIcon}
                                 fill="currentColor"
                                 viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg"
-                                style={{
-                                  animation: achievementOpacities[currentAchievementIndex] > 0
-                                    ? 'bulletSpin 1.2s ease-out'
-                                    : 'none',
-                                }}
                               >
                                 <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" />
                                 <circle cx="12" cy="10" r="1.5" fill="rgba(255, 255, 255, 1)" />
                               </svg>
                             </div>
-                            <p className="text-base sm:text-lg md:text-xl font-normal text-black/85 dark:text-zinc-300 leading-relaxed tracking-[-0.02rem]">
+                            <p className={styles.achievementText}>
                               {text}
                             </p>
                           </li>
@@ -469,18 +469,18 @@ export default function Impact({ scrollProgress }: ImpactProps) {
 
       <div
         ref={sentimentRef}
-        className="w-full h-screen flex flex-col items-center justify-center px-4 transition-opacity duration-700 ease-out"
+        className={styles.sentimentBlock}
         style={{
           opacity: sentimentOpacity,
           visibility: sentimentOpacity > 0 ? 'visible' : 'hidden',
         }}
       >
-        <div className="text-center">
-          <div className="inline-block">
-            <h2 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black dark:text-zinc-200 mb-8 sm:mb-10 md:mb-12">
+        <div className={styles.sentimentInner}>
+          <div className={styles.signatureBlock}>
+            <h2 className={styles.signatureHeading}>
               Your future favorite coworker,
             </h2>
-            <div className="pt-8 sm:pt-10 md:pt-12 flex justify-end text-black dark:text-zinc-200">
+            <div className={styles.signatureWrap}>
               <svg
                 ref={signatureRef}
                 width="197"
@@ -488,7 +488,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
                 viewBox="0 0 197 86"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
-                className="stroke-current"
+                className={styles.signatureSvg}
               >
           <g clipPath="url(#clip0_1_2)">
             <path d="M2.98058 45.3084C3.05598 45.0445 3.453 44.4561 4.33502 43.6386C4.8033 43.2046 5.5375 43.0097 10.6659 42.7606C15.7943 42.5116 25.3519 42.2854 30.6337 42.2159C35.9155 42.1465 36.6318 42.2408 37.6606 42.4119C38.6895 42.5829 40.009 42.828 41.3686 43.0805" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
@@ -502,18 +502,18 @@ export default function Impact({ scrollProgress }: ImpactProps) {
             </clipPath>
           </defs>
         </svg>
-        </div>
-        </div>
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center justify-center gap-4 sm:gap-5 md:gap-6 mt-10 sm:mt-12 md:mt-16">
+        <div className={styles.contactLinks}>
           {contactLinks.map((link) => {
             const IconComponent = () => {
               switch (link.icon) {
                 case 'email':
                   return (
                     <svg
-                      className="w-6 h-6 sm:w-7 sm:h-7 md:w-7 md:h-7"
+                      className={styles.contactLinkIcon}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -530,7 +530,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
                 case 'linkedin':
                   return (
                     <svg
-                      className="w-6 h-6 sm:w-7 sm:h-7 md:w-7 md:h-7"
+                      className={styles.contactLinkIcon}
                       fill="currentColor"
                       viewBox="0 0 24 24"
                       xmlns="http://www.w3.org/2000/svg"
@@ -541,7 +541,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
                 case 'github':
                   return (
                     <svg
-                      className="w-6 h-6 sm:w-7 sm:h-7 md:w-7 md:h-7"
+                      className={styles.contactLinkIcon}
                       fill="currentColor"
                       viewBox="0 0 24 24"
                       xmlns="http://www.w3.org/2000/svg"
@@ -556,7 +556,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
                 case 'resume':
                   return (
                     <svg
-                      className="w-6 h-6 sm:w-7 sm:h-7 md:w-7 md:h-7"
+                      className={styles.contactLinkIcon}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -581,7 +581,7 @@ export default function Impact({ scrollProgress }: ImpactProps) {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 md:w-14 md:h-14 bg-white/60 dark:bg-zinc-700/40 backdrop-blur-md border border-black/20 dark:border-zinc-500/40 rounded-xl transition-all duration-500 hover:border-black/40 dark:hover:border-zinc-400/50 hover:shadow-2xl hover:shadow-black/10 dark:hover:shadow-zinc-500/10 hover:scale-110 text-black dark:text-zinc-200 hover:text-black/90 dark:hover:text-zinc-100"
+                className={styles.contactLink}
                 aria-label={link.label}
               >
                 <IconComponent />
@@ -593,4 +593,4 @@ export default function Impact({ scrollProgress }: ImpactProps) {
     </section>
     </>
   );
-}
+};

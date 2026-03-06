@@ -10,7 +10,7 @@ function getIconDelay(delay: number, isDesktop: boolean) {
   return isDesktop ? Math.min(delay * 0.2, 0.5) : delay;
 }
 
-export default function AnimatedBackground() {
+export const AnimatedBackground = () => {
   const { theme } = useTheme();
   const [iconsReady, setIconsReady] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
@@ -76,5 +76,5 @@ export default function AnimatedBackground() {
         </div>
     </div>
   );
-}
+};
 

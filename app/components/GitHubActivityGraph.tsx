@@ -1,16 +1,30 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import type { ContributionData, GitHubActivityGraphProps } from '../types';
 import {
   STATIC_MONTH_WEEK_INDEX,
   FIXED_WEEKS,
   MONTH_LABELS,
-  GITHUB_LEVEL_COLORS,
-  GITHUB_LEVEL_HOVER_COLORS,
 } from '../constants';
+import styles from './GitHubActivityGraph.module.css';
 
-export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps) {
+export interface ContributionData {
+  date: string;
+  level: number;
+  count: number;
+}
+
+export interface YearData {
+  year: number;
+  contributions: ContributionData[];
+  totalContributions: number;
+}
+
+export interface GitHubActivityGraphProps {
+  years: YearData[];
+}
+
+export const GitHubActivityGraph = ({ years }: GitHubActivityGraphProps) => {
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number } | null>(null);
@@ -127,27 +141,18 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
   };
 
   return (
-    <div className="relative w-full">
-      <div className="absolute right-4 sm:right-6 md:right-8 bottom-0 pb-8 z-10 pointer-events-auto hidden sm:block">
-        <ul className="flex flex-col items-end gap-1 sm:gap-1.5">
+    <div className={styles.root}>
+      <div className={styles.yearSelector}>
+        <ul className={styles.yearList}>
           <li>
             <button
               onClick={() => setSelectedYear(null)}
-              className={`
-                relative px-1.5 sm:px-2 py-1 sm:py-1 text-[10px] sm:text-xs font-medium transition-all duration-300 text-right
-                ${selectedYear === null
-                  ? 'text-black dark:text-zinc-200'
-                  : 'text-black/60 hover:text-black/80 dark:text-zinc-400 dark:hover:text-zinc-200'
-                }
-              `}
+              className={`${styles.yearButton} ${selectedYear === null ? styles.yearButtonActive : styles.yearButtonInactive}`}
               aria-label="View latest 12 months contributions"
             >
-              <span className="relative z-10">12M</span>
+              <span className={styles.yearLabel}>12M</span>
               {selectedYear === null && (
-                <span
-                  className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-3 sm:h-4 bg-black dark:bg-zinc-200 transition-all duration-300"
-                  aria-hidden="true"
-                />
+                <span className={styles.yearIndicator} aria-hidden="true" />
               )}
             </button>
           </li>
@@ -157,21 +162,12 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
               <li key={yearData.year}>
                 <button
                   onClick={() => setSelectedYear(yearData.year)}
-                  className={`
-                    relative px-1.5 sm:px-2 py-1 sm:py-1 text-[10px] sm:text-xs font-medium transition-all duration-300 text-right
-                    ${isActive
-                    ? 'text-black dark:text-zinc-200'
-                    : 'text-black/60 hover:text-black/80 dark:text-zinc-400 dark:hover:text-zinc-200'
-                    }
-                  `}
+                  className={`${styles.yearButton} ${isActive ? styles.yearButtonActive : styles.yearButtonInactive}`}
                   aria-label={`View ${yearData.year} contributions`}
                 >
-                  <span className="relative z-10">{yearData.year}</span>
+                  <span className={styles.yearLabel}>{yearData.year}</span>
                   {isActive && (
-                    <span
-                      className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-3 sm:h-4 bg-black dark:bg-zinc-200 transition-all duration-300"
-                      aria-hidden="true"
-                    />
+                    <span className={styles.yearIndicator} aria-hidden="true" />
                   )}
                 </button>
               </li>
@@ -180,17 +176,17 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
         </ul>
       </div>
 
-      <div className="w-full px-8 py-4 sm:py-6 md:py-8 pr-[32px] flex justify-center">
-        <div className="w-full max-w-3xl">
-          <div className="mb-4 flex items-center justify-between flex-wrap gap-4">
-            <h3 className="text-black dark:text-white text-lg sm:text-xl font-semibold mb-1">
+      <div className={styles.content}>
+        <div className={styles.contentInner}>
+          <div className={styles.titleRow}>
+            <h3 className={styles.title}>
               {totalContributions} contributions {year === null ? 'in the last 12 months' : `in ${year}`}
             </h3>
           </div>
 
-          <div className="overflow-x-auto pl-1">
-            <div className="inline-block min-w-full">
-              <div className="flex mb-2 relative" style={{ height: '15px', marginLeft: '22px' }}>
+          <div className={styles.calendarScroll}>
+            <div className={styles.calendarInner}>
+              <div className={styles.monthRow}>
                 {monthPositions.map(({ month, position }, idx) => {
                   const nextPosition = idx < monthPositions.length - 1
                     ? monthPositions[idx + 1].position
@@ -200,7 +196,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                   return (
                     <div
                       key={`month-${idx}-${position}`}
-                      className="text-black/70 dark:text-zinc-400 text-xs absolute top-0"
+                      className={styles.monthLabel}
                       style={{ left: `${position * cellWidth}px`, width: `${width}px` }}
                     >
                       {MONTH_LABELS[month]}
@@ -209,16 +205,16 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                 })}
               </div>
 
-              <div className="flex gap-[3px]">
-                <div className="flex-1">
+              <div className={styles.weeksRow}>
+                <div className={styles.weekColumn}>
                   {calendar.map((week, dayIndex) => (
-                    <div key={`calendar-week-${dayIndex}`} className="flex gap-[3px] mb-[3px]">
+                    <div key={`calendar-week-${dayIndex}`} className={styles.weekRow}>
                       {week.map((contrib, weekIndex) => {
                         if (!contrib) {
                           return (
                             <div
                               key={`${dayIndex}-${weekIndex}`}
-                              className="w-[10px] h-[10px] rounded-sm border border-black/40 dark:border-zinc-600"
+                              className={styles.cellEmpty}
                             />
                           );
                         }
@@ -229,8 +225,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                         return (
                           <div
                             key={contrib.date}
-                            className={`w-[10px] h-[10px] rounded-sm border border-black/40 dark:border-zinc-600 transition-all duration-200 cursor-pointer relative ${isHovered ? GITHUB_LEVEL_HOVER_COLORS[level] : GITHUB_LEVEL_COLORS[level]
-                              } ${isHovered ? 'ring-2 ring-black dark:ring-zinc-400 scale-110' : ''}`}
+                            className={`${styles.cell} ${styles[`cellLevel${level}`]} ${isHovered ? styles[`cellLevel${level}Hover`] : ''} ${isHovered ? styles.cellHovered : ''}`}
                             onMouseEnter={(e) => handleCellMouseEnter(e, contrib.date)}
                             onMouseLeave={handleCellMouseLeave}
                           />
@@ -243,15 +238,12 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
             </div>
           </div>
 
-          <div className="mt-4 flex items-center justify-end gap-1.5 sm:hidden">
-            <span className="text-black/60 text-[10px]">View:</span>
-            <div className="flex gap-0.5">
+          <div className={styles.mobileYearRow}>
+            <span className={styles.mobileYearLabel}>View:</span>
+            <div className={styles.mobileYearButtons}>
               <button
                 onClick={() => setSelectedYear(null)}
-                className={`px-1.5 py-0.5 text-[10px] rounded transition-all duration-200 ${selectedYear === null
-                    ? 'bg-black/10 text-black border border-black/30'
-                    : 'bg-white/60 text-black/60 hover:text-black hover:bg-white/80 border border-black/20'
-                  }`}
+                className={`${styles.mobileYearButton} ${selectedYear === null ? styles.mobileYearButtonActive : ''}`}
               >
                 12M
               </button>
@@ -259,10 +251,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                 <button
                   key={yearData.year}
                   onClick={() => setSelectedYear(yearData.year)}
-                  className={`px-1.5 py-0.5 text-[10px] rounded transition-all duration-200 ${selectedYear === yearData.year
-                      ? 'bg-black/10 text-black border border-black/30'
-                      : 'bg-white/60 text-black/60 hover:text-black hover:bg-white/80 border border-black/20'
-                    }`}
+                  className={`${styles.mobileYearButton} ${selectedYear === yearData.year ? styles.mobileYearButtonActive : ''}`}
                 >
                   {yearData.year}
                 </button>
@@ -275,7 +264,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
       {hoveredDate && tooltipPosition
         ? (
             <div
-              className="fixed z-50 bg-white/95 dark:bg-zinc-900/95 border border-black/20 dark:border-zinc-600 rounded px-2 py-1 text-black dark:text-zinc-200 text-xs pointer-events-none whitespace-nowrap shadow-lg"
+              className={styles.tooltip}
               style={{
                 left: `${tooltipPosition.x}px`,
                 top: `${tooltipPosition.y}px`,
@@ -292,4 +281,4 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
         : null}
     </div>
   );
-}
+};

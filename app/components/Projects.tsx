@@ -2,9 +2,19 @@
 
 import Link from 'next/link';
 import { calculateFadeOpacity } from '../utils/responsive';
-import Polaroid from './Polaroid';
+import { Polaroid } from './Polaroid';
 import styles from './Projects.module.css';
-import type { ProjectsProps, Project } from '../types';
+
+export interface Project {
+  title: string;
+  githubUrl: string;
+  screenshot?: string;
+  tooltip?: string;
+}
+
+export interface ProjectsProps {
+  scrollProgress: number;
+}
 
 const projects: Project[] = [
   {
@@ -25,7 +35,7 @@ const projects: Project[] = [
   },
 ];
 
-export default function Projects({ scrollProgress }: ProjectsProps) {
+export const Projects = ({ scrollProgress }: ProjectsProps) => {
   const sectionFadeInStart = 0.92;
   const sectionFadeInDuration = 0.1;
   const { opacity: sectionOpacity, visibility } = calculateFadeOpacity(
@@ -82,4 +92,4 @@ export default function Projects({ scrollProgress }: ProjectsProps) {
       </div>
     </section>
   );
-}
+};

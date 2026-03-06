@@ -3,9 +3,20 @@
 import Image from 'next/image';
 import { useTilt } from '../utils/useTilt';
 import styles from './Polaroid.module.css';
-import type { PolaroidProps } from '../types';
 
-export default function Polaroid({
+export type PolaroidVariant = 'portrait' | 'landscape' | 'project';
+
+export interface PolaroidProps {
+  variant: PolaroidVariant;
+  title: string;
+  image?: string;
+  description?: string;
+  year?: string;
+  enableMouseTilt?: boolean;
+  className?: string;
+}
+
+export const Polaroid = ({
   variant,
   title,
   image,
@@ -13,7 +24,7 @@ export default function Polaroid({
   year,
   enableMouseTilt = false,
   className = '',
-}: PolaroidProps) {
+}: PolaroidProps) => {
   const isLandscape = variant === 'landscape';
   const isProject = variant === 'project';
   const { ref: tiltRef, style: tiltStyle } = useTilt(enableMouseTilt);
@@ -83,4 +94,4 @@ export default function Polaroid({
       </div>
     </div>
   );
-}
+};

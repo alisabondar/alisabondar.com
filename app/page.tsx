@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useLayoutEffect, useState, useRef } from 'react';
-import AnimatedBackground from "./components/AnimatedBackground";
-import Journey from "./components/Journey";
-import Projects from "./components/Projects";
-import Impact from "./components/Impact";
+import { AnimatedBackground } from "./components/AnimatedBackground";
+import { Journey } from "./components/Journey";
+import { Projects } from "./components/Projects";
+import { Impact } from "./components/Impact";
 import { scrollToTop, getTimelineMultiplier, SCROLL_DESENSITIZE } from './utils/responsive';
 import { JOURNEY_SHOW_START, CROSSFADE_END, BREAKPOINTS } from './constants';
 

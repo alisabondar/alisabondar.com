@@ -2,9 +2,8 @@
 
 import { useIsMobile, PHASE_TIMING } from '../utils/responsive';
 import { useTilt } from '../utils/useTilt';
-import Polaroid from './Polaroid';
+import { Polaroid } from './Polaroid';
 import styles from './Journey.module.css';
-import type { TimelineItem, JourneyProps } from '../types';
 import {
   EVENT_HEIGHT_VH,
   INTRO_EVENTS,
@@ -19,6 +18,16 @@ import {
   HEADER_FROZEN_DURATION,
   HEADER_FROZEN_DURATION_MOBILE,
 } from '../constants';
+
+export interface TimelineItem {
+  title: string;
+  year?: string;
+  picture?: string;
+}
+
+export interface JourneyProps {
+  scrollProgress: number;
+}
 
 function getPlacement(index: number): { left: number; rotate: number } {
   return EVENT_PLACEMENTS[index % EVENT_PLACEMENTS.length] ?? EVENT_PLACEMENTS[0];
@@ -125,7 +134,7 @@ const timelineItems: TimelineItem[] = [
   }
 ];
 
-function StickyNote({ item, index, styles: s }: { item: TimelineItem; index: number; styles: Record<string, string> }) {
+const StickyNote = ({ item, index, styles: s }: { item: TimelineItem; index: number; styles: Record<string, string> }) => {
   const { ref: tiltRef, style: tiltStyle } = useTilt(true);
   return (
     <div ref={tiltRef} className={s.eventCardWrapper} style={tiltStyle}>
@@ -146,9 +155,9 @@ function StickyNote({ item, index, styles: s }: { item: TimelineItem; index: num
       </div>
     </div>
   );
-}
+};
 
-export default function Journey({ scrollProgress }: JourneyProps) {
+export const Journey = ({ scrollProgress }: JourneyProps) => {
   const isMobile = useIsMobile();
   const heroScrolledPast = scrollProgress >= JOURNEY_SHOW_START;
 
@@ -316,4 +325,4 @@ export default function Journey({ scrollProgress }: JourneyProps) {
       )}
     </div>
   );
-}
+};

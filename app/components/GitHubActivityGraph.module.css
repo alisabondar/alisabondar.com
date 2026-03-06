@@ -1,0 +1,391 @@
+.root {
+  position: relative;
+  width: 100%;
+}
+
+.yearSelector {
+  position: absolute;
+  right: 1rem;
+  bottom: 0;
+  padding-bottom: 2rem;
+  z-index: 10;
+  pointer-events: auto;
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .yearSelector {
+    display: block;
+    right: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .yearSelector {
+    right: 2rem;
+  }
+}
+
+.yearList {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+@media (min-width: 640px) {
+  .yearList {
+    gap: 0.375rem;
+  }
+}
+
+.yearButton {
+  position: relative;
+  padding: 0.25rem 0.375rem;
+  font-size: 10px;
+  font-weight: 500;
+  transition: all 0.3s;
+  text-align: right;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+@media (min-width: 640px) {
+  .yearButton {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+}
+
+.yearButtonActive {
+  color: rgb(0 0 0);
+}
+
+:global(.dark) .yearButtonActive {
+  color: rgb(228 228 231);
+}
+
+.yearButtonInactive {
+  color: rgb(0 0 0 / 0.6);
+}
+
+.yearButtonInactive:hover {
+  color: rgb(0 0 0 / 0.8);
+}
+
+:global(.dark) .yearButtonInactive {
+  color: rgb(161 161 170);
+}
+
+:global(.dark) .yearButtonInactive:hover {
+  color: rgb(228 228 231);
+}
+
+.yearLabel {
+  position: relative;
+  z-index: 10;
+}
+
+.yearIndicator {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.125rem;
+  height: 0.75rem;
+  background: rgb(0 0 0);
+  transition: all 0.3s;
+}
+
+:global(.dark) .yearIndicator {
+  background: rgb(228 228 231);
+}
+
+@media (min-width: 640px) {
+  .yearIndicator {
+    height: 1rem;
+  }
+}
+
+.content {
+  width: 100%;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .content {
+    padding: 1.5rem 2rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: 2rem 2rem;
+  }
+}
+
+.contentInner {
+  width: 100%;
+  max-width: 48rem;
+}
+
+.title {
+  color: rgb(0 0 0);
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+:global(.dark) .title {
+  color: rgb(255 255 255);
+}
+
+@media (min-width: 640px) {
+  .title {
+    font-size: 1.25rem;
+  }
+}
+
+.titleRow {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.monthRow {
+  display: flex;
+  margin-bottom: 0.5rem;
+  position: relative;
+  height: 15px;
+  margin-left: 22px;
+}
+
+.monthLabel {
+  color: rgb(0 0 0 / 0.7);
+  font-size: 0.75rem;
+  position: absolute;
+  top: 0;
+}
+
+:global(.dark) .monthLabel {
+  color: rgb(161 161 170);
+}
+
+.calendarScroll {
+  overflow-x: auto;
+  padding-left: 0.25rem;
+}
+
+.calendarInner {
+  display: inline-block;
+  min-width: 100%;
+}
+
+.weeksRow {
+  display: flex;
+  gap: 3px;
+}
+
+.weekColumn {
+  flex: 1;
+}
+
+.weekRow {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 3px;
+}
+
+.cell {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  border: 1px solid rgb(0 0 0 / 0.4);
+  transition: all 0.2s;
+  cursor: pointer;
+  position: relative;
+}
+
+:global(.dark) .cell {
+  border-color: rgb(82 82 91);
+}
+
+.cellEmpty {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  border: 1px solid rgb(0 0 0 / 0.4);
+}
+
+:global(.dark) .cellEmpty {
+  border-color: rgb(82 82 91);
+}
+
+.cellHovered {
+  outline: 2px solid rgb(0 0 0);
+  outline-offset: 0;
+  transform: scale(1.1);
+}
+
+:global(.dark) .cellHovered {
+  outline-color: rgb(161 161 170);
+}
+
+/* Level 0 */
+.cellLevel0 {
+  background: rgb(228 228 231 / 0.8);
+}
+
+:global(.dark) .cellLevel0 {
+  background: rgb(63 63 70 / 0.8);
+}
+
+.cellLevel0Hover {
+  background: rgb(212 212 216);
+}
+
+:global(.dark) .cellLevel0Hover {
+  background: rgb(82 82 91);
+}
+
+/* Level 1 */
+.cellLevel1 {
+  background: rgb(187 247 208 / 0.8);
+}
+
+:global(.dark) .cellLevel1 {
+  background: rgb(22 101 52 / 0.6);
+}
+
+.cellLevel1Hover {
+  background: rgb(134 239 172);
+}
+
+:global(.dark) .cellLevel1Hover {
+  background: rgb(22 163 74);
+}
+
+/* Level 2 */
+.cellLevel2 {
+  background: rgb(134 239 172 / 0.9);
+}
+
+:global(.dark) .cellLevel2 {
+  background: rgb(22 163 74 / 0.7);
+}
+
+.cellLevel2Hover {
+  background: rgb(74 222 128);
+}
+
+:global(.dark) .cellLevel2Hover {
+  background: rgb(34 197 94);
+}
+
+/* Level 3 */
+.cellLevel3 {
+  background: rgb(74 222 128);
+}
+
+:global(.dark) .cellLevel3 {
+  background: rgb(34 197 94 / 0.8);
+}
+
+.cellLevel3Hover {
+  background: rgb(34 197 94);
+}
+
+:global(.dark) .cellLevel3Hover {
+  background: rgb(22 163 74);
+}
+
+/* Level 4 */
+.cellLevel4 {
+  background: rgb(34 197 94);
+}
+
+:global(.dark) .cellLevel4 {
+  background: rgb(22 163 74);
+}
+
+.cellLevel4Hover {
+  background: rgb(22 163 74);
+}
+
+:global(.dark) .cellLevel4Hover {
+  background: rgb(34 197 94);
+}
+
+.mobileYearRow {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.375rem;
+}
+
+@media (min-width: 640px) {
+  .mobileYearRow {
+    display: none;
+  }
+}
+
+.mobileYearLabel {
+  color: rgb(0 0 0 / 0.6);
+  font-size: 10px;
+}
+
+.mobileYearButtons {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.mobileYearButton {
+  padding: 0.125rem 0.375rem;
+  font-size: 10px;
+  border-radius: 0.25rem;
+  transition: all 0.2s;
+  background: rgb(255 255 255 / 0.6);
+  color: rgb(0 0 0 / 0.6);
+  border: 1px solid rgb(0 0 0 / 0.2);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.mobileYearButton:hover {
+  color: rgb(0 0 0);
+  background: rgb(255 255 255 / 0.8);
+}
+
+.mobileYearButtonActive {
+  background: rgb(0 0 0 / 0.1);
+  color: rgb(0 0 0);
+  border-color: rgb(0 0 0 / 0.3);
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  background: rgb(255 255 255 / 0.95);
+  border: 1px solid rgb(0 0 0 / 0.2);
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  color: rgb(0 0 0);
+  font-size: 0.75rem;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+:global(.dark) .tooltip {
+  background: rgb(24 24 27 / 0.95);
+  border-color: rgb(82 82 91);
+  color: rgb(228 228 231);
+}

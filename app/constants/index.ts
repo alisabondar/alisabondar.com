@@ -52,21 +52,6 @@ export const SMOOTH_SCROLL_DURATION_MS = 1000;
 export const STATIC_MONTH_WEEK_INDEX = [0, 4, 8, 13, 17, 22, 26, 30, 35, 39, 43, 48];
 export const FIXED_WEEKS = 53;
 export const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-export const GITHUB_LEVEL_COLORS = [
-  'bg-zinc-200/80 dark:bg-zinc-700/80',
-  'bg-green-200/80 dark:bg-green-900/60',
-  'bg-green-300/90 dark:bg-green-800/70',
-  'bg-green-400 dark:bg-green-700/80',
-  'bg-green-500 dark:bg-green-600',
-];
-export const GITHUB_LEVEL_HOVER_COLORS = [
-  'bg-zinc-300 dark:bg-zinc-600',
-  'bg-green-300 dark:bg-green-800',
-  'bg-green-400 dark:bg-green-700',
-  'bg-green-500 dark:bg-green-600',
-  'bg-green-600 dark:bg-green-500',
-];
-
 /** Tilt effect (Polaroid / cards) */
 export const MOUSE_TILT_MULTIPLE = 40;
 export const MAX_TILT_DEG = 5;

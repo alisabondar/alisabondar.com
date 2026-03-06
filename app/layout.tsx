@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Story_Script, Permanent_Marker } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
-import TableOfContents from "./components/TableOfContents";
+import { TableOfContents } from "./components/TableOfContents";
 import { ThemeProvider } from "./context/ThemeContext";
-import ThemeToggle from "./components/ThemeToggle";
+import { ThemeToggle } from "./components/ThemeToggle";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

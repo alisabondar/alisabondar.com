@@ -2,7 +2,7 @@
 
 import { useTheme } from '../context/ThemeContext';
 
-export default function ThemeToggle() {
+export const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -41,4 +41,4 @@ export default function ThemeToggle() {
       )}
     </button>
   );
-}
+};

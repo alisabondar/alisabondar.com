@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { getTimelineMultiplier, SCROLL_DESENSITIZE } from '../utils/responsive';
 import { SECTIONS, HEADER_OFFSET_PX, SECTION_TOP_PADDING_PX, SMOOTH_SCROLL_DURATION_MS, BREAKPOINTS } from '../constants';
+import styles from './TableOfContents.module.css';
 
-export default function TableOfContents() {
+export const TableOfContents = () => {
   const [activeSection, setActiveSection] = useState<string>('about');
   const isScrollingRef = useRef(false);
 
@@ -103,28 +104,21 @@ export default function TableOfContents() {
   };
 
   return (
-    <nav className="fixed right-4 sm:right-6 md:right-8 top-1/2 -translate-y-1/2 z-50 pointer-events-auto hidden sm:block">
-      <ul className="flex flex-col items-end gap-3 sm:gap-4 md:gap-6">
+    <nav className={styles.nav}>
+      <ul className={styles.list}>
         {SECTIONS.map((section) => {
           const isActive = activeSection === section.id;
           return (
             <li key={section.id}>
               <button
                 onClick={() => handleClick(section.id)}
-                className={`
-                  relative px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base md:text-lg font-medium transition-all duration-300 text-right
-                  ${
-                    isActive
-                      ? 'text-black dark:text-zinc-200'
-                      : 'text-black/40 hover:text-black/65 dark:text-zinc-400 dark:hover:text-zinc-200'
-                  }
-                `}
+                className={`${styles.button} ${isActive ? styles.buttonActive : styles.buttonInactive}`}
                 aria-label={`Navigate to ${section.label} section`}
               >
-                <span className="relative z-10">{section.label}</span>
+                <span className={styles.label}>{section.label}</span>
                 {isActive && (
                   <span
-                    className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 sm:w-1 h-4 sm:h-6 bg-black dark:bg-zinc-200 transition-all duration-300"
+                    className={styles.indicator}
                     aria-hidden="true"
                   />
                 )}
@@ -135,4 +129,4 @@ export default function TableOfContents() {
       </ul>
     </nav>
   );
-}
+};
