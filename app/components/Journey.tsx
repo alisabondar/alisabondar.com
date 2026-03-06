@@ -211,15 +211,17 @@ export const Journey = ({ scrollProgress }: JourneyProps) => {
 
   const headerTranslateY = baseStripY * 8;
 
-  const journeyHideStart = JOURNEY_HIDE_START;
-  const journeyHideDuration = JOURNEY_HIDE_DURATION;
+  const journeyHideStart = isMobile ? 0.9 : JOURNEY_HIDE_START;
+  const journeyHideDuration = isMobile ? 0.12 : JOURNEY_HIDE_DURATION;
   const journeyHideProgress = Math.min(
     1,
     Math.max(0, (scrollProgress - journeyHideStart) / journeyHideDuration)
   );
   const viewportOpacity = 1 - journeyHideProgress;
 
-  const scrollUpProgress = Math.min(1, Math.max(0, (scrollProgress - 0.9) / 0.15));
+  const scrollUpStart = isMobile ? 0.85 : 0.9;
+  const scrollUpDuration = isMobile ? 0.18 : 0.15;
+  const scrollUpProgress = Math.min(1, Math.max(0, (scrollProgress - scrollUpStart) / scrollUpDuration));
   const translateY = scrollUpProgress * -100;
 
   return (

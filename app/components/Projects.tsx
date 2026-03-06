@@ -1,7 +1,8 @@
 'use client';
 
+import { useRef } from 'react';
 import Link from 'next/link';
-import { calculateFadeOpacity, useIsMobile } from '../utils/responsive';
+import { calculateFadeOpacity, useIsMobile, useViewportFade } from '../utils/responsive';
 import { Polaroid } from './Polaroid';
 import styles from './Projects.module.css';
 
@@ -37,19 +38,25 @@ const projects: Project[] = [
 
 export const Projects = ({ scrollProgress }: ProjectsProps) => {
   const isMobile = useIsMobile();
-  const sectionFadeInStart = isMobile ? 0.98 : 0.92;
+  const sectionRef = useRef<HTMLElement>(null);
+  const viewportFade = useViewportFade(sectionRef, { startAt: 0.92, fullAt: 0.5 });
+
+  const sectionFadeInStart = 0.92;
   const sectionFadeInDuration = 0.1;
-  const { opacity: sectionOpacity, visibility: sectionVisibility } = calculateFadeOpacity(
+  const scrollBasedFade = calculateFadeOpacity(
     scrollProgress,
     sectionFadeInStart,
     sectionFadeInDuration
   );
+  const sectionOpacity = isMobile ? viewportFade.opacity : scrollBasedFade.opacity;
+  const sectionVisibility = isMobile ? viewportFade.visibility : scrollBasedFade.visibility;
 
   const projectFadeStarts = isMobile ? [0.99, 1.0, 1.01] : [0.94, 0.96, 0.98];
   const projectFadeDuration = 0.12;
 
   return (
     <section
+      ref={sectionRef}
       id="projects"
       className="relative z-30 flex flex-col items-center px-4 sm:px-6 md:px-12 md:pr-20 lg:pr-36 pt-20 transition-opacity duration-700 ease-out"
       style={{
@@ -63,11 +70,12 @@ export const Projects = ({ scrollProgress }: ProjectsProps) => {
 
       <div className={`${styles.section} ${styles.polaroidsContainer}`}>
         {projects.map((project, index) => {
-          const { opacity: cardOpacity } = calculateFadeOpacity(
+          const { opacity: scrollCardOpacity } = calculateFadeOpacity(
             scrollProgress,
             projectFadeStarts[index],
             projectFadeDuration
           );
+          const cardOpacity = isMobile ? sectionOpacity : scrollCardOpacity;
 
           return (
             <Link
