@@ -1,8 +1,7 @@
 'use client';
 
-import { useRef } from 'react';
 import Link from 'next/link';
-import { calculateFadeOpacity, useIsMobile, useViewportFade } from '../utils/responsive';
+import { calculateFadeOpacity, useIsMobile } from '../utils/responsive';
 import { Polaroid } from './Polaroid';
 import styles from './Projects.module.css';
 
@@ -20,7 +19,7 @@ export interface ProjectsProps {
 const projects: Project[] = [
   {
     title: 'Florascape',
-    githubUrl: 'https://github.com/yourusername/project1',
+    githubUrl: 'https://github.com/alisabondar/florascape',
     screenshot: '/warning.png',
     tooltip: 'WIP! Click me for the github roadmap',
   },
@@ -37,27 +36,20 @@ const projects: Project[] = [
 ];
 
 export const Projects = ({ scrollProgress }: ProjectsProps) => {
-  const sectionRef = useRef<HTMLElement>(null);
   const isMobile = useIsMobile();
-  const viewportFade = useViewportFade(sectionRef, { startAt: 0.9, fullAt: 0.5 });
-
-  const sectionFadeInStart = 0.92;
+  const sectionFadeInStart = isMobile ? 0.98 : 0.92;
   const sectionFadeInDuration = 0.1;
-  const scrollFade = calculateFadeOpacity(
+  const { opacity: sectionOpacity, visibility: sectionVisibility } = calculateFadeOpacity(
     scrollProgress,
     sectionFadeInStart,
     sectionFadeInDuration
   );
 
-  const sectionOpacity = isMobile ? viewportFade.opacity : scrollFade.opacity;
-  const sectionVisibility = isMobile ? viewportFade.visibility : scrollFade.visibility;
-
-  const projectFadeStarts = [0.94, 0.96, 0.98];
+  const projectFadeStarts = isMobile ? [0.99, 1.0, 1.01] : [0.94, 0.96, 0.98];
   const projectFadeDuration = 0.12;
 
   return (
     <section
-      ref={sectionRef}
       id="projects"
       className="relative z-30 flex flex-col items-center px-4 sm:px-6 md:px-12 md:pr-20 lg:pr-36 pt-20 transition-opacity duration-700 ease-out"
       style={{
@@ -71,12 +63,11 @@ export const Projects = ({ scrollProgress }: ProjectsProps) => {
 
       <div className={`${styles.section} ${styles.polaroidsContainer}`}>
         {projects.map((project, index) => {
-          const scrollCardFade = calculateFadeOpacity(
+          const { opacity: cardOpacity } = calculateFadeOpacity(
             scrollProgress,
             projectFadeStarts[index],
             projectFadeDuration
           );
-          const cardOpacity = isMobile ? sectionOpacity : scrollCardFade.opacity;
 
           return (
             <Link
