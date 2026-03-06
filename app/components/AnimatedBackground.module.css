@@ -127,12 +127,8 @@
 
 @media (max-width: 640px) {
   .iconsWrap {
-    opacity: 0.5;
-    pointer-events: none;
-  }
-
-  .iconsWrap .icon {
-    opacity: 0.25;
+    display: none !important;
+    visibility: hidden !important;
   }
 }
 
