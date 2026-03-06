@@ -30,6 +30,7 @@ export interface TimelineItem {
 
 export interface JourneyProps {
   scrollProgress: number;
+  isPastJourney?: boolean;
 }
 
 function getPlacement(index: number): { left: number; rotate: number } {
@@ -160,7 +161,7 @@ const StickyNote = ({ item, index, styles: s }: { item: TimelineItem; index: num
   );
 };
 
-export const Journey = ({ scrollProgress }: JourneyProps) => {
+export const Journey = ({ scrollProgress, isPastJourney = false }: JourneyProps) => {
   const isMobile = useIsMobile();
   const heroScrolledPast = scrollProgress >= JOURNEY_SHOW_START;
 
@@ -227,18 +228,22 @@ export const Journey = ({ scrollProgress }: JourneyProps) => {
   const scrollUpProgress = Math.min(1, Math.max(0, (scrollProgress - scrollUpStart) / scrollUpDuration));
   const translateY = scrollUpProgress * -100;
 
+  const mobileExited = isMobile && isPastJourney;
+  const overlayOpacity = mobileExited ? 0 : viewportOpacity;
+  const overlayTranslateY = mobileExited ? -100 : translateY;
+
   return (
     <div
-      className={`fixed left-4 right-4 sm:right-20 md:right-24 sm:left-1/2 sm:-translate-x-1/2 h-screen z-40 pointer-events-none transition-opacity duration-500 ease-out ${styles.journeyViewport}`}
+      className={`fixed left-4 right-4 sm:right-20 md:right-24 sm:left-1/2 sm:-translate-x-1/2 h-screen z-40 pointer-events-none transition-all duration-500 ease-out ${styles.journeyViewport}`}
       style={{
-        opacity: viewportOpacity,
-        visibility: viewportOpacity <= 0 ? 'hidden' : 'visible',
+        opacity: overlayOpacity,
+        visibility: overlayOpacity <= 0 ? 'hidden' : 'visible',
       }}
     >
       {heroScrolledPast && (
         <div
           className="w-full h-full"
-          style={{ transform: `translateY(${translateY}vh)` }}
+          style={{ transform: `translateY(${overlayTranslateY}vh)` }}
         >
         <div
           className="absolute inset-0 transition-opacity duration-500 ease-out"

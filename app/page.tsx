@@ -11,6 +11,7 @@ import { JOURNEY_SHOW_START, CROSSFADE_END, BREAKPOINTS, MOBILE_SCROLL_SLOWDOWN 
 export default function Home() {
   const isMobile = useIsMobile();
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isPastJourney, setIsPastJourney] = useState(false);
   const [journeyHeight, setJourneyHeight] = useState('100vh');
   const journeyEndMarkerRef = useRef<HTMLDivElement>(null);
 
@@ -69,9 +70,9 @@ export default function Home() {
       const timelineSectionHeight = windowHeight * timelineMultiplier;
       const fallbackScrollRange = timelineSectionHeight * scrollDesensitize;
 
-      const marker = journeyEndMarkerRef.current;
-      const markerOffsetTop = marker
-        ? marker.getBoundingClientRect().top + scrollTop
+      const markerEl = journeyEndMarkerRef.current;
+      const markerOffsetTop = markerEl
+        ? markerEl.getBoundingClientRect().top + scrollTop
         : 0;
       let effectiveScrollRange =
         markerOffsetTop > 0 ? markerOffsetTop : fallbackScrollRange;
@@ -86,6 +87,10 @@ export default function Home() {
         const pastTimeline = scrollTop - effectiveScrollRange;
         const additionalProgress = (pastTimeline / windowHeight) * 0.3;
         setScrollProgress(Math.min(2.0, 1.2 + additionalProgress));
+      }
+
+      if (markerEl && window.innerWidth < BREAKPOINTS.MOBILE) {
+        setIsPastJourney(markerEl.getBoundingClientRect().top <= 0);
       }
       rafId = null;
     };
@@ -109,7 +114,7 @@ export default function Home() {
   return (
     <>
       <AnimatedBackground />
-      <Journey scrollProgress={scrollProgress} />
+      <Journey scrollProgress={scrollProgress} isPastJourney={isPastJourney} />
 
       <div className="relative z-20">
       <section id="about" className="relative flex min-h-screen items-center justify-center sm:justify-center font-sans z-10 px-4">
@@ -163,7 +168,7 @@ export default function Home() {
         />
       </section>
 
-      <Projects scrollProgress={scrollProgress} />
+      <Projects scrollProgress={scrollProgress} isPastJourney={isPastJourney} />
       <Impact scrollProgress={scrollProgress} />
       </div>
     </>

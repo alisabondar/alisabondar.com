@@ -109,8 +109,8 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
   const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const animationTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
-  const viewportFade = useViewportFade(sectionRef, { startAt: 0.88, fullAt: 0.55 });
   const scrollFade = calculateFadeOpacity(scrollProgress, 1.2, 0.2);
+  const viewportFade = useViewportFade(sectionRef, { startAt: 0.88, fullAt: 0.5 });
   const opacity = isMobile ? viewportFade.opacity : scrollFade.opacity;
   const visibility = isMobile ? viewportFade.visibility : scrollFade.visibility;
 
