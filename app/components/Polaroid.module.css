@@ -302,7 +302,14 @@
   }
 
   .polaroid.project .polaroidCaption {
-    width: 5rem;
+    width: 7rem;
+    padding: 1rem 0.9rem;
+  }
+
+  .polaroid.project .polaroidTitle {
+    font-size: 1rem;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
   }
 
   .polaroid.landscape {

@@ -5,10 +5,11 @@ import { AnimatedBackground } from "./components/AnimatedBackground";
 import { Journey } from "./components/Journey";
 import { Projects } from "./components/Projects";
 import { Impact } from "./components/Impact";
-import { scrollToTop, getTimelineMultiplier, SCROLL_DESENSITIZE } from './utils/responsive';
-import { JOURNEY_SHOW_START, CROSSFADE_END, BREAKPOINTS } from './constants';
+import { scrollToTop, getTimelineMultiplier, SCROLL_DESENSITIZE, useIsMobile } from './utils/responsive';
+import { JOURNEY_SHOW_START, CROSSFADE_END, BREAKPOINTS, MOBILE_SCROLL_SLOWDOWN } from './constants';
 
 export default function Home() {
+  const isMobile = useIsMobile();
   const [scrollProgress, setScrollProgress] = useState(0);
   const [journeyHeight, setJourneyHeight] = useState('100vh');
   const journeyEndMarkerRef = useRef<HTMLDivElement>(null);
@@ -72,8 +73,11 @@ export default function Home() {
       const markerOffsetTop = marker
         ? marker.getBoundingClientRect().top + scrollTop
         : 0;
-      const effectiveScrollRange =
+      let effectiveScrollRange =
         markerOffsetTop > 0 ? markerOffsetTop : fallbackScrollRange;
+      if (isMobile) {
+        effectiveScrollRange *= MOBILE_SCROLL_SLOWDOWN;
+      }
 
       if (scrollTop <= effectiveScrollRange) {
         const progress = (scrollTop / effectiveScrollRange) * 1.2;
@@ -116,10 +120,12 @@ export default function Home() {
               opacity:
                 scrollProgress < JOURNEY_SHOW_START
                   ? 1
-                  : scrollProgress > CROSSFADE_END
+                  : isMobile
                     ? 0
-                    : 1 - (scrollProgress - JOURNEY_SHOW_START) / (CROSSFADE_END - JOURNEY_SHOW_START),
-              visibility: scrollProgress > CROSSFADE_END ? 'hidden' : 'visible',
+                    : scrollProgress > CROSSFADE_END
+                      ? 0
+                      : 1 - (scrollProgress - JOURNEY_SHOW_START) / (CROSSFADE_END - JOURNEY_SHOW_START),
+              visibility: isMobile && scrollProgress >= JOURNEY_SHOW_START ? 'hidden' : scrollProgress > CROSSFADE_END ? 'hidden' : 'visible',
             }}
           >
             <h1 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black dark:text-zinc-200 mb-4">

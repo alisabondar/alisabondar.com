@@ -71,6 +71,8 @@ export const SCROLL_DESENSITIZE = {
   DESKTOP: 1.5,
 } as const;
 
+export const MOBILE_SCROLL_SLOWDOWN = 1.43;
+
 export const PHASE_TIMING = {
   MOBILE: {
     PHASE_IN_DURATION: 0.32,

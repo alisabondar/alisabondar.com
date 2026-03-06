@@ -8,6 +8,15 @@
   transition: opacity 0.4s ease;
 }
 
+@media (max-width: 640px) {
+  .svgBackground {
+    background-size: cover;
+    background-position: center center;
+    min-height: 100%;
+    min-width: 100%;
+  }
+}
+
 .container[data-dark="true"] .svgBackground {
   background-image: url('/crease-dark.svg');
 }
@@ -118,8 +127,12 @@
 
 @media (max-width: 640px) {
   .iconsWrap {
-    display: none !important;
-    visibility: hidden !important;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .iconsWrap .icon {
+    opacity: 0.25;
   }
 }
 
@@ -173,7 +186,7 @@
   }
 
   .iconInner {
-    transform: scale(0.5);
+    transform: scale(0.4);
     transform-origin: center center;
   }
 }

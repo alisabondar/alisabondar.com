@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { getTimelineMultiplier, SCROLL_DESENSITIZE } from '../utils/responsive';
-import { SECTIONS, HEADER_OFFSET_PX, SECTION_TOP_PADDING_PX, SMOOTH_SCROLL_DURATION_MS, BREAKPOINTS } from '../constants';
+import { SECTIONS, HEADER_OFFSET_PX, SECTION_TOP_PADDING_PX, SMOOTH_SCROLL_DURATION_MS, BREAKPOINTS, MOBILE_SCROLL_SLOWDOWN } from '../constants';
 import styles from './TableOfContents.module.css';
 
 export const TableOfContents = () => {
@@ -76,7 +76,8 @@ export const TableOfContents = () => {
       const isMobile = window.innerWidth < BREAKPOINTS.MOBILE;
       const timelineMultiplier = getTimelineMultiplier(isMobile);
       const scrollDesensitize = isMobile ? SCROLL_DESENSITIZE.MOBILE : SCROLL_DESENSITIZE.DESKTOP;
-      const effectiveScrollRange = windowHeight * timelineMultiplier * scrollDesensitize;
+      let effectiveScrollRange = windowHeight * timelineMultiplier * scrollDesensitize;
+      if (isMobile) effectiveScrollRange *= MOBILE_SCROLL_SLOWDOWN;
       const targetScrollProgress = 0.25;
       const targetTop = (targetScrollProgress / 1.2) * effectiveScrollRange;
 
