@@ -1,34 +1,12 @@
 import { useState, useEffect, useRef, RefObject } from 'react';
+import {
+  BREAKPOINTS,
+  TIMELINE_CONSTANTS,
+  SCROLL_DESENSITIZE,
+  PHASE_TIMING,
+} from '../constants';
 
-export const BREAKPOINTS = {
-  MOBILE: 640,
-} as const;
-
-export const TIMELINE_CONSTANTS = {
-  MOBILE_MULTIPLIER: 1.9,
-  DESKTOP_MULTIPLIER: 1.75,
-} as const;
-
-export const SCROLL_DESENSITIZE = {
-  MOBILE: 2.2,
-  DESKTOP: 1.5,
-} as const;
-
-export const PHASE_TIMING = {
-  MOBILE: {
-    PHASE_IN_DURATION: 0.32,
-    PHASE_IN_START_MULTIPLIER: 0.15,
-    PHASE_OUT_START: 0.75,
-    INTRO_PHASE_IN_END: 0.35,
-  },
-  DESKTOP: {
-    PHASE_IN_DURATION: 0.15,
-    PHASE_IN_START_MULTIPLIER: 0.2,
-    PHASE_OUT_START: 0.8,
-    INTRO_PHASE_IN_END: 0.25,
-  },
-  PHASE_OUT_END: 1.0,
-} as const;
+export { BREAKPOINTS, TIMELINE_CONSTANTS, SCROLL_DESENSITIZE, PHASE_TIMING };
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
@@ -72,7 +50,6 @@ export function scrollToTop() {
   }
 }
 
-/** Viewport-based fade for mobile: fades in when section enters viewport. */
 export function useViewportFade(
   ref: RefObject<HTMLElement | null>,
   options: {
@@ -150,7 +127,6 @@ export function useViewportFade(
   return { opacity, visibility };
 }
 
-/** Viewport-based opacities for staggered children (e.g. project cards). */
 export function useViewportStaggerFade(
   containerRef: RefObject<HTMLElement | null>,
   childCount: number,

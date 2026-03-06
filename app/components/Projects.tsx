@@ -4,21 +4,14 @@ import Link from 'next/link';
 import { calculateFadeOpacity } from '../utils/responsive';
 import Polaroid from './Polaroid';
 import styles from './Projects.module.css';
-
-interface ProjectsProps {
-  scrollProgress: number;
-}
-
-interface Project {
-  title: string;
-  githubUrl: string;
-  screenshot?: string;
-}
+import type { ProjectsProps, Project } from '../types';
 
 const projects: Project[] = [
   {
     title: 'Florascape',
     githubUrl: 'https://github.com/yourusername/project1',
+    screenshot: '/warning.png',
+    tooltip: 'WIP! Click me for the github roadmap',
   },
   {
     title: 'Inkloom',
@@ -53,7 +46,7 @@ export default function Projects({ scrollProgress }: ProjectsProps) {
         visibility,
       }}
     >
-      <h2 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black mb-8 sm:mb-10 md:mb-12">
+      <h2 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black dark:text-zinc-200 mb-8 sm:mb-10 md:mb-12">
         Projects
       </h2>
 
@@ -73,6 +66,7 @@ export default function Projects({ scrollProgress }: ProjectsProps) {
               rel="noopener noreferrer"
               className={styles.polaroidWrapper}
               style={{ opacity }}
+              title={project.tooltip}
             >
               <div className={styles.polaroidInner}>
               <Polaroid

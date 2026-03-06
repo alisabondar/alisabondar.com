@@ -1,24 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { getTimelineMultiplier } from '../utils/responsive';
-
-interface Section {
-  id: string;
-  label: string;
-}
-
-const sections: Section[] = [
-  { id: 'about', label: 'Intro' },
-  { id: 'journey', label: 'Journey' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'impact', label: 'Impact' },
-];
-
-/** Match Journey header position: top 50px, horizontally centered */
-const HEADER_OFFSET_PX = 50;
-const SECTION_TOP_PADDING_PX = 80; /* pt-20 / paddingTop for Projects & Impact */
-const SMOOTH_SCROLL_DURATION_MS = 1000;
+import { getTimelineMultiplier, SCROLL_DESENSITIZE } from '../utils/responsive';
+import { SECTIONS, HEADER_OFFSET_PX, SECTION_TOP_PADDING_PX, SMOOTH_SCROLL_DURATION_MS, BREAKPOINTS } from '../constants';
 
 export default function TableOfContents() {
   const [activeSection, setActiveSection] = useState<string>('about');
@@ -31,8 +15,8 @@ export default function TableOfContents() {
       if (isScrollingRef.current) return;
       const scrollPosition = window.scrollY + window.innerHeight * 0.3;
 
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = sections[i];
+      for (let i = SECTIONS.length - 1; i >= 0; i--) {
+        const section = SECTIONS[i];
         const element = document.getElementById(section.id);
         if (element) {
           const rect = element.getBoundingClientRect();
@@ -47,7 +31,7 @@ export default function TableOfContents() {
       }
     };
 
-    sections.forEach((section) => {
+    SECTIONS.forEach((section) => {
       const element = document.getElementById(section.id);
       if (element) {
         const observer = new IntersectionObserver(
@@ -88,10 +72,10 @@ export default function TableOfContents() {
 
     if (sectionId === 'journey') {
       const windowHeight = window.innerHeight;
-      const isMobile = window.innerWidth < 640;
+      const isMobile = window.innerWidth < BREAKPOINTS.MOBILE;
       const timelineMultiplier = getTimelineMultiplier(isMobile);
-      const SCROLL_DESENSITIZE = 1.5;
-      const effectiveScrollRange = windowHeight * timelineMultiplier * SCROLL_DESENSITIZE;
+      const scrollDesensitize = isMobile ? SCROLL_DESENSITIZE.MOBILE : SCROLL_DESENSITIZE.DESKTOP;
+      const effectiveScrollRange = windowHeight * timelineMultiplier * scrollDesensitize;
       const targetScrollProgress = 0.25;
       const targetTop = (targetScrollProgress / 1.2) * effectiveScrollRange;
 
@@ -104,7 +88,6 @@ export default function TableOfContents() {
       if (element) {
         const elementPosition = element.getBoundingClientRect().top;
         const sectionTopInDoc = elementPosition + window.pageYOffset;
-        /* Scroll so header (section top + padding) lands at HEADER_OFFSET_PX from viewport top */
         const offsetPosition = sectionTopInDoc + SECTION_TOP_PADDING_PX - HEADER_OFFSET_PX;
 
         window.scrollTo({
@@ -122,7 +105,7 @@ export default function TableOfContents() {
   return (
     <nav className="fixed right-4 sm:right-6 md:right-8 top-1/2 -translate-y-1/2 z-50 pointer-events-auto hidden sm:block">
       <ul className="flex flex-col items-end gap-3 sm:gap-4 md:gap-6">
-        {sections.map((section) => {
+        {SECTIONS.map((section) => {
           const isActive = activeSection === section.id;
           return (
             <li key={section.id}>
@@ -132,8 +115,8 @@ export default function TableOfContents() {
                   relative px-2 sm:px-3 py-1.5 sm:py-2 text-sm sm:text-base md:text-lg font-medium transition-all duration-300 text-right
                   ${
                     isActive
-                      ? 'text-black'
-                      : 'text-black/40 hover:text-black/65'
+                      ? 'text-black dark:text-zinc-200'
+                      : 'text-black/40 hover:text-black/65 dark:text-zinc-400 dark:hover:text-zinc-200'
                   }
                 `}
                 aria-label={`Navigate to ${section.label} section`}
@@ -141,7 +124,7 @@ export default function TableOfContents() {
                 <span className="relative z-10">{section.label}</span>
                 {isActive && (
                   <span
-                    className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 sm:w-1 h-4 sm:h-6 bg-white transition-all duration-300"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 sm:w-1 h-4 sm:h-6 bg-black dark:bg-zinc-200 transition-all duration-300"
                     aria-hidden="true"
                   />
                 )}

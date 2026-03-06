@@ -3,18 +3,7 @@
 import Image from 'next/image';
 import { useTilt } from '../utils/useTilt';
 import styles from './Polaroid.module.css';
-
-type PolaroidVariant = 'portrait' | 'landscape' | 'project';
-
-interface PolaroidProps {
-  variant: PolaroidVariant;
-  title: string;
-  image?: string;
-  description?: string;
-  year?: string;
-  enableMouseTilt?: boolean;
-  className?: string;
-}
+import type { PolaroidProps } from '../types';
 
 export default function Polaroid({
   variant,
@@ -43,8 +32,14 @@ export default function Polaroid({
           <figure
             className={`${styles.polaroid} ${isProject ? styles.project : isLandscape ? styles.landscape : styles.portrait}`}
           >
-            <div className={styles.polaroidImageWrap}>
-              {image ? (
+            <div className={`${styles.polaroidImageWrap} ${image === '/warning.png' ? styles.warningIconWrap : ''}`}>
+              {image === '/warning.png' ? (
+                <div
+                  className={styles.warningIcon}
+                  role="img"
+                  aria-label={title}
+                />
+              ) : image ? (
                 <Image
                   src={image}
                   alt={title}

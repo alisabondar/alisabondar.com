@@ -5,6 +5,11 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  transition: opacity 0.4s ease;
+}
+
+.container[data-dark="true"] .svgBackground {
+  background-image: url('/crease-dark.svg');
 }
 
 @keyframes float {
@@ -107,6 +112,10 @@
   pointer-events: none;
 }
 
+.iconsDark .icon {
+  filter: brightness(0) invert(1);
+}
+
 @media (max-width: 640px) {
   .iconsWrap {
     display: none !important;
@@ -130,6 +139,28 @@
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   animation: iconFadeIn 1.2s ease-out forwards;
+}
+
+@media (min-width: 641px) {
+  .icon {
+    animation: iconFadeIn 0.2s ease-out forwards;
+  }
+
+  .iconFloat1 {
+    animation: iconFadeIn 0.2s ease-out forwards, float 9s ease-in-out 0.2s infinite;
+  }
+
+  .iconFloat2 {
+    animation: iconFadeIn 0.2s ease-out forwards, float2 8s ease-in-out 0.2s infinite;
+  }
+
+  .iconFloat3 {
+    animation: iconFadeIn 0.2s ease-out forwards, float3 10s ease-in-out 0.2s infinite;
+  }
+
+  .iconFloat4 {
+    animation: iconFadeIn 0.2s ease-out forwards, float4 9.5s ease-in-out 0.2s infinite;
+  }
 }
 
 .iconInner {

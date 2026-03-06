@@ -2,12 +2,26 @@
 
 import { useRef, useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
-import { icons } from '../constants/icons';
+import { icons } from '../constants';
+import { useTheme } from '../context/ThemeContext';
 import styles from './AnimatedBackground.module.css';
 
+function getIconDelay(delay: number, isDesktop: boolean) {
+  return isDesktop ? Math.min(delay * 0.2, 0.5) : delay;
+}
+
 export default function AnimatedBackground() {
+  const { theme } = useTheme();
   const [iconsReady, setIconsReady] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
   const loadedCount = useRef(0);
+
+  useEffect(() => {
+    const check = () => setIsDesktop(typeof window !== 'undefined' && window.innerWidth >= 641);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const handleIconLoad = useCallback(() => {
     loadedCount.current += 1;
@@ -22,11 +36,11 @@ export default function AnimatedBackground() {
   }, []);
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-dark={theme === 'dark'}>
       <div className={styles.svgBackground} aria-hidden />
 
       <div
-        className={styles.iconsWrap}
+        className={`${styles.iconsWrap} ${theme === 'dark' ? styles.iconsDark : ''}`}
           aria-hidden
           style={{ visibility: iconsReady ? 'visible' : 'hidden' }}
         >
@@ -42,7 +56,7 @@ export default function AnimatedBackground() {
                   left: `${icon.x}%`,
                   top: `${icon.y}%`,
                   animationDuration: `${icon.duration}s`,
-                  animationDelay: `${icon.delay}s`,
+                  animationDelay: `${getIconDelay(icon.delay, isDesktop)}s`,
                   animationPlayState: iconsReady ? 'running' : 'paused',
                 }}
               >

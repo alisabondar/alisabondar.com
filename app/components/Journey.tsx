@@ -4,45 +4,24 @@ import { useIsMobile, PHASE_TIMING } from '../utils/responsive';
 import { useTilt } from '../utils/useTilt';
 import Polaroid from './Polaroid';
 import styles from './Journey.module.css';
-
-const EVENT_HEIGHT_VH = 20;
-const INTRO_EVENTS = 4;
-const STRIP_TOP_OFFSET_VH = 30;
-const STRIP_END_PADDING_VH = 80;
-const FOCUS_MULTIPLIER = 1.0;
-
-
-const EVENT_PLACEMENTS: { left: number; rotate: number }[] = [
-  { left: 32, rotate: -3 },
-  { left: 72, rotate: 2 },
-  { left: 40, rotate: -4 },
-  { left: 65, rotate: 1 },
-  { left: 50, rotate: -2 },
-  { left: 35, rotate: 3 },
-  { left: 68, rotate: 0 },
-  { left: 42, rotate: -1 },
-  { left: 75, rotate: 4 },
-  { left: 28, rotate: -5 },
-  { left: 58, rotate: 2 },
-  { left: 38, rotate: -3 },
-  { left: 72, rotate: 1 },
-  { left: 45, rotate: -2 },
-  { left: 30, rotate: 0 },
-  { left: 55, rotate: 3 },
-  { left: 78, rotate: -1 },
-  { left: 40, rotate: 2 },
-  { left: 48, rotate: -2 },
-  { left: 70, rotate: 3 },
-];
+import type { TimelineItem, JourneyProps } from '../types';
+import {
+  EVENT_HEIGHT_VH,
+  INTRO_EVENTS,
+  STRIP_TOP_OFFSET_VH,
+  STRIP_END_PADDING_VH,
+  FOCUS_MULTIPLIER,
+  EVENT_PLACEMENTS,
+  JOURNEY_SHOW_START,
+  JOURNEY_HIDE_START,
+  JOURNEY_HIDE_DURATION,
+  ENTRANCE_DURATION,
+  HEADER_FROZEN_DURATION,
+  HEADER_FROZEN_DURATION_MOBILE,
+} from '../constants';
 
 function getPlacement(index: number): { left: number; rotate: number } {
   return EVENT_PLACEMENTS[index % EVENT_PLACEMENTS.length] ?? EVENT_PLACEMENTS[0];
-}
-
-interface TimelineItem {
-  title: string;
-  year?: string;
-  picture?: string;
 }
 
 const timelineItems: TimelineItem[] = [
@@ -146,18 +125,6 @@ const timelineItems: TimelineItem[] = [
   }
 ];
 
-const JOURNEY_SHOW_START = 0.08;
-const CROSSFADE_END = 0.22;
-const JOURNEY_HIDE_START = 0.84;
-const JOURNEY_HIDE_DURATION = 0.08;
-const ENTRANCE_DURATION = CROSSFADE_END - JOURNEY_SHOW_START;
-const HEADER_FROZEN_DURATION = 0.35;
-const HEADER_FROZEN_DURATION_MOBILE = 0.48;
-
-interface JourneyProps {
-  scrollProgress: number;
-}
-
 function StickyNote({ item, index, styles: s }: { item: TimelineItem; index: number; styles: Record<string, string> }) {
   const { ref: tiltRef, style: tiltStyle } = useTilt(true);
   return (
@@ -243,15 +210,22 @@ export default function Journey({ scrollProgress }: JourneyProps) {
   );
   const viewportOpacity = 1 - journeyHideProgress;
 
+  const scrollUpProgress = Math.min(1, Math.max(0, (scrollProgress - 0.9) / 0.15));
+  const translateY = scrollUpProgress * -100;
+
   return (
     <div
-      className={`fixed left-4 right-4 sm:right-20 md:right-24 sm:left-1/2 sm:-translate-x-1/2 h-screen z-20 pointer-events-none transition-opacity duration-500 ease-out ${styles.journeyViewport}`}
+      className={`fixed left-4 right-4 sm:right-20 md:right-24 sm:left-1/2 sm:-translate-x-1/2 h-screen z-40 pointer-events-none transition-opacity duration-500 ease-out ${styles.journeyViewport}`}
       style={{
         opacity: viewportOpacity,
         visibility: viewportOpacity <= 0 ? 'hidden' : 'visible',
       }}
     >
       {heroScrolledPast && (
+        <div
+          className="w-full h-full"
+          style={{ transform: `translateY(${translateY}vh)` }}
+        >
         <div
           className="absolute inset-0 transition-opacity duration-500 ease-out"
           style={{
@@ -261,7 +235,7 @@ export default function Journey({ scrollProgress }: JourneyProps) {
           }}
         >
           <h2
-            className={`${styles.journeyHeader} ${isMobile ? styles.journeyHeaderMobile : styles.journeyHeaderDesktop} text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black`}
+            className={`${styles.journeyHeader} ${isMobile ? styles.journeyHeaderMobile : styles.journeyHeaderDesktop} text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black dark:text-zinc-200`}
             style={{
               transform: `translateX(-50%) translateY(${headerTranslateY}px)`,
               opacity: headerOpacity,
@@ -337,6 +311,7 @@ export default function Journey({ scrollProgress }: JourneyProps) {
           })}
         </div>
       </div>
+        </div>
         </div>
       )}
     </div>

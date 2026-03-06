@@ -6,9 +6,7 @@ import Journey from "./components/Journey";
 import Projects from "./components/Projects";
 import Impact from "./components/Impact";
 import { scrollToTop, getTimelineMultiplier, SCROLL_DESENSITIZE } from './utils/responsive';
-
-const JOURNEY_SHOW_START = 0.08;
-const CROSSFADE_END = 0.22;
+import { JOURNEY_SHOW_START, CROSSFADE_END, BREAKPOINTS } from './constants';
 
 export default function Home() {
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -18,7 +16,7 @@ export default function Home() {
   useEffect(() => {
     const updateJourneyHeight = () => {
       if (typeof window !== 'undefined') {
-        const isMobile = window.innerWidth < 640;
+        const isMobile = window.innerWidth < BREAKPOINTS.MOBILE;
         const timelineMultiplier = getTimelineMultiplier(isMobile);
         setJourneyHeight(`${timelineMultiplier * 100}vh`);
       }
@@ -64,7 +62,7 @@ export default function Home() {
     const updateScrollProgress = () => {
       const windowHeight = window.innerHeight;
       const scrollTop = window.scrollY;
-      const isMobile = window.innerWidth < 640;
+      const isMobile = window.innerWidth < BREAKPOINTS.MOBILE;
       const timelineMultiplier = getTimelineMultiplier(isMobile);
       const scrollDesensitize = isMobile ? SCROLL_DESENSITIZE.MOBILE : SCROLL_DESENSITIZE.DESKTOP;
       const timelineSectionHeight = windowHeight * timelineMultiplier;
@@ -109,7 +107,8 @@ export default function Home() {
       <AnimatedBackground />
       <Journey scrollProgress={scrollProgress} />
 
-      <section id="about" className="relative flex min-h-screen min-h-dvh items-center justify-center sm:justify-center font-sans z-10 px-4">
+      <div className="relative z-20">
+      <section id="about" className="relative flex min-h-screen items-center justify-center sm:justify-center font-sans z-10 px-4">
         <div className="relative z-10 text-center sm:text-center">
           <div
             className="transition-opacity duration-500 ease-out"
@@ -123,12 +122,12 @@ export default function Home() {
               visibility: scrollProgress > CROSSFADE_END ? 'hidden' : 'visible',
             }}
           >
-            <h1 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black mb-4">
+            <h1 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black dark:text-zinc-200 mb-4">
               Hi, I&apos;m Alisa.
             </h1>
             <div className="flex justify-center mt-6 sm:mt-8">
               <svg
-                className="w-5 h-5 sm:w-6 sm:h-6 text-black/80 animate-bounce"
+                className="w-5 h-5 sm:w-6 sm:h-6 text-black/80 dark:text-zinc-300 animate-bounce"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -160,6 +159,7 @@ export default function Home() {
 
       <Projects scrollProgress={scrollProgress} />
       <Impact scrollProgress={scrollProgress} />
+      </div>
     </>
   );
 }

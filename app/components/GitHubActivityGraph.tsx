@@ -1,43 +1,14 @@
 'use client';
 
 import { useState, useRef } from 'react';
-
-interface ContributionData {
-  date: string;
-  level: number;
-  count: number;
-}
-
-interface YearData {
-  year: number;
-  contributions: ContributionData[];
-  totalContributions: number;
-}
-
-interface GitHubActivityGraphProps {
-  years: YearData[];
-}
-
-const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-const STATIC_MONTH_WEEK_INDEX = [0, 4, 8, 13, 17, 22, 26, 30, 35, 39, 43, 48];
-const FIXED_WEEKS = 53;
-
-const levelColors = [
-  'bg-zinc-200/80',
-  'bg-green-200/80',
-  'bg-green-300/90',
-  'bg-green-400',
-  'bg-green-500'
-];
-
-const levelHoverColors = [
-  'bg-zinc-300',
-  'bg-green-300',
-  'bg-green-400',
-  'bg-green-500',
-  'bg-green-600'
-];
+import type { ContributionData, GitHubActivityGraphProps } from '../types';
+import {
+  STATIC_MONTH_WEEK_INDEX,
+  FIXED_WEEKS,
+  MONTH_LABELS,
+  GITHUB_LEVEL_COLORS,
+  GITHUB_LEVEL_HOVER_COLORS,
+} from '../constants';
 
 export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps) {
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
@@ -165,8 +136,8 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
               className={`
                 relative px-1.5 sm:px-2 py-1 sm:py-1 text-[10px] sm:text-xs font-medium transition-all duration-300 text-right
                 ${selectedYear === null
-                  ? 'text-black'
-                  : 'text-black/60 hover:text-black/80'
+                  ? 'text-black dark:text-zinc-200'
+                  : 'text-black/60 hover:text-black/80 dark:text-zinc-400 dark:hover:text-zinc-200'
                 }
               `}
               aria-label="View latest 12 months contributions"
@@ -174,7 +145,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
               <span className="relative z-10">12M</span>
               {selectedYear === null && (
                 <span
-                  className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-3 sm:h-4 bg-black transition-all duration-300"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-3 sm:h-4 bg-black dark:bg-zinc-200 transition-all duration-300"
                   aria-hidden="true"
                 />
               )}
@@ -189,8 +160,8 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                   className={`
                     relative px-1.5 sm:px-2 py-1 sm:py-1 text-[10px] sm:text-xs font-medium transition-all duration-300 text-right
                     ${isActive
-                      ? 'text-black'
-                      : 'text-black/60 hover:text-black/80'
+                    ? 'text-black dark:text-zinc-200'
+                    : 'text-black/60 hover:text-black/80 dark:text-zinc-400 dark:hover:text-zinc-200'
                     }
                   `}
                   aria-label={`View ${yearData.year} contributions`}
@@ -198,7 +169,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                   <span className="relative z-10">{yearData.year}</span>
                   {isActive && (
                     <span
-                      className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-3 sm:h-4 bg-black transition-all duration-300"
+                      className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-3 sm:h-4 bg-black dark:bg-zinc-200 transition-all duration-300"
                       aria-hidden="true"
                     />
                   )}
@@ -212,7 +183,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
       <div className="w-full px-8 py-4 sm:py-6 md:py-8 pr-[32px] flex justify-center">
         <div className="w-full max-w-3xl">
           <div className="mb-4 flex items-center justify-between flex-wrap gap-4">
-            <h3 className="text-black text-lg sm:text-xl font-semibold mb-1">
+            <h3 className="text-black dark:text-white text-lg sm:text-xl font-semibold mb-1">
               {totalContributions} contributions {year === null ? 'in the last 12 months' : `in ${year}`}
             </h3>
           </div>
@@ -229,10 +200,10 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                   return (
                     <div
                       key={`month-${idx}-${position}`}
-                      className="text-black/70 text-xs absolute top-0"
+                      className="text-black/70 dark:text-zinc-400 text-xs absolute top-0"
                       style={{ left: `${position * cellWidth}px`, width: `${width}px` }}
                     >
-                      {monthLabels[month]}
+                      {MONTH_LABELS[month]}
                     </div>
                   );
                 })}
@@ -247,7 +218,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                           return (
                             <div
                               key={`${dayIndex}-${weekIndex}`}
-                              className="w-[10px] h-[10px] rounded-sm border border-black/40"
+                              className="w-[10px] h-[10px] rounded-sm border border-black/40 dark:border-zinc-600"
                             />
                           );
                         }
@@ -258,8 +229,8 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
                         return (
                           <div
                             key={contrib.date}
-                            className={`w-[10px] h-[10px] rounded-sm border border-black/40 transition-all duration-200 cursor-pointer relative ${isHovered ? levelHoverColors[level] : levelColors[level]
-                              } ${isHovered ? 'ring-2 ring-black scale-110' : ''}`}
+                            className={`w-[10px] h-[10px] rounded-sm border border-black/40 dark:border-zinc-600 transition-all duration-200 cursor-pointer relative ${isHovered ? GITHUB_LEVEL_HOVER_COLORS[level] : GITHUB_LEVEL_COLORS[level]
+                              } ${isHovered ? 'ring-2 ring-black dark:ring-zinc-400 scale-110' : ''}`}
                             onMouseEnter={(e) => handleCellMouseEnter(e, contrib.date)}
                             onMouseLeave={handleCellMouseLeave}
                           />
@@ -304,7 +275,7 @@ export default function GitHubActivityGraph({ years }: GitHubActivityGraphProps)
       {hoveredDate && tooltipPosition
         ? (
             <div
-              className="fixed z-50 bg-white/95 border border-black/20 rounded px-2 py-1 text-black text-xs pointer-events-none whitespace-nowrap shadow-lg"
+              className="fixed z-50 bg-white/95 dark:bg-zinc-900/95 border border-black/20 dark:border-zinc-600 rounded px-2 py-1 text-black dark:text-zinc-200 text-xs pointer-events-none whitespace-nowrap shadow-lg"
               style={{
                 left: `${tooltipPosition.x}px`,
                 top: `${tooltipPosition.y}px`,

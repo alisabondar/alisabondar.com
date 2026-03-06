@@ -1,9 +1,7 @@
 'use client';
 
 import { useRef, useCallback, useEffect } from 'react';
-
-const MOUSE_TILT_MULTIPLE = 40;
-const MAX_TILT_DEG = 5;
+import { MOUSE_TILT_MULTIPLE, MAX_TILT_DEG } from '../constants';
 
 export function useTilt(enabled: boolean) {
   const ref = useRef<HTMLDivElement>(null);
