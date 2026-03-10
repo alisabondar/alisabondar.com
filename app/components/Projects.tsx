@@ -27,15 +27,22 @@ const projects: Project[] = [
   },
   {
     title: 'Inkloom',
-    githubUrl: 'https://github.com/alisabondar/inkloom',
+    githubUrl: 'https://inkloom-nn6o.vercel.app/',
     screenshot: '/inkloom.png',
   },
   {
     title: 'Lumka',
-    githubUrl: 'https://github.com/alisabondar/lumka',
+    githubUrl: 'https://lumka-one.vercel.app/',
     screenshot: '/lumka.png',
   },
 ];
+
+function getDisplayOrder(isMobile: boolean): Project[] {
+  if (isMobile) {
+    return [projects[1], projects[2], projects[0]];
+  }
+  return projects;
+}
 
 export const Projects = ({ scrollProgress, isPastJourney = false }: ProjectsProps) => {
   const isMobile = useIsMobile();
@@ -83,7 +90,7 @@ export const Projects = ({ scrollProgress, isPastJourney = false }: ProjectsProp
         className={`${styles.section} ${styles.polaroidsContainer}`}
         style={isMobile ? { opacity: cardsContainerOpacity } : undefined}
       >
-        {projects.map((project, index) => {
+        {getDisplayOrder(isMobile).map((project, index) => {
           const { opacity: cardOpacity } = calculateFadeOpacity(
             scrollProgress,
             projectFadeStarts[index],
@@ -92,7 +99,7 @@ export const Projects = ({ scrollProgress, isPastJourney = false }: ProjectsProp
 
           return (
             <Link
-              key={index}
+              key={project.title}
               href={project.githubUrl}
               target="_blank"
               rel="noopener noreferrer"

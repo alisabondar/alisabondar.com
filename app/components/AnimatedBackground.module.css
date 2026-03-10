@@ -108,6 +108,9 @@
 .container {
   position: fixed;
   inset: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100dvh;
   z-index: 0;
   overflow: hidden;
   transform: translateZ(0);

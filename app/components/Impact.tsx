@@ -62,7 +62,7 @@ const jobs: Job[] = [
       'Co-architected the company\'s first AI-integrated outreach system, doubling workforce productivity and driving 2× credit revenue.',
       'Redesigned structured data capture flows, increasing usable data volume 1.8× and improving downstream client outputs.',
       'Architected authentication via AWS Cognito, implementing multi-provider login to reduce onboarding friction while maintaining secure identity controls.',
-      'Co-engineered a responsive, accessible external product serving 10K+ users, achieving a 30% 60-day return rate.',
+      'Co-engineered a responsive, accessible external product serving 15K+ users, achieving a 30% 60-day return rate.',
       'Resolved backend performance bottlenecks (including N+1 queries), improving latency and system throughput under load.',
       'Led cross-team API and analytics design, aligning technical decisions with product metrics and long-term platform evolution.',
     ],
