@@ -112,7 +112,19 @@ export const GitHubActivityGraph = ({ years }: GitHubActivityGraphProps) => {
     calendar.push(row);
   }
 
-  const monthPositions: { month: number; position: number }[] = STATIC_MONTH_WEEK_INDEX.map((position, month) => ({ month, position }));
+  const monthPositions: { month: number; position: number; label: string }[] = year === null
+    ? (() => {
+        const result: { month: number; position: number; label: string }[] = [];
+        const cur = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+        let idx = 0;
+        while (cur <= endDate && idx < STATIC_MONTH_WEEK_INDEX.length) {
+          result.push({ month: cur.getMonth(), position: STATIC_MONTH_WEEK_INDEX[idx], label: MONTH_LABELS[cur.getMonth()] });
+          cur.setMonth(cur.getMonth() + 1);
+          idx++;
+        }
+        return result;
+      })()
+    : STATIC_MONTH_WEEK_INDEX.map((position, month) => ({ month, position, label: MONTH_LABELS[month] }));
 
   const handleCellMouseEnter = (e: React.MouseEvent<HTMLDivElement>, date: string) => {
     setHoveredDate(date);
@@ -187,7 +199,7 @@ export const GitHubActivityGraph = ({ years }: GitHubActivityGraphProps) => {
           <div className={styles.calendarScroll}>
             <div className={styles.calendarInner}>
               <div className={styles.monthRow}>
-                {monthPositions.map(({ month, position }, idx) => {
+                {monthPositions.map(({ month, position, label }, idx) => {
                   const nextPosition = idx < monthPositions.length - 1
                     ? monthPositions[idx + 1].position
                     : FIXED_WEEKS;
@@ -199,7 +211,7 @@ export const GitHubActivityGraph = ({ years }: GitHubActivityGraphProps) => {
                       className={styles.monthLabel}
                       style={{ left: `${position * cellWidth}px`, width: `${width}px` }}
                     >
-                      {MONTH_LABELS[month]}
+                      {label}
                     </div>
                   );
                 })}

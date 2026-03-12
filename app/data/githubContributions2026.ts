@@ -31,7 +31,20 @@ export const contributions2026 = [
   { date: '2026-02-17', level: 2, count: 10 },
   { date: '2026-02-18', level: 1, count: 5 },
   { date: '2026-02-20', level: 2, count: 9 },
-  { date: '2026-02-23', level: 1, count: 4 },
+  { date: '2026-02-23', level: 2, count: 7 },
+  { date: '2026-02-24', level: 2, count: 11 },
+  { date: '2026-02-25', level: 2, count: 7 },
+  { date: '2026-02-26', level: 1, count: 5 },
+  { date: '2026-02-27', level: 3, count: 16 },
+  { date: '2026-03-02', level: 1, count: 3 },
+  { date: '2026-03-03', level: 1, count: 4 },
+  { date: '2026-03-04', level: 2, count: 8 },
+  { date: '2026-03-05', level: 4, count: 18 },
+  { date: '2026-03-06', level: 1, count: 4 },
+  { date: '2026-03-09', level: 4, count: 19 },
+  { date: '2026-03-10', level: 1, count: 5 },
+  { date: '2026-03-11', level: 1, count: 3 },
+  { date: '2026-03-12', level: 1, count: 1 },
 ];
 
-export const totalContributions2026 = 222;
+export const totalContributions2026 = 336;
