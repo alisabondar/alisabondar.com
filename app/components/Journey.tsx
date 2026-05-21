@@ -135,6 +135,16 @@ const timelineItems: TimelineItem[] = [
     title: 'First time ice skating on a lake!',
     picture: 'skating.png',
     year: 'February 2026',
+  },
+  {
+    title: 'Joined the fiancée club!',
+    picture: 'engagement.png',
+    year: 'March 2026',
+  },
+  {
+    title: 'Moved out west to Colorado!',
+    picture: 'west.png',
+    year: 'May 2026',
   }
 ];
 
