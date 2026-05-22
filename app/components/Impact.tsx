@@ -107,7 +107,7 @@ const testimonials: Testimonial[] = [
     attribution: 'Lead Engineer',
   },
   {
-    quote: 'You made the team a better place just by being in it.',
+    quote: 'You make the team a better place just by being in it.',
     attribution: 'Fellow SWE',
   },
   {
