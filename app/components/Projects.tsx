@@ -44,7 +44,7 @@ function getDisplayOrder(isMobile: boolean): Project[] {
   return projects;
 }
 
-export const Projects = ({ scrollProgress, isPastJourney = false }: ProjectsProps) => {
+export const Projects = ({ scrollProgress }: ProjectsProps) => {
   const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
@@ -57,14 +57,14 @@ export const Projects = ({ scrollProgress, isPastJourney = false }: ProjectsProp
   const scrollFade = calculateFadeOpacity(scrollProgress, sectionFadeInStart, sectionFadeInDuration);
 
   const sectionOpacity = isMobile
-    ? (isPastJourney ? sectionViewportFade.opacity : 0)
+    ? sectionViewportFade.opacity
     : scrollFade.opacity;
   const sectionVisibility = isMobile
-    ? (isPastJourney && sectionViewportFade.visibility === 'visible' ? 'visible' : 'hidden')
+    ? sectionViewportFade.visibility
     : scrollFade.visibility;
 
   const cardsContainerOpacity = isMobile
-    ? (isPastJourney ? cardsViewportFade.opacity : 0)
+    ? cardsViewportFade.opacity
     : undefined;
 
   const projectFadeStarts = [0.94, 0.96, 0.98];

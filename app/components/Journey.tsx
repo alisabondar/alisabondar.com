@@ -171,7 +171,7 @@ const StickyNote = ({ item, index, styles: s }: { item: TimelineItem; index: num
   );
 };
 
-export const Journey = ({ scrollProgress, isPastJourney = false }: JourneyProps) => {
+export const Journey = ({ scrollProgress }: JourneyProps) => {
   const isMobile = useIsMobile();
   const heroScrolledPast = scrollProgress >= JOURNEY_SHOW_START;
 
@@ -234,13 +234,12 @@ export const Journey = ({ scrollProgress, isPastJourney = false }: JourneyProps)
   const viewportOpacity = 1 - journeyHideProgress;
 
   const scrollUpStart = isMobile ? JOURNEY_SCROLL_UP_START_MOBILE : 0.86;
-  const scrollUpDuration = isMobile ? 0.18 : 0.16;
+  const scrollUpDuration = isMobile ? 0.24 : 0.16;
   const scrollUpProgress = Math.min(1, Math.max(0, (scrollProgress - scrollUpStart) / scrollUpDuration));
   const translateY = scrollUpProgress * -100;
 
-  const mobileExited = isMobile && isPastJourney;
-  const overlayOpacity = mobileExited ? 0 : viewportOpacity;
-  const overlayTranslateY = mobileExited ? -100 : translateY;
+  const overlayOpacity = viewportOpacity;
+  const overlayTranslateY = translateY;
 
   return (
     <div
