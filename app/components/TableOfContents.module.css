@@ -1,7 +1,7 @@
 .nav {
   position: fixed;
   right: 1rem;
-  top: 50%;
+  top: calc(50% - 60px);
   transform: translateY(-50%);
   z-index: 50;
   pointer-events: auto;
@@ -44,7 +44,7 @@
   position: relative;
   padding: 0.375rem 0.5rem;
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   transition: all 0.3s;
   text-align: right;
   background: none;
@@ -67,27 +67,15 @@
 }
 
 .buttonActive {
-  color: rgb(0 0 0);
-}
-
-:global(.dark) .buttonActive {
-  color: rgb(228 228 231);
+  color: rgb(246 132 124);
 }
 
 .buttonInactive {
-  color: rgb(0 0 0 / 0.4);
+  color: rgb(246 132 124 / 0.5);
 }
 
 .buttonInactive:hover {
-  color: rgb(0 0 0 / 0.65);
-}
-
-:global(.dark) .buttonInactive {
-  color: rgb(161 161 170);
-}
-
-:global(.dark) .buttonInactive:hover {
-  color: rgb(228 228 231);
+  color: rgb(246 132 124 / 0.78);
 }
 
 .label {
@@ -102,12 +90,8 @@
   transform: translateY(-50%);
   width: 0.125rem;
   height: 1rem;
-  background: rgb(0 0 0);
+  background: rgb(246 132 124);
   transition: all 0.3s;
-}
-
-:global(.dark) .indicator {
-  background: rgb(228 228 231);
 }
 
 @media (min-width: 640px) {

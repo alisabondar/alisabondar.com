@@ -37,8 +37,8 @@ export const EVENT_PLACEMENTS: { left: number; rotate: number }[] = [
   { left: 70, rotate: 3 },
 ];
 
-export const JOURNEY_HIDE_START = 0.98;
-export const JOURNEY_HIDE_DURATION = 0.06;
+export const JOURNEY_HIDE_START = 0.94;
+export const JOURNEY_HIDE_DURATION = 0.05;
 
 export const JOURNEY_SCROLL_UP_START_MOBILE = 0.84;
 export const JOURNEY_FADE_START_MOBILE = 0.9;
@@ -102,4 +102,5 @@ export const SECTIONS: Section[] = [
   { id: 'journey', label: 'Journey' },
   { id: 'projects', label: 'Projects' },
   { id: 'impact', label: 'Impact' },
+  { id: 'contact', label: 'Contact Me' },
 ];

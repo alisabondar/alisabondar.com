@@ -63,24 +63,12 @@
   color: rgb(0 0 0);
 }
 
-:global(.dark) .yearButtonActive {
-  color: rgb(228 228 231);
-}
-
 .yearButtonInactive {
   color: rgb(0 0 0 / 0.6);
 }
 
 .yearButtonInactive:hover {
   color: rgb(0 0 0 / 0.8);
-}
-
-:global(.dark) .yearButtonInactive {
-  color: rgb(161 161 170);
-}
-
-:global(.dark) .yearButtonInactive:hover {
-  color: rgb(228 228 231);
 }
 
 .yearLabel {
@@ -97,10 +85,6 @@
   height: 0.75rem;
   background: rgb(0 0 0);
   transition: all 0.3s;
-}
-
-:global(.dark) .yearIndicator {
-  background: rgb(228 228 231);
 }
 
 @media (min-width: 640px) {
@@ -140,10 +124,6 @@
   margin-bottom: 0.25rem;
 }
 
-:global(.dark) .title {
-  color: rgb(255 255 255);
-}
-
 @media (min-width: 640px) {
   .title {
     font-size: 1.25rem;
@@ -172,10 +152,6 @@
   font-size: 0.75rem;
   position: absolute;
   top: 0;
-}
-
-:global(.dark) .monthLabel {
-  color: rgb(161 161 170);
 }
 
 .calendarScroll {
@@ -213,19 +189,11 @@
   position: relative;
 }
 
-:global(.dark) .cell {
-  border-color: rgb(82 82 91);
-}
-
 .cellEmpty {
   width: 10px;
   height: 10px;
   border-radius: 2px;
   border: 1px solid rgb(0 0 0 / 0.4);
-}
-
-:global(.dark) .cellEmpty {
-  border-color: rgb(82 82 91);
 }
 
 .cellHovered {
@@ -234,25 +202,13 @@
   transform: scale(1.1);
 }
 
-:global(.dark) .cellHovered {
-  outline-color: rgb(161 161 170);
-}
-
 /* Level 0 */
 .cellLevel0 {
   background: rgb(228 228 231 / 0.8);
 }
 
-:global(.dark) .cellLevel0 {
-  background: rgb(63 63 70 / 0.8);
-}
-
 .cellLevel0Hover {
   background: rgb(212 212 216);
-}
-
-:global(.dark) .cellLevel0Hover {
-  background: rgb(82 82 91);
 }
 
 /* Level 1 */
@@ -260,16 +216,8 @@
   background: rgb(187 247 208 / 0.8);
 }
 
-:global(.dark) .cellLevel1 {
-  background: rgb(22 101 52 / 0.6);
-}
-
 .cellLevel1Hover {
   background: rgb(134 239 172);
-}
-
-:global(.dark) .cellLevel1Hover {
-  background: rgb(22 163 74);
 }
 
 /* Level 2 */
@@ -277,16 +225,8 @@
   background: rgb(134 239 172 / 0.9);
 }
 
-:global(.dark) .cellLevel2 {
-  background: rgb(22 163 74 / 0.7);
-}
-
 .cellLevel2Hover {
   background: rgb(74 222 128);
-}
-
-:global(.dark) .cellLevel2Hover {
-  background: rgb(34 197 94);
 }
 
 /* Level 3 */
@@ -294,16 +234,8 @@
   background: rgb(74 222 128);
 }
 
-:global(.dark) .cellLevel3 {
-  background: rgb(34 197 94 / 0.8);
-}
-
 .cellLevel3Hover {
   background: rgb(34 197 94);
-}
-
-:global(.dark) .cellLevel3Hover {
-  background: rgb(22 163 74);
 }
 
 /* Level 4 */
@@ -311,16 +243,8 @@
   background: rgb(34 197 94);
 }
 
-:global(.dark) .cellLevel4 {
-  background: rgb(22 163 74);
-}
-
 .cellLevel4Hover {
   background: rgb(22 163 74);
-}
-
-:global(.dark) .cellLevel4Hover {
-  background: rgb(34 197 94);
 }
 
 .mobileYearRow {
@@ -340,10 +264,6 @@
 .mobileYearLabel {
   color: rgb(0 0 0);
   font-size: 10px;
-}
-
-:global(.dark) .mobileYearLabel {
-  color: rgb(255 255 255);
 }
 
 .mobileYearButtons {
@@ -379,26 +299,6 @@
   color: rgb(0 0 0);
 }
 
-:global(.dark) .mobileYearButton {
-  background: rgb(82 82 91);
-  color: rgb(255 255 255);
-}
-
-:global(.dark) .mobileYearButton:hover {
-  background: rgb(113 113 122);
-  color: rgb(255 255 255);
-}
-
-:global(.dark) .mobileYearButtonActive {
-  background: rgb(63 63 70);
-  color: rgb(255 255 255);
-}
-
-:global(.dark) .mobileYearButtonActive:hover {
-  background: rgb(63 63 70);
-  color: rgb(255 255 255);
-}
-
 .tooltip {
   position: fixed;
   z-index: 50;
@@ -413,8 +313,3 @@
   box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
-:global(.dark) .tooltip {
-  background: rgb(24 24 27 / 0.95);
-  border-color: rgb(82 82 91);
-  color: rgb(228 228 231);
-}

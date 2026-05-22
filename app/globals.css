@@ -1,25 +1,6 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --background: #383535;
-    --foreground: #e4e4e7;
-  }
-}
-
-.dark {
-  --background: #383535;
-  --foreground: #e4e4e7;
-}
-
-.light {
   --background: #ffffff;
   --foreground: #171717;
 }
@@ -96,4 +77,3 @@ h1, h2, h3, h4, h5, h6 {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
-

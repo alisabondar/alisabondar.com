@@ -133,12 +133,12 @@ export default function Home() {
               visibility: isMobile && scrollProgress >= JOURNEY_SHOW_START ? 'hidden' : scrollProgress > CROSSFADE_END ? 'hidden' : 'visible',
             }}
           >
-            <h1 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black dark:text-zinc-200 mb-4">
+            <h1 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black mb-4">
               Hi, I&apos;m Alisa.
             </h1>
             <div className="flex justify-center mt-6 sm:mt-8">
               <svg
-                className="w-5 h-5 sm:w-6 sm:h-6 text-black/80 dark:text-zinc-300 animate-bounce"
+                className="w-5 h-5 sm:w-6 sm:h-6 text-black/80 animate-bounce"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

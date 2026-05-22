@@ -81,7 +81,7 @@ export const Projects = ({ scrollProgress, isPastJourney = false }: ProjectsProp
         ...(isMobile && { minHeight: '100vh' }),
       }}
     >
-      <h2 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black dark:text-zinc-200 mb-8 sm:mb-10 md:mb-12">
+      <h2 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black mb-8 sm:mb-10 md:mb-12">
         Projects
       </h2>
 

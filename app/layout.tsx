@@ -3,8 +3,6 @@ import { Geist, Story_Script, Permanent_Marker } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import { TableOfContents } from "./components/TableOfContents";
-import { ThemeProvider } from "./context/ThemeContext";
-import { ThemeToggle } from "./components/ThemeToggle";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,15 +32,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${storyScript.variable} ${permanentMarker.variable} light`} suppressHydrationWarning>
+    <html lang="en" className={`${geistSans.variable} ${storyScript.variable} ${permanentMarker.variable}`}>
       <head />
       <body className="font-sans antialiased">
-        <ThemeProvider>
-          {children}
-          <ThemeToggle />
-          <TableOfContents />
-          <Analytics />
-        </ThemeProvider>
+        {children}
+        <TableOfContents />
+        <Analytics />
       </body>
     </html>
   );

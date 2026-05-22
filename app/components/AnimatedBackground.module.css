@@ -1,10 +1,11 @@
 .svgBackground {
   position: absolute;
   inset: 0;
-  background-image: url('/crease.svg');
+  background-image: url('/collage-paper-bg-v2.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  filter: saturate(0.92) brightness(1.03) contrast(0.98);
   transition: opacity 0.4s ease;
 }
 
@@ -15,10 +16,6 @@
     min-height: 100%;
     min-width: 100%;
   }
-}
-
-.container[data-dark="true"] .svgBackground {
-  background-image: url('/crease-dark.svg');
 }
 
 @keyframes float {
@@ -124,10 +121,6 @@
   pointer-events: none;
 }
 
-.iconsDark .icon {
-  filter: brightness(0) invert(1);
-}
-
 @media (max-width: 640px) {
   .iconsWrap {
     display: none !important;
@@ -147,7 +140,7 @@
 .icon {
   position: absolute;
   opacity: 0;
-  filter: brightness(0);
+  filter: brightness(0) saturate(100%) invert(45%) sepia(28%) saturate(760%) hue-rotate(350deg) brightness(0.92) contrast(0.92);
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   animation: iconFadeIn 1.2s ease-out forwards;

@@ -3,7 +3,6 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import { icons } from '../constants';
-import { useTheme } from '../context/ThemeContext';
 import styles from './AnimatedBackground.module.css';
 
 function getIconDelay(delay: number, isDesktop: boolean) {
@@ -11,7 +10,6 @@ function getIconDelay(delay: number, isDesktop: boolean) {
 }
 
 export const AnimatedBackground = () => {
-  const { theme } = useTheme();
   const [iconsReady, setIconsReady] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
   const loadedCount = useRef(0);
@@ -36,11 +34,11 @@ export const AnimatedBackground = () => {
   }, []);
 
   return (
-    <div className={styles.container} data-dark={theme === 'dark'}>
+    <div className={styles.container}>
       <div className={styles.svgBackground} aria-hidden />
 
       <div
-        className={`${styles.iconsWrap} ${theme === 'dark' ? styles.iconsDark : ''}`}
+        className={styles.iconsWrap}
           aria-hidden
           style={{ visibility: iconsReady ? 'visible' : 'hidden' }}
         >
@@ -77,4 +75,3 @@ export const AnimatedBackground = () => {
     </div>
   );
 };
-

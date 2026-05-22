@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { GitHubActivityGraph } from './GitHubActivityGraph';
-import { useTheme } from '../context/ThemeContext';
 import { useIsMobile, calculateFadeOpacity, useViewportFade } from '../utils/responsive';
 import { contributions2023, totalContributions2023 } from '../data/githubContributions2023';
 import { contributions2024, totalContributions2024 } from '../data/githubContributions2024';
@@ -21,6 +20,11 @@ export interface Job {
   role: string;
   period: string;
   achievements: string[];
+}
+
+export interface Testimonial {
+  quote: string;
+  attribution: string;
 }
 
 export interface ImpactProps {
@@ -89,8 +93,34 @@ const jobs: Job[] = [
   },
 ];
 
+const testimonials: Testimonial[] = [
+  {
+    quote: '... always happy, always proactive, always seeking to learn more and more...',
+    attribution: 'Fellow SWE',
+  },
+  {
+    quote: '... it was immediately clear how appreciated and valued you are by this team.',
+    attribution: 'SWE Manager',
+  },
+  {
+    quote: 'Your engineering growth these past few years speaks to your talent and dedication.',
+    attribution: 'Lead Engineer',
+  },
+  {
+    quote: 'You made the team a better place just by being in it.',
+    attribution: 'Fellow SWE',
+  },
+  {
+    quote: 'She is one of the pillars of the team.',
+    attribution: 'Former Healthcare Manager',
+  },
+  {
+    quote: 'Thank you for accepting the nomination to be our Graduation Class Speaker!',
+    attribution: 'HR Class of S23 Coordinator',
+  },
+];
+
 export const Impact = ({ scrollProgress }: ImpactProps) => {
-  const { theme } = useTheme();
   const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
   const careerJourneyRef = useRef<HTMLDivElement>(null);
@@ -105,6 +135,7 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
   const [lastJobOpacity, setLastJobOpacity] = useState(1);
   const [jobsContainerOpacity, setJobsContainerOpacity] = useState(1);
   const [sentimentOpacity, setSentimentOpacity] = useState(0);
+  const [activeTestimonialIndex, setActiveTestimonialIndex] = useState(0);
   const signatureRef = useRef<SVGSVGElement>(null);
   const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const animationTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
@@ -313,6 +344,16 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
     };
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTestimonialIndex((current) => (current + 1) % testimonials.length);
+    }, 5200);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const activeTestimonial = testimonials[activeTestimonialIndex];
+
   return (
     <>
       <section
@@ -340,19 +381,12 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
           <div
             className={styles.backdrop}
             style={{
-              background: theme === 'dark'
-                ? `linear-gradient(to bottom,
-                    rgba(56, 53, 53, ${0.95 * graphBackgroundOpacity}) 0%,
-                    rgba(56, 53, 53, ${0.85 * graphBackgroundOpacity}) 30%,
-                    rgba(56, 53, 53, ${0.5 * graphBackgroundOpacity}) 60%,
-                    rgba(56, 53, 53, 0) 100%
-                  )`
-                : `linear-gradient(to bottom,
-                    rgba(255, 255, 255, ${0.95 * graphBackgroundOpacity}) 0%,
-                    rgba(255, 255, 255, ${0.85 * graphBackgroundOpacity}) 30%,
-                    rgba(255, 255, 255, ${0.5 * graphBackgroundOpacity}) 60%,
-                    rgba(255, 255, 255, 0) 100%
-                  )`,
+              background: `linear-gradient(to bottom,
+                rgba(255, 255, 255, ${0.95 * graphBackgroundOpacity}) 0%,
+                rgba(255, 255, 255, ${0.85 * graphBackgroundOpacity}) 30%,
+                rgba(255, 255, 255, ${0.5 * graphBackgroundOpacity}) 60%,
+                rgba(255, 255, 255, 0) 100%
+              )`,
             }}
           />
 
@@ -467,7 +501,8 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
         </div>
       </div>
 
-      <div
+      <section
+        id="contact"
         ref={sentimentRef}
         className={styles.sentimentBlock}
         style={{
@@ -504,6 +539,28 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
         </svg>
             </div>
           </div>
+
+          <section className={`${styles.jobsWrap} ${styles.testimonials}`} aria-label="Testimonials">
+            <div
+              className={styles.backdrop}
+              style={{
+                background: 'rgba(255, 255, 255, 0.36)',
+              }}
+            />
+            <div className={styles.testimonialViewport} aria-live="polite">
+              <div
+                key={`${activeTestimonial.quote}-${activeTestimonial.attribution}`}
+                className={styles.testimonialSlide}
+              >
+                <blockquote className={styles.testimonialQuote}>
+                  &ldquo;{activeTestimonial.quote}&rdquo;
+                </blockquote>
+                <p className={styles.testimonialAttribution}>
+                  - {activeTestimonial.attribution}
+                </p>
+              </div>
+            </div>
+          </section>
         </div>
 
         <div className={styles.contactLinks}>
@@ -589,7 +646,7 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
             );
           })}
         </div>
-      </div>
+      </section>
     </section>
     </>
   );

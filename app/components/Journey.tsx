@@ -233,8 +233,8 @@ export const Journey = ({ scrollProgress, isPastJourney = false }: JourneyProps)
   );
   const viewportOpacity = 1 - journeyHideProgress;
 
-  const scrollUpStart = isMobile ? JOURNEY_SCROLL_UP_START_MOBILE : 0.9;
-  const scrollUpDuration = isMobile ? 0.18 : 0.15;
+  const scrollUpStart = isMobile ? JOURNEY_SCROLL_UP_START_MOBILE : 0.86;
+  const scrollUpDuration = isMobile ? 0.18 : 0.16;
   const scrollUpProgress = Math.min(1, Math.max(0, (scrollProgress - scrollUpStart) / scrollUpDuration));
   const translateY = scrollUpProgress * -100;
 
@@ -264,7 +264,7 @@ export const Journey = ({ scrollProgress, isPastJourney = false }: JourneyProps)
           }}
         >
           <h2
-            className={`${styles.journeyHeader} ${isMobile ? styles.journeyHeaderMobile : styles.journeyHeaderDesktop} text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black dark:text-zinc-200`}
+            className={`${styles.journeyHeader} ${isMobile ? styles.journeyHeaderMobile : styles.journeyHeaderDesktop} text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black`}
             style={{
               transform: `translateX(-50%) translateY(${headerTranslateY}px)`,
               opacity: headerOpacity,
