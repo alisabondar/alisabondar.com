@@ -80,6 +80,10 @@ export const contributions2026 = [
   { date: '2026-05-12', level: 1, count: 1 },
   { date: '2026-05-13', level: 1, count: 2 },
   { date: '2026-05-14', level: 1, count: 4 },
+  { date: '2026-05-21', level: 1, count: 1 },
+  { date: '2026-05-22', level: 1, count: 3 },
+  { date: '2026-05-25', level: 1, count: 5 },
+  { date: '2026-05-26', level: 1, count: 1 },
 ];
 
-export const totalContributions2026 = 583;
+export const totalContributions2026 = 593;

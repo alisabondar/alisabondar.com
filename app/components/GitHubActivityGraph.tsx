@@ -199,7 +199,7 @@ export const GitHubActivityGraph = ({ years }: GitHubActivityGraphProps) => {
           <div className={styles.calendarScroll}>
             <div className={styles.calendarInner}>
               <div className={styles.monthRow}>
-                {monthPositions.map(({ month, position, label }, idx) => {
+                {monthPositions.map(({ position, label }, idx) => {
                   const nextPosition = idx < monthPositions.length - 1
                     ? monthPositions[idx + 1].position
                     : FIXED_WEEKS;
