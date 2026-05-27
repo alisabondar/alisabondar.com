@@ -22,7 +22,7 @@ const projects: Project[] = [
   {
     title: 'Florascape',
     githubUrl: 'https://github.com/alisabondar/florascape',
-    screenshot: '/warning.png',
+    screenshot: '/florascape.png',
     tooltip: 'WIP! Click me for the github roadmap',
   },
   {
