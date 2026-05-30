@@ -84,7 +84,7 @@ export const contributions2026 = [
   { date: '2026-05-22', level: 1, count: 3 },
   { date: '2026-05-25', level: 1, count: 5 },
   { date: '2026-05-26', level: 1, count: 1 },
-  { date: '2026-05-27', level: 1, count: 6 },
+  { date: '2026-05-27', level: 2, count: 6 },
   { date: '2026-05-29', level: 1, count: 1 },
   { date: '2026-05-30', level: 1, count: 1 },
 ];
