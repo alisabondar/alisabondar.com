@@ -21,18 +21,18 @@ export interface ProjectsProps {
 const projects: Project[] = [
   {
     title: 'Florascape',
-    githubUrl: 'https://github.com/alisabondar/florascape',
+    githubUrl: 'https://florascaper.vercel.app/',
     screenshot: '/florascape.png',
     tooltip: 'WIP! Click me for the github roadmap',
   },
   {
     title: 'Inkloom',
-    githubUrl: 'https://inkloom-nn6o.vercel.app/',
+    githubUrl: 'https://inkloom.vercel.app/',
     screenshot: '/inkloom.png',
   },
   {
     title: 'Lumka',
-    githubUrl: 'https://lumka-one.vercel.app/',
+    githubUrl: 'https://lumka-game.vercel.app/',
     screenshot: '/lumka.png',
   },
 ];
