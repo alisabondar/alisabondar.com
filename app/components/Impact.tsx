@@ -58,7 +58,7 @@ const jobs: Job[] = [
   {
     company: 'AlphaSights',
     role: 'Software Engineer',
-    period: '2024 - Present',
+    period: '2024 - 2026',
     achievements: [
       'Shipped 550+ production changes across debugging, feature development, and new microservices while maintaining platform reliability and delivery velocity.',
       'Published internal Implementation Design Documents for the following projects: a step-by-step monolith breakdown, an AI outreach initiative, a structured data capture framework, and a social login project.',
