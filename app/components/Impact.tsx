@@ -124,7 +124,6 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
   const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
   const careerJourneyRef = useRef<HTMLDivElement>(null);
-  const [graphBackgroundOpacity, setGraphBackgroundOpacity] = useState(1);
   const achievementRefs = useRef<(HTMLLIElement | null)[]>([]);
   const headerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const lastJobRef = useRef<HTMLDivElement | null>(null);
@@ -149,16 +148,7 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
     const handleScroll = () => {
       if (!careerJourneyRef.current) return;
 
-      const careerSection = careerJourneyRef.current;
-      const rect = careerSection.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-
-      const sectionTop = rect.top;
-
-      const fadeStart = windowHeight;
-      const fadeDistance = 300;
-      const scrollProgress = Math.max(0, Math.min(1, (fadeStart - sectionTop) / fadeDistance));
-      setGraphBackgroundOpacity(1 - scrollProgress);
 
       const newOpacities = achievementRefs.current.map((achievementRef) => {
         if (!achievementRef) return 0;
@@ -381,12 +371,7 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
           <div
             className={styles.backdrop}
             style={{
-              background: `linear-gradient(to bottom,
-                rgba(255, 255, 255, ${0.95 * graphBackgroundOpacity}) 0%,
-                rgba(255, 255, 255, ${0.85 * graphBackgroundOpacity}) 30%,
-                rgba(255, 255, 255, ${0.5 * graphBackgroundOpacity}) 60%,
-                rgba(255, 255, 255, 0) 100%
-              )`,
+              background: 'rgba(255, 255, 255, 0.36)',
             }}
           />
 
