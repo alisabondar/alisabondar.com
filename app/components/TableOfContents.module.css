@@ -8,15 +8,9 @@
   display: none;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 1120px) and (min-height: 720px) {
   .nav {
     display: block;
-    right: 1.5rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .nav {
     right: 2rem;
   }
 }
