@@ -49,7 +49,10 @@ export const Projects = ({ scrollProgress }: ProjectsProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const cardsContainerRef = useRef<HTMLDivElement>(null);
 
-  const sectionViewportFade = useViewportFade(sectionRef, { startAt: 0.92, fullAt: 0.5 });
+  const sectionViewportFade = useViewportFade(
+    sectionRef,
+    { startAt: isMobile ? 0.35 : 0.92, fullAt: isMobile ? 0.1 : 0.5 }
+  );
   const cardsViewportFade = useViewportFade(cardsContainerRef, { startAt: 0.5, fullAt: 0.25 });
 
   const sectionFadeInStart = 0.92;

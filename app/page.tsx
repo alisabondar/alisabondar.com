@@ -20,7 +20,8 @@ export default function Home() {
       if (typeof window !== 'undefined') {
         const isMobile = window.innerWidth < BREAKPOINTS.MOBILE;
         const timelineMultiplier = getTimelineMultiplier(isMobile);
-        setJourneyHeight(`${timelineMultiplier * 100}vh`);
+        const mobileScrollMultiplier = isMobile ? MOBILE_SCROLL_SLOWDOWN : 1;
+        setJourneyHeight(`${timelineMultiplier * mobileScrollMultiplier * 100}vh`);
       }
     };
 
@@ -74,12 +75,8 @@ export default function Home() {
       const markerOffsetTop = markerEl
         ? markerEl.getBoundingClientRect().top + scrollTop
         : 0;
-      let effectiveScrollRange =
+      const effectiveScrollRange =
         markerOffsetTop > 0 ? markerOffsetTop : fallbackScrollRange;
-      if (isMobile) {
-        effectiveScrollRange *= MOBILE_SCROLL_SLOWDOWN;
-      }
-
       if (scrollTop <= effectiveScrollRange) {
         const progress = (scrollTop / effectiveScrollRange) * 1.2;
         setScrollProgress(progress);
