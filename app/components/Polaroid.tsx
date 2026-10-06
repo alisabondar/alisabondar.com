@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import Image from 'next/image';
 import { useTilt } from '../utils/useTilt';
 import styles from './Polaroid.module.css';
@@ -16,7 +17,8 @@ export interface PolaroidProps {
   className?: string;
 }
 
-export const Polaroid = ({
+// Memoized: Journey re-renders on every scroll frame, but a card's own props never change.
+export const Polaroid = memo(function Polaroid({
   variant,
   title,
   image,
@@ -24,7 +26,7 @@ export const Polaroid = ({
   year,
   enableMouseTilt = false,
   className = '',
-}: PolaroidProps) => {
+}: PolaroidProps) {
   const isLandscape = variant === 'landscape';
   const isProject = variant === 'project';
   const { ref: tiltRef, style: tiltStyle } = useTilt(enableMouseTilt);
@@ -94,4 +96,4 @@ export const Polaroid = ({
       </div>
     </div>
   );
-};
+});

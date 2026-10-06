@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { memo, useRef, useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import { icons } from '../constants';
 import styles from './AnimatedBackground.module.css';
@@ -9,7 +9,7 @@ function getIconDelay(delay: number, isDesktop: boolean) {
   return isDesktop ? Math.min(delay * 0.2, 0.5) : delay;
 }
 
-export const AnimatedBackground = () => {
+export const AnimatedBackground = memo(function AnimatedBackground() {
   const [iconsReady, setIconsReady] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
   const loadedCount = useRef(0);
@@ -74,4 +74,4 @@ export const AnimatedBackground = () => {
         </div>
     </div>
   );
-};
+});

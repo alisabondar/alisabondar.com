@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { useIsMobile, PHASE_TIMING } from '../utils/responsive';
 import { useTilt } from '../utils/useTilt';
 import { Polaroid } from './Polaroid';
@@ -34,20 +35,20 @@ function getPlacement(index: number): { left: number; rotate: number } {
 }
 
 
-const StickyNote = ({ item, index, styles: s }: { item: TimelineItem; index: number; styles: Record<string, string> }) => {
+const StickyNote = memo(function StickyNote({ item, index }: { item: TimelineItem; index: number }) {
   const { ref: tiltRef, style: tiltStyle } = useTilt(true);
   return (
-    <div ref={tiltRef} className={s.eventCardWrapper} style={tiltStyle}>
-      <div className={s.tapedCard}>
-        <div className={s.tape} aria-hidden />
-        <div className={`${s.stickyContainer} transition-all duration-500`}>
-          <div className={s.stickyOuter}>
-            <div className={s.sticky}>
-              <div className={`${s.stickyContent} ${
-                [s.paleLavender, s.paleBlue, s.paleGray, s.palePink][index % 4]
+    <div ref={tiltRef} className={styles.eventCardWrapper} style={tiltStyle}>
+      <div className={styles.tapedCard}>
+        <div className={styles.tape} aria-hidden />
+        <div className={`${styles.stickyContainer} transition-all duration-500`}>
+          <div className={styles.stickyOuter}>
+            <div className={styles.sticky}>
+              <div className={`${styles.stickyContent} ${
+                [styles.paleLavender, styles.paleBlue, styles.paleGray, styles.palePink][index % 4]
               }`}>
-                <h3 className={s.stickyTitle}>{item.title}</h3>
-                {item.year ? <div className={s.stickyYear}>{item.year}</div> : null}
+                <h3 className={styles.stickyTitle}>{item.title}</h3>
+                {item.year ? <div className={styles.stickyYear}>{item.year}</div> : null}
               </div>
             </div>
           </div>
@@ -55,7 +56,7 @@ const StickyNote = ({ item, index, styles: s }: { item: TimelineItem; index: num
       </div>
     </div>
   );
-};
+});
 
 export const Journey = ({ scrollProgress }: JourneyProps) => {
   const isMobile = useIsMobile();
@@ -218,7 +219,7 @@ export const Journey = ({ scrollProgress }: JourneyProps) => {
                         enableMouseTilt
                       />
                     ) : (
-                      <StickyNote item={item} index={index} styles={styles} />
+                      <StickyNote item={item} index={index} />
                     )}
                   </div>
                 );
