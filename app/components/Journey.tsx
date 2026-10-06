@@ -45,17 +45,17 @@ const timelineItems: TimelineItem[] = [
   {
     title: 'First day working at the CVOR',
     year: 'May 2020',
-    picture: 'CVOR-event.png',
+    picture: 'CVOR-event.webp',
   },
   {
     title: 'First ski trip out west! 🎿',
     year: 'December 2020',
-    picture: 'colorado-event.png',
+    picture: 'colorado-event.webp',
   },
   {
     title: 'First time scrubbing in to assist',
     year: 'March 2021',
-    picture: 'scrub-event.png',
+    picture: 'scrub-event.webp',
   },
   {
     title: 'First 8hr+ road trip to Stowe, VT',
@@ -68,7 +68,7 @@ const timelineItems: TimelineItem[] = [
   {
     title: 'Visited Acadia National Park 🌿',
     year: 'July 2022',
-    picture: 'maine-event.png',
+    picture: 'maine-event.webp',
   },
   {
     title: 'Bye bye CVOR, hello eICU',
@@ -81,37 +81,37 @@ const timelineItems: TimelineItem[] = [
   {
     title: 'First road bike',
     year: 'April 2023',
-    picture: 'bike-event.png',
+    picture: 'bike-event.webp',
   },
   {
     title: 'Enrolled into Hack Reactor 💻',
     year: 'June 2023',
-    picture: 'hackreactor-event.png',
+    picture: 'hackreactor-event.webp',
   },
   {
     title: 'Graduated Hack Reactor 📓',
     year: 'August 2023',
-    picture: 'graduation-event.png',
+    picture: 'graduation-event.webp',
   },
   {
     title: 'First lease signed! 🌃',
     year: 'December 2023',
-    picture: 'nyc-event.png',
+    picture: 'nyc-event.webp',
   },
   {
     title: 'First software engineering gig!',
     year: 'January 2024',
-    picture: 'alphasights-event.png',
+    picture: 'alphasights-event.webp',
   },
   {
     title: 'First marathon! ',
     year: 'March 2025',
-    picture: 'marathon-event.png',
+    picture: 'marathon-event.webp',
   },
   {
     title: 'First time renting a convertible',
     year: 'May 2025',
-    picture: 'driving-event.png',
+    picture: 'driving-event.webp',
   },
   {
     title: 'First time playing pickleball',
@@ -124,26 +124,26 @@ const timelineItems: TimelineItem[] = [
   {
     title: 'Visited Boston',
     year: 'September 2025',
-    picture: 'boston.png',
+    picture: 'boston.webp',
   },
   {
     title: 'Spent most of the holiday season baking!',
-    picture: 'pie.png',
+    picture: 'pie.webp',
     year: 'December 2025',
   },
   {
     title: 'First time ice skating on a lake!',
-    picture: 'skating.png',
+    picture: 'skating.webp',
     year: 'February 2026',
   },
   {
     title: 'Joined the fiancée club!',
-    picture: 'engagement.png',
+    picture: 'engagement.webp',
     year: 'March 2026',
   },
   {
     title: 'Moved out west to Colorado!',
-    picture: 'west.png',
+    picture: 'west.webp',
     year: 'May 2026',
   }
 ];
