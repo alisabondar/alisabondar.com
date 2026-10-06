@@ -360,16 +360,12 @@
   }
 }
 
+/* The heading never wraps, so above mobile its size tracks the viewport: the line is ~13.2em wide and the
+   section + block padding take 8rem. Fixed 3.75rem/4.5rem sizes overflowed the page at 768px and 1024px. */
 @media (min-width: 768px) {
   .signatureHeading {
-    font-size: 3.75rem;
+    font-size: clamp(2.25rem, calc((100vw - 8rem) / 13.2), 4.5rem);
     margin-bottom: 3rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .signatureHeading {
-    font-size: 4.5rem;
   }
 }
 
