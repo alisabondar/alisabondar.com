@@ -37,9 +37,6 @@ export const Projects = ({ scrollProgress }: ProjectsProps) => {
   const sectionOpacity = isMobile
     ? sectionViewportFade.opacity
     : scrollFade.opacity;
-  const sectionVisibility = isMobile
-    ? sectionViewportFade.visibility
-    : scrollFade.visibility;
 
   const cardsContainerOpacity = isMobile
     ? cardsViewportFade.opacity
@@ -55,7 +52,8 @@ export const Projects = ({ scrollProgress }: ProjectsProps) => {
       className="relative z-30 flex flex-col items-center px-4 sm:px-6 md:px-12 md:pr-20 lg:pr-36 pt-20 transition-opacity duration-700 ease-out"
       style={{
         opacity: sectionOpacity,
-        visibility: sectionVisibility,
+        // Stay focusable while transparent (focus scrolls it into view), but don't catch stray clicks.
+        pointerEvents: sectionOpacity < 0.05 ? 'none' : undefined,
         ...(isMobile && { minHeight: '100vh' }),
       }}
     >
