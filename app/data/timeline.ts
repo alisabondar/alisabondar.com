@@ -68,7 +68,7 @@ export const timelineItems: TimelineItem[] = [
     picture: 'alphasights-event.webp',
   },
   {
-    title: 'Ran my first marathon! 🏃',
+    title: 'Ran my first marathon!',
     year: 'March 2025',
     picture: 'marathon-event.webp',
   },
