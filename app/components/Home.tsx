@@ -9,6 +9,7 @@ import type { YearData } from './GitHubActivityGraph';
 import { useIsMobile } from '../utils/responsive';
 import { getJourneySectionVh, isMobileViewport, measureJourneyEnd, scrollToProgress } from '../utils/scrollTimeline';
 import { scrollToSection } from '../utils/scrollToSection';
+import { useRandomHobby } from '../utils/useRandomHobby';
 import { JOURNEY_SHOW_START, CROSSFADE_END } from '../constants';
 import styles from './Home.module.css';
 
@@ -25,6 +26,7 @@ export interface HomeProps {
 
 export function Home({ contributionYears }: HomeProps) {
   const isMobile = useIsMobile();
+  const hobby = useRandomHobby();
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isPastJourney, setIsPastJourney] = useState(false);
 
@@ -73,7 +75,7 @@ export function Home({ contributionYears }: HomeProps) {
 
   return (
     <>
-      <AnimatedBackground />
+      <AnimatedBackground highlightedIcon={hobby?.icon} />
       <Journey scrollProgress={scrollProgress} isPastJourney={isPastJourney} />
 
       <main className="await-background relative z-20">
@@ -86,6 +88,16 @@ export function Home({ contributionYears }: HomeProps) {
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-black mb-4">
                 Hi, I&apos;m Alisa.
               </h1>
+              <p className={styles.tagline}>
+                I went from the operating room to shipping LLM-powered products.
+              </p>
+              <p className={styles.obsession}>
+                Currently obsessed with{' '}
+                <span className={`${styles.hobby} ${hobby ? styles.hobbyVisible : ''}`}>
+                  {/* Non-breaking space keeps the line's height before the client picks a hobby. */}
+                  {hobby?.label ?? '\u00a0'}
+                </span>
+              </p>
               <div className="flex justify-center mt-6 sm:mt-8">
                 <svg
                   className="w-5 h-5 sm:w-6 sm:h-6 text-black/80 animate-bounce"

@@ -9,7 +9,12 @@ function getIconDelay(delay: number, isDesktop: boolean) {
   return isDesktop ? Math.min(delay * 0.2, 0.5) : delay;
 }
 
-export const AnimatedBackground = memo(function AnimatedBackground() {
+export interface AnimatedBackgroundProps {
+  /** src of the icon to spotlight (matches the hobby featured in the hero). */
+  highlightedIcon?: string;
+}
+
+export const AnimatedBackground = memo(function AnimatedBackground({ highlightedIcon }: AnimatedBackgroundProps) {
   const [iconsReady, setIconsReady] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
   const loadedCount = useRef(0);
@@ -49,7 +54,7 @@ export const AnimatedBackground = memo(function AnimatedBackground() {
             return (
               <div
                 key={index}
-                className={`${styles.icon} ${animationClass}`}
+                className={`${styles.icon} ${animationClass} ${icon.src === highlightedIcon ? styles.iconHighlighted : ''}`}
                 style={{
                   left: `${icon.x}%`,
                   top: `${icon.y}%`,
