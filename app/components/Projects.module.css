@@ -32,7 +32,10 @@
   transition: transform 0.3s ease-out;
 }
 
-.polaroidWrapper:hover {
+/* Bring the card being read (hovered, focused, or tapped open) above its overlapping neighbors. */
+.polaroidWrapper:hover,
+.polaroidWrapper:focus-within,
+.polaroidWrapper:has([data-flipped='true']) {
   z-index: 100;
 }
 

@@ -1,9 +1,8 @@
 'use client';
 
 import { useRef } from 'react';
-import Link from 'next/link';
 import { calculateFadeOpacity, useIsMobile, useViewportFade } from '../utils/responsive';
-import { Polaroid } from './Polaroid';
+import { ProjectCard } from './ProjectCard';
 import styles from './Projects.module.css';
 import { projects, type Project } from '../data/projects';
 
@@ -12,11 +11,10 @@ export interface ProjectsProps {
   isPastJourney?: boolean;
 }
 
+
+/** On mobile the first (in-progress) project moves to the end of the stack. */
 function getDisplayOrder(isMobile: boolean): Project[] {
-  if (isMobile) {
-    return [projects[1], projects[2], projects[0]];
-  }
-  return projects;
+  return isMobile ? [...projects.slice(1), ...projects.slice(0, 1)] : projects;
 }
 
 export const Projects = ({ scrollProgress }: ProjectsProps) => {
@@ -74,24 +72,15 @@ export const Projects = ({ scrollProgress }: ProjectsProps) => {
           );
 
           return (
-            <Link
+            <div
               key={project.title}
-              href={project.url}
-              target="_blank"
-              rel="noopener noreferrer"
               className={styles.polaroidWrapper}
               style={{ opacity: isMobile ? 1 : cardOpacity }}
-              title={project.tooltip}
             >
               <div className={styles.polaroidInner}>
-              <Polaroid
-                variant="project"
-                title={project.title}
-                image={project.screenshot}
-                enableMouseTilt
-              />
+                <ProjectCard project={project} />
               </div>
-            </Link>
+            </div>
           );
         })}
       </div>
