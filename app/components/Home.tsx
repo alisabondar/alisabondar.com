@@ -5,6 +5,7 @@ import { AnimatedBackground } from './AnimatedBackground';
 import { Journey } from './Journey';
 import { Projects } from './Projects';
 import { Impact } from './Impact';
+import type { YearData } from './GitHubActivityGraph';
 import { useIsMobile } from '../utils/responsive';
 import { getJourneySectionVh, isMobileViewport, measureJourneyEnd, scrollToProgress } from '../utils/scrollTimeline';
 import { JOURNEY_SHOW_START, CROSSFADE_END } from '../constants';
@@ -17,7 +18,11 @@ const journeyHeightVars = {
   '--journey-height-desktop': `${getJourneySectionVh(false) * 100}vh`,
 } as CSSProperties;
 
-export function Home() {
+export interface HomeProps {
+  contributionYears: YearData[];
+}
+
+export function Home({ contributionYears }: HomeProps) {
   const isMobile = useIsMobile();
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isPastJourney, setIsPastJourney] = useState(false);
@@ -92,7 +97,7 @@ export function Home() {
         <section id="journey" aria-label="Journey" className={`relative z-10 ${styles.journeySpacer}`} style={journeyHeightVars} />
 
         <Projects scrollProgress={scrollProgress} isPastJourney={isPastJourney} />
-        <Impact scrollProgress={scrollProgress} />
+        <Impact scrollProgress={scrollProgress} contributionYears={contributionYears} />
       </main>
     </>
   );

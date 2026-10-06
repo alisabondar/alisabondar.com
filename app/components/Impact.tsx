@@ -2,10 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { GitHubActivityGraph, type YearData } from './GitHubActivityGraph';
-import { contributions2023, totalContributions2023 } from '../data/githubContributions2023';
-import { contributions2024, totalContributions2024 } from '../data/githubContributions2024';
-import { contributions2025, totalContributions2025 } from '../data/githubContributions2025';
-import { contributions2026, totalContributions2026 } from '../data/githubContributions2026';
 import { ImpactStats } from './ImpactStats';
 import { Testimonials } from './Testimonials';
 import { ContactIcon } from './ContactIcon';
@@ -15,6 +11,7 @@ import styles from './Impact.module.css';
 
 export interface ImpactProps {
   scrollProgress: number;
+  contributionYears: YearData[];
 }
 
 const totalAchievements = jobs.reduce((sum, job) => sum + job.achievements.length, 0);
@@ -35,14 +32,7 @@ function sameValues(a: number[], b: number[]) {
   return a.length === b.length && a.every((v, i) => v === b[i]);
 }
 
-const contributionYears: YearData[] = [
-  { year: 2026, contributions: contributions2026, totalContributions: totalContributions2026 },
-  { year: 2025, contributions: contributions2025, totalContributions: totalContributions2025 },
-  { year: 2024, contributions: contributions2024, totalContributions: totalContributions2024 },
-  { year: 2023, contributions: contributions2023, totalContributions: totalContributions2023 },
-];
-
-export const Impact = ({ scrollProgress }: ImpactProps) => {
+export const Impact = ({ scrollProgress, contributionYears }: ImpactProps) => {
   const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
   const achievementRefs = useRef<(HTMLLIElement | null)[]>([]);
