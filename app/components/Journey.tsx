@@ -4,6 +4,7 @@ import { useIsMobile, PHASE_TIMING } from '../utils/responsive';
 import { useTilt } from '../utils/useTilt';
 import { Polaroid } from './Polaroid';
 import styles from './Journey.module.css';
+import { timelineItems, type TimelineItem } from '../data/timeline';
 import {
   EVENT_HEIGHT_VH,
   INTRO_EVENTS,
@@ -22,11 +23,6 @@ import {
   HEADER_FROZEN_DURATION_MOBILE,
 } from '../constants';
 
-export interface TimelineItem {
-  title: string;
-  year?: string;
-  picture?: string;
-}
 
 export interface JourneyProps {
   scrollProgress: number;
@@ -37,116 +33,6 @@ function getPlacement(index: number): { left: number; rotate: number } {
   return EVENT_PLACEMENTS[index % EVENT_PLACEMENTS.length] ?? EVENT_PLACEMENTS[0];
 }
 
-const timelineItems: TimelineItem[] = [
-  {
-    title: 'Graduated Virginia Tech with a double major!',
-    year: 'May 2020',
-  },
-  {
-    title: 'First day working at the CVOR',
-    year: 'May 2020',
-    picture: 'CVOR-event.webp',
-  },
-  {
-    title: 'First ski trip out west! 🎿',
-    year: 'December 2020',
-    picture: 'colorado-event.webp',
-  },
-  {
-    title: 'First time scrubbing in to assist',
-    year: 'March 2021',
-    picture: 'scrub-event.webp',
-  },
-  {
-    title: 'First 8hr+ road trip to Stowe, VT',
-    year: 'December 2021',
-  },
-  {
-    title: 'Ditching the contacts post LASIK surgery 🤯',
-    year: 'June 2022',
-  },
-  {
-    title: 'Visited Acadia National Park 🌿',
-    year: 'July 2022',
-    picture: 'maine-event.webp',
-  },
-  {
-    title: 'Bye bye CVOR, hello eICU',
-    year: 'August 2022',
-  },
-  {
-    title: 'Started to study javascript and python',
-    year: 'March 2023',
-  },
-  {
-    title: 'First road bike',
-    year: 'April 2023',
-    picture: 'bike-event.webp',
-  },
-  {
-    title: 'Enrolled into Hack Reactor 💻',
-    year: 'June 2023',
-    picture: 'hackreactor-event.webp',
-  },
-  {
-    title: 'Graduated Hack Reactor 📓',
-    year: 'August 2023',
-    picture: 'graduation-event.webp',
-  },
-  {
-    title: 'First lease signed! 🌃',
-    year: 'December 2023',
-    picture: 'nyc-event.webp',
-  },
-  {
-    title: 'First software engineering gig!',
-    year: 'January 2024',
-    picture: 'alphasights-event.webp',
-  },
-  {
-    title: 'First marathon! ',
-    year: 'March 2025',
-    picture: 'marathon-event.webp',
-  },
-  {
-    title: 'First time renting a convertible',
-    year: 'May 2025',
-    picture: 'driving-event.webp',
-  },
-  {
-    title: 'First time playing pickleball',
-    year: 'June 2025',
-  },
-  {
-    title: 'First solo headstand in yoga',
-    year: 'August 2025',
-  },
-  {
-    title: 'Visited Boston',
-    year: 'September 2025',
-    picture: 'boston.webp',
-  },
-  {
-    title: 'Spent most of the holiday season baking!',
-    picture: 'pie.webp',
-    year: 'December 2025',
-  },
-  {
-    title: 'First time ice skating on a lake!',
-    picture: 'skating.webp',
-    year: 'February 2026',
-  },
-  {
-    title: 'Joined the fiancée club!',
-    picture: 'engagement.webp',
-    year: 'March 2026',
-  },
-  {
-    title: 'Moved out west to Colorado!',
-    picture: 'west.webp',
-    year: 'May 2026',
-  }
-];
 
 const StickyNote = ({ item, index, styles: s }: { item: TimelineItem; index: number; styles: Record<string, string> }) => {
   const { ref: tiltRef, style: tiltStyle } = useTilt(true);

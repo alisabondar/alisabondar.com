@@ -5,37 +5,12 @@ import Link from 'next/link';
 import { calculateFadeOpacity, useIsMobile, useViewportFade } from '../utils/responsive';
 import { Polaroid } from './Polaroid';
 import styles from './Projects.module.css';
-
-export interface Project {
-  title: string;
-  githubUrl: string;
-  screenshot?: string;
-  tooltip?: string;
-}
+import { projects, type Project } from '../data/projects';
 
 export interface ProjectsProps {
   scrollProgress: number;
   isPastJourney?: boolean;
 }
-
-const projects: Project[] = [
-  {
-    title: 'Florascape',
-    githubUrl: 'https://florascaper.vercel.app/',
-    screenshot: '/florascape.webp',
-    tooltip: 'WIP! Click me for the github roadmap',
-  },
-  {
-    title: 'Inkloom',
-    githubUrl: 'https://inkloom.vercel.app/',
-    screenshot: '/inkloom.webp',
-  },
-  {
-    title: 'Lumka',
-    githubUrl: 'https://lumka-game.vercel.app/',
-    screenshot: '/lumka.webp',
-  },
-];
 
 function getDisplayOrder(isMobile: boolean): Project[] {
   if (isMobile) {
@@ -103,7 +78,7 @@ export const Projects = ({ scrollProgress }: ProjectsProps) => {
           return (
             <Link
               key={project.title}
-              href={project.githubUrl}
+              href={project.url}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.polaroidWrapper}
