@@ -1,0 +1,58 @@
+/* The hero slides up under the pinned Journey layer, which keeps its own 100vh in the flow. */
+.underPinned {
+  margin-top: -100vh;
+}
+
+/* Containing block for the sticky Journey layer; its end is where the Journey is released. */
+.pinnedTrack {
+  position: relative;
+}
+
+.journeySpacer {
+  min-height: var(--journey-height-desktop);
+}
+
+@media (max-width: 639px) {
+  .journeySpacer {
+    min-height: var(--journey-height-mobile);
+  }
+}
+
+.tagline {
+  max-width: 34rem;
+  margin: 0 auto;
+  font-size: 1.125rem;
+  line-height: 1.45;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: rgb(0 0 0 / 0.72);
+  text-wrap: balance;
+}
+
+.obsession {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  color: rgb(0 0 0 / 0.55);
+}
+
+.hobby {
+  font-family: var(--font-handwriting), cursive, sans-serif;
+  font-size: calc(1.15em * var(--handwriting-scale, 1));
+  color: rgb(226 104 96);
+  opacity: 0;
+  transition: opacity 0.5s ease-out 0.2s;
+}
+
+.hobbyVisible {
+  opacity: 1;
+}
+
+@media (min-width: 768px) {
+  .tagline {
+    font-size: 1.375rem;
+  }
+
+  .obsession {
+    font-size: 1.05rem;
+  }
+}

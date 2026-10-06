@@ -1,0 +1,231 @@
+.plainLink {
+  display: block;
+}
+
+.card {
+  perspective: 1400px;
+  cursor: pointer;
+}
+
+.card:focus-visible {
+  outline: 2px solid rgb(246 132 124);
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+
+.flipper {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .flipper {
+    transform: rotateY(180deg);
+  }
+}
+
+.card:focus-within .flipper,
+.card[data-flipped='true'] .flipper {
+  transform: rotateY(180deg);
+}
+
+.face {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.front {
+  position: relative;
+  /* Safari only honors backface-visibility on elements with their own transform. */
+  transform: rotateY(0deg);
+}
+
+.back {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem 1.75rem 1.4rem;
+  background: var(--print-stock);
+  box-shadow: var(--print-shadow);
+  border-radius: 2px;
+  cursor: default;
+  text-align: left;
+}
+
+/* A project with only a name, status and one line: centered like a title card instead of top-aligned. */
+.backCompact {
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  text-align: center;
+}
+
+.backCompact .header {
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.backCompact .title {
+  font-size: calc(2rem * var(--handwriting-scale, 1));
+}
+
+.backCompact .pitch {
+  font-size: 1.3rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-handwriting), cursive, sans-serif;
+  font-weight: 400;
+  font-size: calc(1.35rem * var(--handwriting-scale, 1));
+  letter-spacing: normal;
+  color: #171717;
+}
+
+.status {
+  flex-shrink: 0;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+  background: rgb(246 132 124 / 0.16);
+  color: rgb(196 84 76);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.pitch {
+  margin: 0;
+  font-size: 1.2rem;
+  line-height: 1.4;
+  font-weight: 500;
+  color: rgb(0 0 0 / 0.85);
+}
+
+.underTheHood {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: rgb(0 0 0 / 0.6);
+}
+
+.underTheHoodLabel {
+  font-weight: 600;
+  color: rgb(0 0 0 / 0.75);
+}
+
+.stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  padding: 0.15rem 0.5rem;
+  border: 1px solid rgb(0 0 0 / 0.12);
+  border-radius: 0.375rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgb(0 0 0 / 0.7);
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 0.95rem;
+  border: 1px solid rgb(0 0 0 / 0.8);
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #000;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+.buttonPrimary {
+  background: #000;
+  color: #fff;
+}
+
+.button:not(.buttonPrimary):hover {
+  background: rgb(0 0 0 / 0.06);
+}
+
+.button:focus-visible {
+  outline: 2px solid rgb(246 132 124);
+  outline-offset: 2px;
+}
+
+.arrow {
+  width: 0.85rem;
+  height: 0.85rem;
+}
+
+@media (max-width: 767px) {
+  .back {
+    gap: 0.55rem;
+    padding: 1.1rem 1.25rem 1rem;
+  }
+
+  .title {
+    font-size: calc(1.15rem * var(--handwriting-scale, 1));
+  }
+
+  .pitch {
+    font-size: 1.05rem;
+  }
+}
+
+/* The smallest card (21rem wide) only has room for the essentials. */
+@media (max-width: 640px) {
+  .back {
+    gap: 0.4rem;
+    padding: 0.85rem 0.95rem 0.8rem;
+  }
+
+  .title {
+    font-size: calc(1.05rem * var(--handwriting-scale, 1));
+  }
+
+  .pitch {
+    font-size: 0.98rem;
+    line-height: 1.35;
+  }
+
+  .underTheHood {
+    display: none;
+  }
+
+  .chip {
+    font-size: 0.75rem;
+  }
+
+  .button {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+  }
+}

@@ -1,15 +1,38 @@
 @import "tailwindcss";
 
+/* Registered so Journey cards can transition their paper veil smoothly (see Journey.tsx). */
+@property --card-veil {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
 :root {
-  --background: #ffffff;
+  /* Paper tone sampled from the collage background, so the instant before it loads isn't stark white. */
+  --background: #f9f0dd;
   --foreground: #171717;
+  /* Playball runs small for its point size; every handwritten element multiplies its font size by this. */
+  --handwriting-scale: 1.35;
+  /* Faint paper fiber texture, layered over the photo prints and the post-its. */
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.3 0 0 0 0 0.24 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* Instant-film print: cream stock with a faint paper grain, and a layered shadow of a print lying on paper.
+     Shared by the polaroid front (Polaroid.module.css) and the project card's back (ProjectCard.module.css). */
+  --print-stock:
+    var(--paper-grain),
+    linear-gradient(165deg, #fffdf9 0%, #f8f4ec 55%, #efe9de 100%);
+  --print-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.04),
+    0 1px 1px rgb(0 0 0 / 0.08),
+    0 3px 6px rgb(0 0 0 / 0.08),
+    0 12px 24px -6px rgb(0 0 0 / 0.22),
+    0 28px 48px -18px rgb(0 0 0 / 0.28);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-journey: var(--font-story-script), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-sans: var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif: var(--font-heading), Georgia, "Times New Roman", serif;
 }
 
 html {
@@ -27,53 +50,37 @@ html {
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  font-family: var(--font-body), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
   overscroll-behavior-y: auto;
 }
 
-h1, h2, h3, h4, h5, h6 {
+/* :where() keeps this at zero specificity, so components that set their own font (the handwritten
+   captions on polaroids and sticky notes) override it without fighting. */
+:where(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-heading), Georgia, "Times New Roman", serif;
   letter-spacing: -0.05em;
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
+/* Content waits for the paper background (see the gate script in layout.tsx), then fades in. */
+.await-background {
+  transition: opacity 0.6s ease-out;
+}
+
+html[data-bg-pending] .await-background {
+  opacity: 0 !important;
+}
+
+/* Honor the OS "reduce motion" setting: stop looping/decorative animation and smooth scrolling. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
-  100% {
-    background-position: 200% 0;
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
-}
-
-.animate-shimmer {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.4) 50%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-  transition: background 0.3s ease;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.4);
-}
-
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }

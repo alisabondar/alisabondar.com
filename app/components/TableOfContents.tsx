@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { getTimelineMultiplier, SCROLL_DESENSITIZE } from '../utils/responsive';
-import { SECTIONS, HEADER_OFFSET_PX, SECTION_TOP_PADDING_PX, SMOOTH_SCROLL_DURATION_MS, BREAKPOINTS, MOBILE_SCROLL_SLOWDOWN } from '../constants';
+import { scrollToSection } from '../utils/scrollToSection';
+import { SECTIONS, SMOOTH_SCROLL_DURATION_MS } from '../constants';
 import styles from './TableOfContents.module.css';
 
 export const TableOfContents = () => {
@@ -71,33 +71,7 @@ export const TableOfContents = () => {
     setActiveSection(sectionId);
     isScrollingRef.current = true;
 
-    if (sectionId === 'journey') {
-      const windowHeight = window.innerHeight;
-      const isMobile = window.innerWidth < BREAKPOINTS.MOBILE;
-      const timelineMultiplier = getTimelineMultiplier(isMobile);
-      const scrollDesensitize = isMobile ? SCROLL_DESENSITIZE.MOBILE : SCROLL_DESENSITIZE.DESKTOP;
-      let effectiveScrollRange = windowHeight * timelineMultiplier * scrollDesensitize;
-      if (isMobile) effectiveScrollRange *= MOBILE_SCROLL_SLOWDOWN;
-      const targetScrollProgress = 0.25;
-      const targetTop = (targetScrollProgress / 1.2) * effectiveScrollRange;
-
-      window.scrollTo({
-        top: targetTop,
-        behavior: 'smooth',
-      });
-    } else {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        const elementPosition = element.getBoundingClientRect().top;
-        const sectionTopInDoc = elementPosition + window.pageYOffset;
-        const offsetPosition = sectionTopInDoc + SECTION_TOP_PADDING_PX - HEADER_OFFSET_PX;
-
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth',
-        });
-      }
-    }
+    scrollToSection(sectionId);
 
     setTimeout(() => {
       isScrollingRef.current = false;
@@ -105,7 +79,7 @@ export const TableOfContents = () => {
   };
 
   return (
-    <nav className={styles.nav}>
+    <nav className={`${styles.nav} await-background`} aria-label="Sections">
       <ul className={styles.list}>
         {SECTIONS.map((section) => {
           const isActive = activeSection === section.id;
@@ -115,6 +89,7 @@ export const TableOfContents = () => {
                 onClick={() => handleClick(section.id)}
                 className={`${styles.button} ${isActive ? styles.buttonActive : styles.buttonInactive}`}
                 aria-label={`Navigate to ${section.label} section`}
+                aria-current={isActive ? 'location' : undefined}
               >
                 <span className={styles.label}>{section.label}</span>
                 {isActive && (

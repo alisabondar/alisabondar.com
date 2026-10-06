@@ -1,9 +1,11 @@
 'use client';
 
+import { memo, type CSSProperties } from 'react';
 import { useIsMobile, PHASE_TIMING } from '../utils/responsive';
 import { useTilt } from '../utils/useTilt';
 import { Polaroid } from './Polaroid';
 import styles from './Journey.module.css';
+import { timelineItems, type TimelineItem } from '../data/timeline';
 import {
   EVENT_HEIGHT_VH,
   INTRO_EVENTS,
@@ -12,21 +14,11 @@ import {
   FOCUS_MULTIPLIER,
   EVENT_PLACEMENTS,
   JOURNEY_SHOW_START,
-  JOURNEY_HIDE_START,
-  JOURNEY_HIDE_DURATION,
-  JOURNEY_SCROLL_UP_START_MOBILE,
-  JOURNEY_FADE_START_MOBILE,
-  JOURNEY_FADE_DURATION_MOBILE,
   ENTRANCE_DURATION,
   HEADER_FROZEN_DURATION,
   HEADER_FROZEN_DURATION_MOBILE,
 } from '../constants';
 
-export interface TimelineItem {
-  title: string;
-  year?: string;
-  picture?: string;
-}
 
 export interface JourneyProps {
   scrollProgress: number;
@@ -37,131 +29,25 @@ function getPlacement(index: number): { left: number; rotate: number } {
   return EVENT_PLACEMENTS[index % EVENT_PLACEMENTS.length] ?? EVENT_PLACEMENTS[0];
 }
 
-const timelineItems: TimelineItem[] = [
-  {
-    title: 'Graduated Virginia Tech with a double major!',
-    year: 'May 2020',
-  },
-  {
-    title: 'First day working at the CVOR',
-    year: 'May 2020',
-    picture: 'CVOR-event.png',
-  },
-  {
-    title: 'First ski trip out west! 🎿',
-    year: 'December 2020',
-    picture: 'colorado-event.png',
-  },
-  {
-    title: 'First time scrubbing in to assist',
-    year: 'March 2021',
-    picture: 'scrub-event.png',
-  },
-  {
-    title: 'First 8hr+ road trip to Stowe, VT',
-    year: 'December 2021',
-  },
-  {
-    title: 'Ditching the contacts post LASIK surgery 🤯',
-    year: 'June 2022',
-  },
-  {
-    title: 'Visited Acadia National Park 🌿',
-    year: 'July 2022',
-    picture: 'maine-event.png',
-  },
-  {
-    title: 'Bye bye CVOR, hello eICU',
-    year: 'August 2022',
-  },
-  {
-    title: 'Started to study javascript and python',
-    year: 'March 2023',
-  },
-  {
-    title: 'First road bike',
-    year: 'April 2023',
-    picture: 'bike-event.png',
-  },
-  {
-    title: 'Enrolled into Hack Reactor 💻',
-    year: 'June 2023',
-    picture: 'hackreactor-event.png',
-  },
-  {
-    title: 'Graduated Hack Reactor 📓',
-    year: 'August 2023',
-    picture: 'graduation-event.png',
-  },
-  {
-    title: 'First lease signed! 🌃',
-    year: 'December 2023',
-    picture: 'nyc-event.png',
-  },
-  {
-    title: 'First software engineering gig!',
-    year: 'January 2024',
-    picture: 'alphasights-event.png',
-  },
-  {
-    title: 'First marathon! ',
-    year: 'March 2025',
-    picture: 'marathon-event.png',
-  },
-  {
-    title: 'First time renting a convertible',
-    year: 'May 2025',
-    picture: 'driving-event.png',
-  },
-  {
-    title: 'First time playing pickleball',
-    year: 'June 2025',
-  },
-  {
-    title: 'First solo headstand in yoga',
-    year: 'August 2025',
-  },
-  {
-    title: 'Visited Boston',
-    year: 'September 2025',
-    picture: 'boston.png',
-  },
-  {
-    title: 'Spent most of the holiday season baking!',
-    picture: 'pie.png',
-    year: 'December 2025',
-  },
-  {
-    title: 'First time ice skating on a lake!',
-    picture: 'skating.png',
-    year: 'February 2026',
-  },
-  {
-    title: 'Joined the fiancée club!',
-    picture: 'engagement.png',
-    year: 'March 2026',
-  },
-  {
-    title: 'Moved out west to Colorado!',
-    picture: 'west.png',
-    year: 'May 2026',
-  }
-];
 
-const StickyNote = ({ item, index, styles: s }: { item: TimelineItem; index: number; styles: Record<string, string> }) => {
+/** Life events rotate through these; career milestones are always pink, the closest to the coral career key. */
+const LIFE_NOTE_COLORS = [styles.noteLavender, styles.noteBlue, styles.noteGray];
+
+const StickyNote = memo(function StickyNote({ item, index }: { item: TimelineItem; index: number }) {
   const { ref: tiltRef, style: tiltStyle } = useTilt(true);
   return (
-    <div ref={tiltRef} className={s.eventCardWrapper} style={tiltStyle}>
-      <div className={s.tapedCard}>
-        <div className={s.tape} aria-hidden />
-        <div className={`${s.stickyContainer} transition-all duration-500`}>
-          <div className={s.stickyOuter}>
-            <div className={s.sticky}>
-              <div className={`${s.stickyContent} ${
-                [s.paleLavender, s.paleBlue, s.paleGray, s.palePink][index % 4]
-              }`}>
-                <h3 className={s.stickyTitle}>{item.title}</h3>
-                {item.year ? <div className={s.stickyYear}>{item.year}</div> : null}
+    <div ref={tiltRef} className={styles.eventCardWrapper} style={tiltStyle}>
+      <div className={styles.tapedCard}>
+        <div className={`${styles.stickyContainer} transition-all duration-500`}>
+          <div className={styles.stickyOuter}>
+            <div className={styles.sticky}>
+              <div
+                className={`${styles.stickyContent} ${
+                  item.career ? styles.noteCareer : LIFE_NOTE_COLORS[index % LIFE_NOTE_COLORS.length]
+                }`}
+              >
+                <h3 className={styles.stickyTitle}>{item.title}</h3>
+                {item.year ? <div className={styles.stickyYear}>{item.year}</div> : null}
               </div>
             </div>
           </div>
@@ -169,7 +55,7 @@ const StickyNote = ({ item, index, styles: s }: { item: TimelineItem; index: num
       </div>
     </div>
   );
-};
+});
 
 export const Journey = ({ scrollProgress }: JourneyProps) => {
   const isMobile = useIsMobile();
@@ -225,35 +111,11 @@ export const Journey = ({ scrollProgress }: JourneyProps) => {
 
   const headerTranslateY = baseStripY * 8;
 
-  const journeyHideStart = isMobile ? JOURNEY_FADE_START_MOBILE : JOURNEY_HIDE_START;
-  const journeyHideDuration = isMobile ? JOURNEY_FADE_DURATION_MOBILE : JOURNEY_HIDE_DURATION;
-  const journeyHideProgress = Math.min(
-    1,
-    Math.max(0, (scrollProgress - journeyHideStart) / journeyHideDuration)
-  );
-  const viewportOpacity = 1 - journeyHideProgress;
-
-  const scrollUpStart = isMobile ? JOURNEY_SCROLL_UP_START_MOBILE : 0.86;
-  const scrollUpDuration = isMobile ? 0.24 : 0.16;
-  const scrollUpProgress = Math.min(1, Math.max(0, (scrollProgress - scrollUpStart) / scrollUpDuration));
-  const translateY = scrollUpProgress * -100;
-
-  const overlayOpacity = viewportOpacity;
-  const overlayTranslateY = translateY;
-
   return (
-    <div
-      className={`fixed left-4 right-4 sm:right-20 md:right-24 sm:left-1/2 sm:-translate-x-1/2 h-screen z-40 pointer-events-none transition-all duration-500 ease-out ${styles.journeyViewport}`}
-      style={{
-        opacity: overlayOpacity,
-        visibility: overlayOpacity <= 0 ? 'hidden' : 'visible',
-      }}
-    >
+    // Pinned with position: sticky inside Home's pinned track; see .pinned in Journey.module.css.
+    <div className={`${styles.journeyViewport} ${styles.pinned}`}>
       {heroScrolledPast && (
-        <div
-          className="w-full h-full"
-          style={{ transform: `translateY(${overlayTranslateY}vh)` }}
-        >
+        <div className="w-full h-full">
         <div
           className="absolute inset-0 transition-opacity duration-500 ease-out"
           style={{
@@ -262,15 +124,15 @@ export const Journey = ({ scrollProgress }: JourneyProps) => {
             transition: isMobile ? 'none' : 'transform 0.2s ease-out',
           }}
         >
-          <h2
-            className={`${styles.journeyHeader} ${isMobile ? styles.journeyHeaderMobile : styles.journeyHeaderDesktop} text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black`}
+          <div
+            className={`${styles.journeyHeader} ${isMobile ? styles.journeyHeaderMobile : styles.journeyHeaderDesktop}`}
             style={{
               transform: `translateX(-50%) translateY(${headerTranslateY}px)`,
               opacity: headerOpacity,
             }}
           >
-            Journey
-          </h2>
+            <h2 className="text-4xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-black">Journey</h2>
+          </div>
           <div className={styles.eventsZone}>
         <div
           className={styles.eventsScroll}
@@ -305,9 +167,20 @@ export const Journey = ({ scrollProgress }: JourneyProps) => {
               opacity = Math.abs(distanceFromFocus) < 0.5 ? 1 : Math.max(0.2, 0.6 - Math.abs(distanceFromFocus) * 0.15);
             }
 
+            // Cards are solid objects, so background icons never show through them. Once a card has appeared it
+            // stays fully opaque, and its faded look (dimmed out of focus) comes from a paper-colored veil laid
+            // over it (--card-veil; see Polaroid.module.css and .stickyContent). While fading in, it turns opaque
+            // within the first 40% of the fade and the veil carries the rest.
+            const presence = shouldShow ? opacity : 0;
+            const solidity = !shouldShow ? 0 : hasPhasedIn ? 1 : Math.min(1, presence * 2.5);
+
             const isFocused = Math.abs(index - displayFocusIndex) < 0.5;
             const scale = isFocused ? 1.1 : 0.95;
-            const zIndexValue = 100 + index;
+            // Stack by distance from the focused card: it's always on top, nearer cards sit above farther ones,
+            // and on a tie the earlier (already seen) card goes underneath. Hover still lifts any card to the
+            // top (.eventCardOuter:hover).
+            const focusDistance = Math.abs(index - displayFocusIndex);
+            const zIndexValue = 1000 - focusDistance * 2 + (index > displayFocusIndex ? 1 : 0);
 
             const topValue = STRIP_TOP_OFFSET_VH + index * EVENT_HEIGHT_VH;
 
@@ -320,8 +193,9 @@ export const Journey = ({ scrollProgress }: JourneyProps) => {
                   left: `${leftPercent}%`,
                   zIndex: zIndexValue,
                   transform: `translate(-50%, -50%) rotate(${placement.rotate}deg) scale(${scale})`,
-                  opacity: shouldShow ? opacity : 0,
-                }}
+                  opacity: solidity,
+                  '--card-veil': (1 - presence).toFixed(3),
+                } as CSSProperties}
               >
                     {item.picture ? (
                       <Polaroid
@@ -329,10 +203,11 @@ export const Journey = ({ scrollProgress }: JourneyProps) => {
                         title={item.title}
                         image={`/${item.picture}`}
                         year={item.year}
+                        tape={item.career ? 'career' : 'clear'}
                         enableMouseTilt
                       />
                     ) : (
-                      <StickyNote item={item} index={index} styles={styles} />
+                      <StickyNote item={item} index={index} />
                     )}
                   </div>
                 );

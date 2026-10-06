@@ -1,12 +1,7 @@
 import { useState, useEffect, useRef, RefObject } from 'react';
-import {
-  BREAKPOINTS,
-  TIMELINE_CONSTANTS,
-  SCROLL_DESENSITIZE,
-  PHASE_TIMING,
-} from '../constants';
+import { BREAKPOINTS, PHASE_TIMING } from '../constants';
 
-export { BREAKPOINTS, TIMELINE_CONSTANTS, SCROLL_DESENSITIZE, PHASE_TIMING };
+export { BREAKPOINTS, PHASE_TIMING };
 
 export function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
@@ -34,20 +29,6 @@ export function calculateFadeOpacity(
     : 0;
   const visibility = scrollProgress >= fadeInStart ? 'visible' : 'hidden';
   return { opacity, visibility };
-}
-
-export function getTimelineMultiplier(isMobile: boolean): number {
-  return isMobile ? TIMELINE_CONSTANTS.MOBILE_MULTIPLIER : TIMELINE_CONSTANTS.DESKTOP_MULTIPLIER;
-}
-
-export function scrollToTop() {
-  window.scrollTo(0, 0);
-  if (document.documentElement) {
-    document.documentElement.scrollTop = 0;
-  }
-  if (document.body) {
-    document.body.scrollTop = 0;
-  }
 }
 
 export function useViewportFade(
@@ -125,74 +106,4 @@ export function useViewportFade(
   }, [ref, startAt, fullAt, hideWhenPast]);
 
   return { opacity, visibility };
-}
-
-export function useViewportStaggerFade(
-  containerRef: RefObject<HTMLElement | null>,
-  childCount: number,
-  options: {
-    startAt?: number;
-    fullAt?: number;
-    staggerFraction?: number;
-  } = {}
-) {
-  const {
-    startAt = 0.92,
-    fullAt = 0.5,
-    staggerFraction = 0.08,
-  } = options;
-
-  const [opacities, setOpacities] = useState<number[]>(() => Array(childCount).fill(0));
-  const rafRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const update = () => {
-      const container = containerRef.current;
-      if (!container || childCount === 0) return;
-
-      const windowHeight = window.innerHeight;
-      const childEls = container.querySelectorAll(':scope > *');
-      const newOpacities: number[] = [];
-
-      childEls.forEach((child, index) => {
-        const rect = (child as HTMLElement).getBoundingClientRect();
-        const center = rect.top + rect.height / 2;
-
-        const fadeInStart = windowHeight * startAt;
-        const fadeInEnd = windowHeight * (fullAt - index * staggerFraction);
-        const fadeInDistance = fadeInStart - fadeInEnd;
-
-        if (center > fadeInStart) {
-          newOpacities.push(0);
-        } else if (center <= fadeInEnd) {
-          newOpacities.push(1);
-        } else {
-          const progress = (fadeInStart - center) / fadeInDistance;
-          newOpacities.push(Math.max(0, Math.min(1, progress)));
-        }
-      });
-
-      setOpacities(newOpacities.length === childCount ? newOpacities : Array(childCount).fill(0));
-    };
-
-    const handleScroll = () => {
-      if (rafRef.current != null) return;
-      rafRef.current = requestAnimationFrame(() => {
-        update();
-        rafRef.current = null;
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('resize', handleScroll);
-    update();
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
-      if (rafRef.current != null) cancelAnimationFrame(rafRef.current);
-    };
-  }, [containerRef, childCount, startAt, fullAt, staggerFraction]);
-
-  return opacities;
 }

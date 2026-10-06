@@ -1,6 +1,33 @@
+/*
+ * The Journey layer stays pinned to the viewport with position: sticky inside Home's pinned track (the hero
+ * plus the Journey section). When the track ends, the browser releases it natively, in the same frame as the
+ * scroll, so it leaves at exactly the speed Projects arrives behind it. The layer keeps its full height in
+ * the flow (sticky limits are measured from the margin box, so a negative margin here would delay the
+ * release by a screen); the hero pulls itself up underneath it instead (Home.module.css .underPinned).
+ */
+.pinned {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: 100vh;
+  margin: 0 1rem;
+  pointer-events: none;
+}
+
+@media (min-width: 640px) {
+  .pinned {
+    width: calc(50% - 5rem);
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 768px) {
+  .pinned {
+    width: calc(50% - 6rem);
+  }
+}
+
 .journeyViewport {
-  width: 100%;
-  height: 100%;
   transform: translateZ(0);
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
@@ -15,6 +42,10 @@
   pointer-events: none;
   margin: 0;
   transition: transform 0.25s ease-out;
+}
+
+.journeyHeader h2 {
+  margin: 0;
 }
 
 .journeyHeaderMobile {
@@ -57,11 +88,11 @@
 }
 
 .eventCardMobile {
-  transition: opacity 0.12s ease-out, transform 0.12s ease-out;
+  transition: opacity 0.12s ease-out, --card-veil 0.12s ease-out, transform 0.12s ease-out;
 }
 
 .eventCardDesktop {
-  transition: opacity 0.5s ease-out;
+  transition: opacity 0.5s ease-out, --card-veil 0.5s ease-out;
 }
 
 .eventCardOuter:hover {
@@ -77,45 +108,6 @@
   position: relative;
 }
 
-.tape {
-  background-color: hsla(0, 0%, 100%, 0.3);
-  box-shadow: inset 0 0 1em 0.5em hsla(0, 0%, 100%, 0.1);
-  height: 1.5em;
-  position: absolute;
-  top: -11px;
-  left: 50%;
-  transform: translateX(-50%) rotate(1deg);
-  min-width: 50px;
-  max-width: 90px;
-  width: 60%;
-  filter: drop-shadow(0 1px 0.7px hsla(0, 0%, 0%, 0.3));
-  z-index: 1;
-}
-
-.tape::before,
-.tape::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 0.2em;
-  background-size: 0.25em 0.25em;
-}
-
-.tape::before {
-  left: -0.2em;
-  background-image: linear-gradient(135deg, transparent 50%, hsla(0, 0%, 100%, 0.3) 50%),
-    linear-gradient(-135deg, transparent 50%, hsla(0, 0%, 100%, 0.3) 50%);
-  background-position: 100% 100%;
-}
-
-.tape::after {
-  right: -0.2em;
-  background-image: linear-gradient(45deg, transparent 50%, hsla(0, 0%, 100%, 0.3) 50%),
-    linear-gradient(-45deg, transparent 50%, hsla(0, 0%, 100%, 0.3) 50%);
-  background-position: 0 100%;
-}
-
 .stickyContainer {
   max-width: 13rem;
   width: 13rem;
@@ -128,90 +120,102 @@
   width: 100%;
 }
 
+/*
+ * The note tilts back a few degrees, so its free bottom edge reads as lifted off the page while the glued
+ * top stays flat.
+ */
 .sticky {
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
+  transform: perspective(900px) rotateX(5deg);
+  transform-origin: top center;
 }
 
-.sticky::before {
-  content: '';
-  position: absolute;
-  width: 90%;
-  left: 5%;
-  height: 75%;
-  top: 28%;
-  box-shadow: -2px 2px 12px 0 rgba(0, 0, 0, 0.35);
-  background-color: rgba(0, 0, 0, 0.2);
-  z-index: 0;
-}
-
+/*
+ * Solid Post-it paper (no transparency). The inset shadows do the realism: the top darkens where the glued
+ * band curves into the page, the lifted bottom catches a little shade, and a tight drop shadow sits under
+ * the free edge. The bottom-left corner curls up (rounded corner plus the folded flap in ::before).
+ */
 .stickyContent {
+  --note: rgb(220 210 235);
+  --note-shade: rgb(200 185 220);
   position: relative;
   z-index: 1;
   width: 100%;
   height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 0.75rem;
   text-align: center;
-  font-family: var(--font-permanent-marker), cursive, sans-serif;
+  font-family: var(--font-handwriting), cursive, sans-serif;
   font-weight: 400;
-  text-transform: uppercase;
-  border-radius: 2px;
   box-sizing: border-box;
+  border-radius: 0 0 0 28px / 40px;
+  background: linear-gradient(180deg, var(--note) 0%, var(--note) 15%, var(--note-shade) 80%, var(--note) 100%);
+  box-shadow:
+    inset 0 24px 30px -12px rgb(0 0 0 / 0.22),
+    inset 0 -32px 32px -20px rgb(0 0 0 / 0.14),
+    -1px 10px 6px -4px rgb(0 0 0 / 0.22),
+    0 2px 3px rgb(0 0 0 / 0.08);
 }
 
-.stickyContent.paleLavender {
-  background: linear-gradient(
-    180deg,
-    rgba(220, 210, 235, 0.98) 0%,
-    rgba(220, 210, 235, 0.98) 15%,
-    rgba(200, 185, 220, 0.98) 75%,
-    rgba(230, 218, 242, 0.98) 100%
-  );
+/* Out-of-focus fade: a paper-colored veil instead of transparency (see Journey.tsx). Sits above the curl. */
+.stickyContent::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: var(--background);
+  opacity: var(--card-veil, 0);
 }
 
-.stickyContent.paleBlue {
-  background: linear-gradient(
-    180deg,
-    rgba(187, 235, 255, 0.98) 0%,
-    rgba(187, 235, 255, 0.98) 12%,
-    rgba(170, 220, 241, 0.98) 75%,
-    rgba(195, 229, 244, 0.98) 100%
-  );
+.stickyContent::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 20px;
+  height: 25px;
+  background: var(--note);
+  box-shadow:
+    3px -2px 10px rgb(0 0 0 / 0.18),
+    inset 15px -15px 15px rgb(0 0 0 / 0.22);
+  transform: skewX(25deg);
 }
 
-.stickyContent.paleGray {
-  background: linear-gradient(
-    180deg,
-    rgba(244, 242, 248, 0.98) 0%,
-    rgba(244, 242, 248, 0.98) 12%,
-    rgba(231, 229, 235, 0.98) 75%,
-    rgba(248, 246, 252, 0.98) 100%
-  );
+.noteLavender {
+  --note: rgb(220 210 235);
+  --note-shade: rgb(200 185 220);
 }
 
-.stickyContent.palePink {
-  background: linear-gradient(
-    180deg,
-    rgba(252, 228, 236, 0.98) 0%,
-    rgba(252, 228, 236, 0.98) 12%,
-    rgba(245, 210, 224, 0.98) 75%,
-    rgba(253, 235, 242, 0.98) 100%
-  );
+.noteBlue {
+  --note: rgb(187 235 255);
+  --note-shade: rgb(170 220 241);
+}
+
+.noteGray {
+  --note: rgb(244 242 248);
+  --note-shade: rgb(231 229 235);
+}
+
+/* Career milestones. */
+.noteCareer {
+  --note: rgb(252 228 236);
+  --note-shade: rgb(245 210 224);
 }
 
 .stickyTitle {
-  font-size: 1.1rem;
+  font-family: inherit;
+  font-size: calc(1.1rem * var(--handwriting-scale, 1));
   font-weight: 400;
   margin: 0;
   letter-spacing: normal;
-  color: #1f2937;
+  color: #2a2622;
   line-height: 1.3;
 }
 
@@ -226,10 +230,10 @@
 }
 
 .stickyYear {
-  font-size: 0.9rem;
+  font-size: calc(0.9rem * var(--handwriting-scale, 1));
   font-weight: 400;
   margin: 0.4em 0 0;
-  color: #4b5563;
+  color: rgb(42 38 34 / 0.7);
 }
 
 @media (min-width: 640px) {
@@ -239,7 +243,7 @@
   }
 
   .stickyTitle {
-    font-size: 1.25rem;
+    font-size: calc(1.25rem * var(--handwriting-scale, 1));
   }
 
   .stickyDescription {
