@@ -1,16 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { isMobileViewport, measureJourneyEnd, progressToScroll } from '../utils/scrollTimeline';
-import { SECTIONS, HEADER_OFFSET_PX, SECTION_TOP_PADDING_PX, SMOOTH_SCROLL_DURATION_MS } from '../constants';
+import { scrollToSection } from '../utils/scrollToSection';
+import { SECTIONS, SMOOTH_SCROLL_DURATION_MS } from '../constants';
 import styles from './TableOfContents.module.css';
-
-/** scrollProgress the Journey link jumps to: the header is settled and the first cards are in view. */
-const JOURNEY_TARGET_PROGRESS = 0.25;
-
-function scrollBehavior(): ScrollBehavior {
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
-}
 
 export const TableOfContents = () => {
   const [activeSection, setActiveSection] = useState<string>('about');
@@ -78,21 +71,7 @@ export const TableOfContents = () => {
     setActiveSection(sectionId);
     isScrollingRef.current = true;
 
-    if (sectionId === 'journey') {
-      window.scrollTo({
-        top: progressToScroll(JOURNEY_TARGET_PROGRESS, window.innerHeight, measureJourneyEnd(), isMobileViewport()),
-        behavior: scrollBehavior(),
-      });
-    } else {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        const sectionTopInDoc = element.getBoundingClientRect().top + window.scrollY;
-        window.scrollTo({
-          top: sectionTopInDoc + SECTION_TOP_PADDING_PX - HEADER_OFFSET_PX,
-          behavior: scrollBehavior(),
-        });
-      }
-    }
+    scrollToSection(sectionId);
 
     setTimeout(() => {
       isScrollingRef.current = false;

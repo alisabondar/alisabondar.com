@@ -8,6 +8,7 @@ import { Impact } from './Impact';
 import type { YearData } from './GitHubActivityGraph';
 import { useIsMobile } from '../utils/responsive';
 import { getJourneySectionVh, isMobileViewport, measureJourneyEnd, scrollToProgress } from '../utils/scrollTimeline';
+import { scrollToSection } from '../utils/scrollToSection';
 import { JOURNEY_SHOW_START, CROSSFADE_END } from '../constants';
 import styles from './Home.module.css';
 
@@ -26,6 +27,13 @@ export function Home({ contributionYears }: HomeProps) {
   const isMobile = useIsMobile();
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isPastJourney, setIsPastJourney] = useState(false);
+
+  // Deep links like /#impact: browsers don't reliably apply the hash on a fresh load of this page,
+  // so do it once on mount. A non-zero scrollY means the browser already restored a position (reload/back).
+  useEffect(() => {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (id && window.scrollY === 0) scrollToSection(id, 'instant');
+  }, []);
 
   useEffect(() => {
     let rafId: number | null = null;
