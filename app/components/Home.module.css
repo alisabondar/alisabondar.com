@@ -1,3 +1,13 @@
+/* The hero slides up under the pinned Journey layer, which keeps its own 100vh in the flow. */
+.underPinned {
+  margin-top: -100vh;
+}
+
+/* Containing block for the sticky Journey layer; its end is where the Journey is released. */
+.pinnedTrack {
+  position: relative;
+}
+
 .journeySpacer {
   min-height: var(--journey-height-desktop);
 }

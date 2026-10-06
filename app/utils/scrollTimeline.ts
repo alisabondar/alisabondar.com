@@ -4,6 +4,7 @@ import {
   MOBILE_SCROLL_SLOWDOWN,
   JOURNEY_CARD_SCROLL_VH,
   JOURNEY_END_PROGRESS,
+  JOURNEY_EXIT_HOLD_VH,
   JOURNEY_SHOW_START,
   ENTRANCE_DURATION,
   HEADER_FROZEN_DURATION,
@@ -19,7 +20,7 @@ import { timelineItems } from '../data/timeline';
  *   hero + journey intro  ->  [0, parallaxStart]
  *   parallax card strip   ->  [parallaxStart, parallaxEnd]
  *   journey exit          ->  [parallaxEnd, JOURNEY_END_PROGRESS]
- * The intro and exit bands keep a fixed length; the parallax band grows with the
+ * The intro band keeps a fixed length; the parallax band grows with the
  * number of cards, so adding memories never speeds up the scroll.
  */
 
@@ -41,7 +42,9 @@ export function getTimelineBands(isMobile: boolean) {
   const baseLength =
     1 + (isMobile ? TIMELINE_CONSTANTS.MOBILE_MULTIPLIER * MOBILE_SCROLL_SLOWDOWN : TIMELINE_CONSTANTS.DESKTOP_MULTIPLIER);
   const introVh = (parallaxStart / JOURNEY_END_PROGRESS) * baseLength;
-  const exitVh = ((JOURNEY_END_PROGRESS - parallaxEnd) / JOURNEY_END_PROGRESS) * baseLength;
+  // Exit: the last card holds, then the Journey scrolls away over exactly one viewport, when the sticky
+  // Journey layer (Journey.module.css .pinned) is released at the end of its track.
+  const exitVh = JOURNEY_EXIT_HOLD_VH + 1;
   const parallaxCards = Math.max(1, timelineItems.length - INTRO_EVENTS);
   const parallaxVh = parallaxCards * (isMobile ? JOURNEY_CARD_SCROLL_VH.MOBILE : JOURNEY_CARD_SCROLL_VH.DESKTOP);
 

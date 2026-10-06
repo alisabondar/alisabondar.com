@@ -30,11 +30,12 @@ export function Home({ contributionYears }: HomeProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isPastJourney, setIsPastJourney] = useState(false);
 
-  // Deep links like /#impact: browsers don't reliably apply the hash on a fresh load of this page,
-  // so do it once on mount. A non-zero scrollY means the browser already restored a position (reload/back).
+  // Every load starts at the top (scroll restoration is off; see the gate script in layout.tsx), except
+  // deep links like /#impact, which browsers don't reliably apply on a fresh load of this page.
   useEffect(() => {
     const id = decodeURIComponent(window.location.hash.slice(1));
-    if (id && window.scrollY === 0) scrollToSection(id, 'instant');
+    if (id) scrollToSection(id, 'instant');
+    else window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
   useEffect(() => {
@@ -75,48 +76,56 @@ export function Home({ contributionYears }: HomeProps) {
 
   return (
     <>
-      <AnimatedBackground highlightedIcon={hobby?.icon} />
-      <Journey scrollProgress={scrollProgress} isPastJourney={isPastJourney} />
-
+      {/* The icon only lights up alongside the hero's hobby line; once the hero scrolls away it rejoins the
+          rest of the background so it doesn't compete with the content. */}
+      <AnimatedBackground highlightedIcon={heroOpacity > 0 ? hobby?.icon : undefined} />
       <main className="await-background relative z-20">
-        <section id="about" className="relative flex min-h-screen items-center justify-center font-sans z-10 px-4">
-          <div className="relative z-10 text-center">
-            <div
-              className="transition-opacity duration-500 ease-out"
-              style={{ opacity: heroOpacity, visibility: heroOpacity <= 0 ? 'hidden' : 'visible' }}
-            >
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-black mb-4">
-                Hi, I&apos;m Alisa.
-              </h1>
-              <p className={styles.tagline}>
-                I went from the operating room to shipping LLM-powered products.
-              </p>
-              <p className={styles.obsession}>
-                Currently obsessed with{' '}
-                <span className={`${styles.hobby} ${hobby ? styles.hobbyVisible : ''}`}>
-                  {/* Non-breaking space keeps the line's height before the client picks a hobby. */}
-                  {hobby?.label ?? '\u00a0'}
-                </span>
-              </p>
-              <div className="flex justify-center mt-6 sm:mt-8">
-                <svg
-                  className="w-5 h-5 sm:w-6 sm:h-6 text-black/80 animate-bounce"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
+        {/* The Journey layer is pinned (sticky) for exactly the length of this track: the hero plus the Journey
+            spacer. When the track ends it's released natively and Projects follows directly behind it. */}
+        <div className={styles.pinnedTrack}>
+          <Journey scrollProgress={scrollProgress} isPastJourney={isPastJourney} />
+          <section
+            id="about"
+            className={`relative flex min-h-screen items-center justify-center font-sans z-10 px-4 ${styles.underPinned}`}
+          >
+            <div className="relative z-10 text-center">
+              <div
+                className="transition-opacity duration-500 ease-out"
+                style={{ opacity: heroOpacity, visibility: heroOpacity <= 0 ? 'hidden' : 'visible' }}
+              >
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-black mb-4">
+                  Hi, I&apos;m Alisa.
+                </h1>
+                <p className={styles.tagline}>
+                  I went from the operating room to shipping LLM-powered products.
+                </p>
+                <p className={styles.obsession}>
+                  Currently obsessed with{' '}
+                  <span className={`${styles.hobby} ${hobby ? styles.hobbyVisible : ''}`}>
+                    {/* Non-breaking space keeps the line's height before the client picks a hobby. */}
+                    {hobby?.label ?? '\u00a0'}
+                  </span>
+                </p>
+                <div className="flex justify-center mt-6 sm:mt-8">
+                  <svg
+                    className="w-5 h-5 sm:w-6 sm:h-6 text-black/80 animate-bounce"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                  </svg>
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <section id="journey" aria-label="Journey" className={`relative z-10 ${styles.journeySpacer}`} style={journeyHeightVars} />
+          <section id="journey" aria-label="Journey" className={`relative z-10 ${styles.journeySpacer}`} style={journeyHeightVars} />
+        </div>
 
-        <Projects scrollProgress={scrollProgress} isPastJourney={isPastJourney} />
+        <Projects />
         <Impact scrollProgress={scrollProgress} contributionYears={contributionYears} />
       </main>
     </>

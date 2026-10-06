@@ -29,8 +29,9 @@ const BACKGROUND_SRC = "/collage-paper-bg-v2.webp";
  * Runs before first paint: marks the page as waiting for the paper background, then clears the mark once the
  * image is decoded (or after a timeout so a slow network never blocks content). Without JS nothing is hidden.
  * Elements with the `await-background` class stay transparent while the mark is present.
+ * It also turns off the browser's scroll restoration, so a refresh starts at the top (see Home.tsx).
  */
-const backgroundGateScript = `(function(){var d=document.documentElement;d.setAttribute('data-bg-pending','');var done=false;function ready(){if(done)return;done=true;d.removeAttribute('data-bg-pending');}var img=new Image();img.onload=function(){img.decode?img.decode().then(ready,ready):ready();};img.onerror=ready;img.src=${JSON.stringify(BACKGROUND_SRC)};setTimeout(ready,2500);})();`;
+const backgroundGateScript = `(function(){if('scrollRestoration' in history)history.scrollRestoration='manual';var d=document.documentElement;d.setAttribute('data-bg-pending','');var done=false;function ready(){if(done)return;done=true;d.removeAttribute('data-bg-pending');}var img=new Image();img.onload=function(){img.decode?img.decode().then(ready,ready):ready();};img.onerror=ready;img.src=${JSON.stringify(BACKGROUND_SRC)};setTimeout(ready,2500);})();`;
 const TITLE = "Alisa Bondar | Software Engineer";
 const DESCRIPTION =
   "Full-stack engineer who went from the operating room to shipping LLM-powered products. My journey, projects, and impact.";
