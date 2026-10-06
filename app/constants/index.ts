@@ -37,14 +37,6 @@ export const EVENT_PLACEMENTS: { left: number; rotate: number }[] = [
   { left: 70, rotate: 3 },
 ];
 
-export const JOURNEY_HIDE_START = 0.94;
-export const JOURNEY_HIDE_DURATION = 0.05;
-
-export const JOURNEY_SCROLL_UP_START_MOBILE = 0.82;
-export const JOURNEY_FADE_START_MOBILE = 0.88;
-export const JOURNEY_FADE_DURATION_MOBILE = 0.18;
-export const IMPACT_FADE_IN_START_MOBILE = 1.05;
-
 export const ENTRANCE_DURATION = CROSSFADE_END - JOURNEY_SHOW_START;
 export const HEADER_FROZEN_DURATION = 0.35;
 export const HEADER_FROZEN_DURATION_MOBILE = 0.48;
@@ -67,17 +59,25 @@ export const BREAKPOINTS = {
   MOBILE: 640,
 } as const;
 
+/** Sets the scroll length (in viewport heights) of the hero and Journey intro phases. */
 export const TIMELINE_CONSTANTS = {
   MOBILE_MULTIPLIER: 1.9,
   DESKTOP_MULTIPLIER: 1.75,
 } as const;
 
-export const SCROLL_DESENSITIZE = {
-  MOBILE: 2.2,
-  DESKTOP: 1.5,
+export const MOBILE_SCROLL_SLOWDOWN = 1.43;
+
+/** Scroll distance (in viewport heights) each parallax card gets before the next one takes focus. */
+export const JOURNEY_CARD_SCROLL_VH = {
+  MOBILE: 0.26,
+  DESKTOP: 0.2,
 } as const;
 
-export const MOBILE_SCROLL_SLOWDOWN = 1.43;
+/** scrollProgress value at the bottom of the Journey section. */
+export const JOURNEY_END_PROGRESS = 1.2;
+
+/** How long (in viewport heights of scrolling) the last Journey card holds before the Journey scrolls away. */
+export const JOURNEY_EXIT_HOLD_VH = 0.3;
 
 export const PHASE_TIMING = {
   MOBILE: {

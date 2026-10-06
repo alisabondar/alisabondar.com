@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { memo, useRef, useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
 import { icons } from '../constants';
 import styles from './AnimatedBackground.module.css';
@@ -9,7 +9,12 @@ function getIconDelay(delay: number, isDesktop: boolean) {
   return isDesktop ? Math.min(delay * 0.2, 0.5) : delay;
 }
 
-export const AnimatedBackground = () => {
+export interface AnimatedBackgroundProps {
+  /** src of the icon to spotlight (matches the hobby featured in the hero). */
+  highlightedIcon?: string;
+}
+
+export const AnimatedBackground = memo(function AnimatedBackground({ highlightedIcon }: AnimatedBackgroundProps) {
   const [iconsReady, setIconsReady] = useState(false);
   const [isDesktop, setIsDesktop] = useState(true);
   const loadedCount = useRef(0);
@@ -38,7 +43,7 @@ export const AnimatedBackground = () => {
       <div className={styles.svgBackground} aria-hidden />
 
       <div
-        className={styles.iconsWrap}
+        className={`${styles.iconsWrap} await-background`}
           aria-hidden
           style={{ visibility: iconsReady ? 'visible' : 'hidden' }}
         >
@@ -49,7 +54,7 @@ export const AnimatedBackground = () => {
             return (
               <div
                 key={index}
-                className={`${styles.icon} ${animationClass}`}
+                className={`${styles.icon} ${animationClass} ${icon.src === highlightedIcon ? styles.iconHighlighted : ''}`}
                 style={{
                   left: `${icon.x}%`,
                   top: `${icon.y}%`,
@@ -74,4 +79,4 @@ export const AnimatedBackground = () => {
         </div>
     </div>
   );
-};
+});
