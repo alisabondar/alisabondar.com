@@ -11,23 +11,19 @@ export const timelineItems: TimelineItem[] = [
     year: 'May 2020',
   },
   {
-    title: 'First day working at the CVOR',
+    title: 'First job!',
     year: 'May 2020',
     picture: 'CVOR-event.webp',
   },
   {
-    title: 'First ski trip out west! 🎿',
+    title: 'Skiied out west! 🎿',
     year: 'December 2020',
     picture: 'colorado-event.webp',
   },
   {
-    title: 'First time scrubbing in to assist',
+    title: 'Scrubbed in to assist open heart surgery',
     year: 'March 2021',
     picture: 'scrub-event.webp',
-  },
-  {
-    title: 'First 8hr+ road trip to Stowe, VT',
-    year: 'December 2021',
   },
   {
     title: 'Ditching the contacts post LASIK surgery 🤯',
@@ -43,11 +39,11 @@ export const timelineItems: TimelineItem[] = [
     year: 'August 2022',
   },
   {
-    title: 'Started to study javascript and python',
+    title: 'Began studying javascript and python',
     year: 'March 2023',
   },
   {
-    title: 'First road bike',
+    title: 'Got into road cycling',
     year: 'April 2023',
     picture: 'bike-event.webp',
   },
@@ -72,21 +68,12 @@ export const timelineItems: TimelineItem[] = [
     picture: 'alphasights-event.webp',
   },
   {
-    title: 'First marathon! ',
+    title: 'Ran a marathon! ',
     year: 'March 2025',
     picture: 'marathon-event.webp',
   },
   {
-    title: 'First time renting a convertible',
-    year: 'May 2025',
-    picture: 'driving-event.webp',
-  },
-  {
-    title: 'First time playing pickleball',
-    year: 'June 2025',
-  },
-  {
-    title: 'First solo headstand in yoga',
+    title: 'Mastered the solo headstand in yoga',
     year: 'August 2025',
   },
   {
@@ -100,7 +87,7 @@ export const timelineItems: TimelineItem[] = [
     year: 'December 2025',
   },
   {
-    title: 'First time ice skating on a lake!',
+    title: 'Ice skated on a lake!',
     picture: 'skating.webp',
     year: 'February 2026',
   },
