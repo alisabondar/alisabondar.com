@@ -545,3 +545,41 @@
     height: 1.75rem;
   }
 }
+
+.testimonials {
+  flex-direction: column;
+}
+
+.testimonialDots {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.testimonialDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  background: rgb(0 0 0 / 0.18);
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.testimonialDot:hover {
+  background: rgb(0 0 0 / 0.4);
+}
+
+.testimonialDotActive {
+  background: rgb(246 132 124);
+  transform: scale(1.25);
+}
+
+.testimonialDot:focus-visible,
+.contactLink:focus-visible {
+  outline: 2px solid rgb(246 132 124);
+  outline-offset: 3px;
+}

@@ -1,35 +1,56 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { GitHubActivityGraph } from './GitHubActivityGraph';
-import { useIsMobile, calculateFadeOpacity, useViewportFade } from '../utils/responsive';
+import { GitHubActivityGraph, type YearData } from './GitHubActivityGraph';
 import { contributions2023, totalContributions2023 } from '../data/githubContributions2023';
 import { contributions2024, totalContributions2024 } from '../data/githubContributions2024';
 import { contributions2025, totalContributions2025 } from '../data/githubContributions2025';
 import { contributions2026, totalContributions2026 } from '../data/githubContributions2026';
+import { ImpactStats } from './ImpactStats';
+import { Testimonials } from './Testimonials';
+import { ContactIcon } from './ContactIcon';
+import { useIsMobile, calculateFadeOpacity, useViewportFade } from '../utils/responsive';
+import { contactLinks, jobs } from '../data/career';
 import styles from './Impact.module.css';
-import { contactLinks, jobs, testimonials } from '../data/career';
 
 export interface ImpactProps {
   scrollProgress: number;
 }
 
+const totalAchievements = jobs.reduce((sum, job) => sum + job.achievements.length, 0);
+const achievementStartIndex = jobs.map((_, jobIndex) =>
+  jobs.slice(0, jobIndex).reduce((sum, job) => sum + job.achievements.length, 0)
+);
+
+/** 1 when `position` is above `end`, 0 below `start`, linear in between (all in px from viewport top). */
+function fadeBetween(position: number, start: number, end: number) {
+  if (position > start) return 0;
+  if (position < end) return 1;
+  return 1 - (position - end) / (start - end);
+}
+
+const round = (n: number) => Math.round(n * 100) / 100;
+
+function sameValues(a: number[], b: number[]) {
+  return a.length === b.length && a.every((v, i) => v === b[i]);
+}
+
+const contributionYears: YearData[] = [
+  { year: 2026, contributions: contributions2026, totalContributions: totalContributions2026 },
+  { year: 2025, contributions: contributions2025, totalContributions: totalContributions2025 },
+  { year: 2024, contributions: contributions2024, totalContributions: totalContributions2024 },
+  { year: 2023, contributions: contributions2023, totalContributions: totalContributions2023 },
+];
 
 export const Impact = ({ scrollProgress }: ImpactProps) => {
   const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
-  const careerJourneyRef = useRef<HTMLDivElement>(null);
   const achievementRefs = useRef<(HTMLLIElement | null)[]>([]);
   const headerRefs = useRef<(HTMLDivElement | null)[]>([]);
   const lastJobRef = useRef<HTMLDivElement | null>(null);
-  const sentimentRef = useRef<HTMLDivElement | null>(null);
-  const totalAchievements = jobs.reduce((sum, job) => sum + job.achievements.length, 0);
-  const [achievementOpacities, setAchievementOpacities] = useState<number[]>(Array(totalAchievements).fill(0));
-  const [headerOpacities, setHeaderOpacities] = useState<number[]>(Array(jobs.length).fill(1));
+  const [achievementOpacities, setAchievementOpacities] = useState<number[]>(() => Array(totalAchievements).fill(0));
+  const [headerOpacities, setHeaderOpacities] = useState<number[]>(() => Array(jobs.length).fill(1));
   const [lastJobOpacity, setLastJobOpacity] = useState(1);
-  const [jobsContainerOpacity, setJobsContainerOpacity] = useState(1);
-  const [sentimentOpacity, setSentimentOpacity] = useState(0);
-  const [activeTestimonialIndex, setActiveTestimonialIndex] = useState(0);
   const signatureRef = useRef<SVGSVGElement>(null);
   const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const animationTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
@@ -37,93 +58,49 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
   const scrollFade = calculateFadeOpacity(scrollProgress, 1.2, 0.2);
   const viewportFade = useViewportFade(sectionRef, { startAt: 0.88, fullAt: 0.5 });
   const opacity = isMobile ? viewportFade.opacity : scrollFade.opacity;
-  const visibility = isMobile ? viewportFade.visibility : scrollFade.visibility;
+  const sentimentOpacity = 1 - lastJobOpacity;
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (!careerJourneyRef.current) return;
+    let rafId: number | null = null;
 
-      const windowHeight = window.innerHeight;
+    const update = () => {
+      rafId = null;
+      const wh = window.innerHeight;
 
-      const newOpacities = achievementRefs.current.map((achievementRef) => {
-        if (!achievementRef) return 0;
-
-        const achievementRect = achievementRef.getBoundingClientRect();
-        const achievementTop = achievementRect.top;
-        const achievementCenter = achievementTop + achievementRect.height / 2;
-
-        const fadeInStart = windowHeight * 0.85;
-        const fadeInEnd = windowHeight * 0.6;
-        const fadeDistance = fadeInStart - fadeInEnd;
-
-        if (achievementCenter > fadeInStart) {
-          return 0;
-        } else if (achievementCenter < fadeInEnd) {
-          return 1;
-        } else {
-          return 1 - ((achievementCenter - fadeInEnd) / fadeDistance);
-        }
+      const nextAchievements = achievementRefs.current.map((el) => {
+        if (!el) return 0;
+        const rect = el.getBoundingClientRect();
+        return round(fadeBetween(rect.top + rect.height / 2, wh * 0.85, wh * 0.6));
       });
+      // Skip the state update (and the re-render) when nothing visibly changed.
+      setAchievementOpacities((prev) => (sameValues(prev, nextAchievements) ? prev : nextAchievements));
 
-      setAchievementOpacities(newOpacities);
-
-      const newHeaderOpacities = headerRefs.current.map((headerRef) => {
-        if (!headerRef) return 1;
-
-        const headerRect = headerRef.getBoundingClientRect();
-        const headerTop = headerRect.top;
-        const headerBottom = headerRect.bottom;
-        const headerCenter = headerTop + headerRect.height / 2;
-
-        const fadeInStart = windowHeight * 0.9;
-        const fadeInEnd = windowHeight * 0.7;
-        const fadeDistance = fadeInStart - fadeInEnd;
-
-        if (headerBottom < 0 || headerTop < 0) {
-          return 1;
-        }
-
-        if (headerCenter > fadeInStart) {
-          return 0;
-        } else if (headerCenter < fadeInEnd) {
-          return 1;
-        } else {
-          return 1 - ((headerCenter - fadeInEnd) / fadeDistance);
-        }
+      const nextHeaders = headerRefs.current.map((el) => {
+        if (!el) return 1;
+        const rect = el.getBoundingClientRect();
+        // Once a header has reached the top of the viewport it stays fully visible.
+        if (rect.top < 0) return 1;
+        return round(fadeBetween(rect.top + rect.height / 2, wh * 0.9, wh * 0.7));
       });
-
-      setHeaderOpacities(newHeaderOpacities);
+      setHeaderOpacities((prev) => (sameValues(prev, nextHeaders) ? prev : nextHeaders));
 
       if (lastJobRef.current) {
-        const lastJobRect = lastJobRef.current.getBoundingClientRect();
-        const lastJobBottom = lastJobRect.bottom;
-        const wh = window.innerHeight;
-
-        const holdEnd = wh * 0.18;
-        const fadeOutEnd = wh * 0.02;
-        const fadeDistance = holdEnd - fadeOutEnd;
-
-        let opacity = 1;
-        if (lastJobBottom > holdEnd) {
-          opacity = 1;
-        } else if (lastJobBottom < fadeOutEnd) {
-          opacity = 0;
-        } else {
-          const fadeProgress = (holdEnd - lastJobBottom) / fadeDistance;
-          opacity = 1 - fadeProgress;
-        }
-
-        setLastJobOpacity(opacity);
-        setJobsContainerOpacity(opacity);
-        setSentimentOpacity(1 - opacity);
+        // As the last job leaves the top of the screen, crossfade the work history out and the sign-off in.
+        const bottom = lastJobRef.current.getBoundingClientRect().bottom;
+        setLastJobOpacity(round(1 - fadeBetween(bottom, wh * 0.18, wh * 0.02)));
       }
+    };
+
+    const handleScroll = () => {
+      if (rafId === null) rafId = requestAnimationFrame(update);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll);
-    handleScroll();
+    update();
 
     return () => {
+      if (rafId !== null) cancelAnimationFrame(rafId);
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
     };
@@ -135,10 +112,12 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
     const paths = signatureRef.current.querySelectorAll('path');
     if (paths.length === 0) return;
 
+    // Reduced motion: leave the signature fully drawn.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
     const pathLengths: number[] = [];
     paths.forEach((path) => {
-      const length = path.getTotalLength();
-      pathLengths.push(length);
+      pathLengths.push(path.getTotalLength());
     });
 
     const resetAndAnimate = () => {
@@ -146,40 +125,27 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
       animationTimeoutsRef.current = [];
 
       paths.forEach((path, index) => {
-        const pathElement = path as SVGPathElement;
         const length = pathLengths[index];
-        pathElement.style.transition = 'none';
-        pathElement.style.strokeDasharray = `${length}`;
-        pathElement.style.strokeDashoffset = `${length}`;
+        path.style.transition = 'none';
+        path.style.strokeDasharray = `${length}`;
+        path.style.strokeDashoffset = `${length}`;
       });
 
       const resetTimeout = setTimeout(() => {
-        const animationOrder = Array.from({ length: paths.length }, (_, i) => i);
         const dashDuration = 100;
         const otherDuration = 400;
 
-        animationOrder.forEach((pathIndex, orderIndex) => {
-          if (pathIndex < paths.length) {
-            const pathElement = paths[pathIndex] as SVGPathElement;
-            const isDash = pathIndex === 0;
-            const duration = isDash ? dashDuration : otherDuration;
+        // The first path is the leading dash; it's drawn quickly, then each letter stroke follows in order.
+        paths.forEach((path, index) => {
+          const duration = index === 0 ? dashDuration : otherDuration;
+          const delay = index === 0 ? 0 : dashDuration + (index - 1) * otherDuration;
 
-            let delay = 0;
-            if (orderIndex === 0) {
-              delay = 0;
-            } else if (orderIndex === 1) {
-              delay = dashDuration;
-            } else {
-              delay = dashDuration + (orderIndex - 1) * otherDuration;
-            }
+          const animTimeout = setTimeout(() => {
+            path.style.transition = `stroke-dashoffset ${duration}ms ease-in-out`;
+            path.style.strokeDashoffset = '0';
+          }, delay);
 
-            const animTimeout = setTimeout(() => {
-              pathElement.style.transition = `stroke-dashoffset ${duration}ms ease-in-out`;
-              pathElement.style.strokeDashoffset = '0';
-            }, delay);
-
-            animationTimeoutsRef.current.push(animTimeout);
-          }
+          animationTimeoutsRef.current.push(animTimeout);
         });
       }, 100);
 
@@ -187,30 +153,20 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
     };
 
     paths.forEach((path, index) => {
-      const pathElement = path as SVGPathElement;
-      const length = pathLengths[index];
-      pathElement.style.strokeDasharray = `${length}`;
-      pathElement.style.strokeDashoffset = `${length}`;
+      path.style.strokeDasharray = `${pathLengths[index]}`;
+      path.style.strokeDashoffset = `${pathLengths[index]}`;
     });
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          if (animationIntervalRef.current) {
+            clearInterval(animationIntervalRef.current);
+            animationIntervalRef.current = null;
+          }
           if (entry.isIntersecting) {
-            if (animationIntervalRef.current) {
-              clearInterval(animationIntervalRef.current);
-            }
-
             resetAndAnimate();
-
-            animationIntervalRef.current = setInterval(() => {
-              resetAndAnimate();
-            }, 5000);
-          } else {
-            if (animationIntervalRef.current) {
-              clearInterval(animationIntervalRef.current);
-              animationIntervalRef.current = null;
-            }
+            animationIntervalRef.current = setInterval(resetAndAnimate, 5000);
           }
         });
       },
@@ -229,104 +185,52 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
     };
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveTestimonialIndex((current) => (current + 1) % testimonials.length);
-    }, 5200);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const activeTestimonial = testimonials[activeTestimonialIndex];
-
   return (
-    <>
-      <section
-        ref={sectionRef}
-        id="impact"
-        className={styles.section}
-        style={{
-          opacity,
-          visibility,
-          paddingTop: '80px',
-          paddingBottom: 0,
-        }}
-      >
+    <section
+      ref={sectionRef}
+      id="impact"
+      className={styles.section}
+      style={{
+        opacity,
+        // Invisible content stays in the accessibility tree and tab order (focusing it scrolls it into view
+        // and fades it in), but shouldn't swallow clicks while transparent.
+        pointerEvents: opacity < 0.05 ? 'none' : undefined,
+        paddingTop: '80px',
+        paddingBottom: 0,
+      }}
+    >
       <h2 className={styles.heading}>
         Impact
       </h2>
 
       <div className={styles.container}>
-        <div
-          className={styles.jobsWrap}
-          style={{
-            opacity: jobsContainerOpacity,
-          }}
-        >
-          <div
-            className={styles.backdrop}
-            style={{
-              background: 'rgba(255, 255, 255, 0.36)',
-            }}
-          />
+        <ImpactStats />
+
+        <div className={styles.jobsWrap} style={{ opacity: lastJobOpacity }}>
+          <div className={styles.backdrop} style={{ background: 'rgba(255, 255, 255, 0.36)' }} />
 
           <div className={styles.graphWrap}>
-            <GitHubActivityGraph
-              years={[
-                {
-                  year: 2026,
-                  contributions: contributions2026,
-                  totalContributions: totalContributions2026,
-                },
-                {
-                  year: 2025,
-                  contributions: contributions2025,
-                  totalContributions: totalContributions2025,
-                },
-                {
-                  year: 2024,
-                  contributions: contributions2024,
-                  totalContributions: totalContributions2024,
-                },
-                {
-                  year: 2023,
-                  contributions: contributions2023,
-                  totalContributions: totalContributions2023,
-                },
-              ]}
-            />
+            <GitHubActivityGraph years={contributionYears} />
           </div>
 
-          <div
-            ref={careerJourneyRef}
-            className={styles.careerWrap}
-          >
+          <div className={styles.careerWrap}>
             <div className={styles.jobsInner}>
               {jobs.map((job, jobIndex) => {
-                let achievementIndex = 0;
-                for (let i = 0; i < jobIndex; i++) {
-                  achievementIndex += jobs[i].achievements.length;
-                }
-
                 const isLastJob = jobIndex === jobs.length - 1;
 
                 return (
                   <div
-                    key={`job-${jobIndex}-${job.company}`}
+                    key={job.company}
                     ref={isLastJob ? (el) => { lastJobRef.current = el; } : undefined}
                     className={styles.jobBlock}
-                    style={{
-                      opacity: isLastJob ? lastJobOpacity : 1,
-                    }}
+                    style={{ opacity: isLastJob ? lastJobOpacity : 1 }}
                   >
                     <div
                       ref={(el) => {
                         headerRefs.current[jobIndex] = el;
                       }}
                       className={styles.jobHeader}
-                      style={{
-                        opacity: headerOpacities[jobIndex] || 0,
-                      }}
+                      style={{ opacity: headerOpacities[jobIndex] || 0 }}
                     >
                       <h3 className={styles.companyName}>
                         {job.company}
@@ -343,24 +247,24 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
 
                     <ul className={styles.achievementList}>
                       {job.achievements.map((text, index) => {
-                        const currentAchievementIndex = achievementIndex + index;
+                        const achievementIndex = achievementStartIndex[jobIndex] + index;
+                        const achievementOpacity = achievementOpacities[achievementIndex] || 0;
                         return (
                           <li
-                            key={`achievement-${currentAchievementIndex}-${jobIndex}`}
+                            key={text}
                             ref={(el) => {
-                              achievementRefs.current[currentAchievementIndex] = el;
+                              achievementRefs.current[achievementIndex] = el;
                             }}
                             className={styles.achievementItem}
-                            style={{
-                              opacity: achievementOpacities[currentAchievementIndex] || 0,
-                            }}
+                            style={{ opacity: achievementOpacity }}
                           >
                             <div className={styles.bulletWrap}>
                               <svg
-                                className={achievementOpacities[currentAchievementIndex] > 0 ? `${styles.bulletIcon} ${styles.bulletIconAnimated}` : styles.bulletIcon}
+                                className={achievementOpacity > 0 ? `${styles.bulletIcon} ${styles.bulletIconAnimated}` : styles.bulletIcon}
                                 fill="currentColor"
                                 viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden
                               >
                                 <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" />
                                 <circle cx="12" cy="10" r="1.5" fill="rgba(255, 255, 255, 1)" />
@@ -383,11 +287,11 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
 
       <section
         id="contact"
-        ref={sentimentRef}
+        aria-label="Contact"
         className={styles.sentimentBlock}
         style={{
           opacity: sentimentOpacity,
-          visibility: sentimentOpacity > 0 ? 'visible' : 'hidden',
+          pointerEvents: sentimentOpacity < 0.05 ? 'none' : undefined,
         }}
       >
         <div className={styles.sentimentInner}>
@@ -404,6 +308,8 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
                 className={styles.signatureSvg}
+                role="img"
+                aria-label="Alisa"
               >
           <g clipPath="url(#clip0_1_2)">
             <path d="M2.98058 45.3084C3.05598 45.0445 3.453 44.4561 4.33502 43.6386C4.8033 43.2046 5.5375 43.0097 10.6659 42.7606C15.7943 42.5116 25.3519 42.2854 30.6337 42.2159C35.9155 42.1465 36.6318 42.2408 37.6606 42.4119C38.6895 42.5829 40.009 42.828 41.3686 43.0805" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
@@ -420,114 +326,27 @@ export const Impact = ({ scrollProgress }: ImpactProps) => {
             </div>
           </div>
 
-          <section className={`${styles.jobsWrap} ${styles.testimonials}`} aria-label="Testimonials">
-            <div
-              className={styles.backdrop}
-              style={{
-                background: 'rgba(255, 255, 255, 0.36)',
-              }}
-            />
-            <div className={styles.testimonialViewport} aria-live="polite">
-              <div
-                key={`${activeTestimonial.quote}-${activeTestimonial.attribution}`}
-                className={styles.testimonialSlide}
-              >
-                <blockquote className={styles.testimonialQuote}>
-                  &ldquo;{activeTestimonial.quote}&rdquo;
-                </blockquote>
-                <p className={styles.testimonialAttribution}>
-                  - {activeTestimonial.attribution}
-                </p>
-              </div>
-            </div>
-          </section>
+          <Testimonials />
         </div>
 
         <div className={styles.contactLinks}>
           {contactLinks.map((link) => {
-            const IconComponent = () => {
-              switch (link.icon) {
-                case 'email':
-                  return (
-                    <svg
-                      className={styles.contactLinkIcon}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                      />
-                    </svg>
-                  );
-                case 'linkedin':
-                  return (
-                    <svg
-                      className={styles.contactLinkIcon}
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                    </svg>
-                  );
-                case 'github':
-                  return (
-                    <svg
-                      className={styles.contactLinkIcon}
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  );
-                case 'resume':
-                  return (
-                    <svg
-                      className={styles.contactLinkIcon}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                      />
-                    </svg>
-                  );
-                default:
-                  return null;
-              }
-            };
-
+            const isMailto = link.url.startsWith('mailto:');
             return (
               <a
                 key={link.url}
                 href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
+                {...(isMailto ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
                 className={styles.contactLink}
                 aria-label={link.label}
+                title={link.label}
               >
-                <IconComponent />
+                <ContactIcon icon={link.icon} />
               </a>
             );
           })}
         </div>
       </section>
     </section>
-    </>
   );
 };

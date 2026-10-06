@@ -103,3 +103,29 @@ export const testimonials: Testimonial[] = [
     attribution: 'HR Class of S23 Coordinator',
   },
 ];
+
+export interface StatFigure {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  /** Short unit shown beside the number, for tiles with more than one figure. */
+  unit?: string;
+}
+
+export interface ImpactStat {
+  figures: StatFigure[];
+  label: string;
+}
+
+/** Headline numbers shown above the work history. Each one is backed by an AlphaSights bullet in `jobs`. */
+export const impactStats: ImpactStat[] = [
+  { figures: [{ value: 2, suffix: '×' }], label: 'credit revenue from an LLM outreach workflow' },
+  {
+    figures: [
+      { value: 30, suffix: 'K+', unit: 'users' },
+      { value: 200, prefix: '$', suffix: 'K+', unit: 'revenue' },
+    ],
+    label: 'from a customer-facing product I built',
+  },
+  { figures: [{ value: 2, suffix: '×' }], label: 'faster deploys after a Kotlin migration' },
+];
