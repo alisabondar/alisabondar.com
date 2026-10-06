@@ -68,20 +68,17 @@ export function ImpactStats() {
   }, []);
 
   return (
-    <dl ref={ref} className={styles.grid}>
+    <dl ref={ref} className={styles.panel}>
       {impactStats.map((stat) => (
-        <div key={stat.label} className={`${styles.tile} ${stat.figures.length > 1 ? styles.tileWide : ''}`}>
+        <div key={stat.label} className={`${styles.cell} ${stat.figures.length > 1 ? styles.cellMerged : ''}`}>
           {/* Screen readers get the final figures; the animated digits are visual only. */}
           <dt className={styles.label}>{stat.label}</dt>
           <dd className={styles.figures}>
-            <span className="sr-only">
-              {stat.figures.map((figure) => [formatStat(figure, figure.value), figure.unit].filter(Boolean).join(' ')).join(' and ')}
-            </span>
+            <span className="sr-only">{stat.figures.map((figure) => formatStat(figure, figure.value)).join(' and ')}</span>
             {stat.figures.map((figure, index) => (
-              <span key={figure.unit ?? 'value'} className={styles.figure} aria-hidden>
+              <span key={formatStat(figure, figure.value)} className={styles.figure} aria-hidden>
                 {index > 0 ? <span className={styles.joiner}>&amp;</span> : null}
                 <StatValue stat={figure} play={inView} />
-                {figure.unit ? <span className={styles.unit}>{figure.unit}</span> : null}
               </span>
             ))}
           </dd>
