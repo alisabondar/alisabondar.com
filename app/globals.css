@@ -4,6 +4,8 @@
   /* Paper tone sampled from the collage background, so the instant before it loads isn't stark white. */
   --background: #f9f0dd;
   --foreground: #171717;
+  /* Playball runs small for its point size; every handwritten element multiplies its font size by this. */
+  --handwriting-scale: 1.35;
 }
 
 @theme inline {

@@ -74,9 +74,8 @@
   margin: 0;
   font-family: var(--font-handwriting), cursive, sans-serif;
   font-weight: 400;
-  font-size: 1.35rem;
+  font-size: calc(1.35rem * var(--handwriting-scale, 1));
   letter-spacing: normal;
-  text-transform: uppercase;
   color: #171717;
 }
 
@@ -234,7 +233,7 @@
   }
 
   .title {
-    font-size: 1.15rem;
+    font-size: calc(1.15rem * var(--handwriting-scale, 1));
   }
 
   .pitch {
@@ -250,7 +249,7 @@
   }
 
   .title {
-    font-size: 1.05rem;
+    font-size: calc(1.05rem * var(--handwriting-scale, 1));
   }
 
   .pitch {

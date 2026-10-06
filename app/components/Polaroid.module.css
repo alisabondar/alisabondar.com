@@ -97,7 +97,7 @@
 }
 
 .polaroid.project .polaroidTitle {
-  font-size: 1.1rem;
+  font-size: calc(1.1rem * var(--handwriting-scale, 1));
   line-height: 1.4;
 }
 
@@ -156,14 +156,12 @@
   color: rgba(255, 255, 255, 0.6);
   font-weight: 400;
   font-size: 1.1rem;
-  text-transform: uppercase;
 }
 
 .polaroidCaption {
   color: #171717;
   font-family: var(--font-handwriting), cursive, sans-serif;
   font-weight: 400;
-  text-transform: uppercase;
   letter-spacing: normal;
 }
 
@@ -194,7 +192,7 @@
 
 .polaroidTitle {
   font-family: inherit;
-  font-size: 1.1rem;
+  font-size: calc(1.1rem * var(--handwriting-scale, 1));
   font-weight: 400;
   margin: 0;
   letter-spacing: normal;
@@ -202,7 +200,7 @@
 }
 
 .polaroid.landscape .polaroidTitle {
-  font-size: 1.1rem;
+  font-size: calc(1.1rem * var(--handwriting-scale, 1));
   line-height: 1.4;
 }
 
@@ -216,7 +214,7 @@
 }
 
 .polaroidYear {
-  font-size: 0.9rem;
+  font-size: calc(0.9rem * var(--handwriting-scale, 1));
   font-weight: 400;
   margin: 0.4em 0 0;
   opacity: 0.75;
@@ -237,7 +235,7 @@
   }
 
   .polaroid.portrait .polaroidTitle {
-    font-size: 1.25rem;
+    font-size: calc(1.25rem * var(--handwriting-scale, 1));
   }
 
   .polaroid.portrait .polaroidDescription {
@@ -277,7 +275,7 @@
   }
 
   .polaroid.project .polaroidTitle {
-    font-size: 1rem;
+    font-size: calc(1rem * var(--handwriting-scale, 1));
     line-height: 1.5;
     letter-spacing: 0.02em;
   }

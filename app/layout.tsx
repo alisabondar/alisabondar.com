@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Manrope, Permanent_Marker } from "next/font/google";
+import { Playfair_Display, EB_Garamond, Playball } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import { TableOfContents } from "./components/TableOfContents";
@@ -11,12 +11,12 @@ const headingFont = Playfair_Display({
   subsets: ["latin"],
 });
 
-const bodyFont = Manrope({
+const bodyFont = EB_Garamond({
   variable: "--font-body",
   subsets: ["latin"],
 });
 
-const handwritingFont = Permanent_Marker({
+const handwritingFont = Playball({
   weight: "400",
   variable: "--font-handwriting",
   subsets: ["latin"],

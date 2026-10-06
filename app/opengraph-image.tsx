@@ -28,19 +28,19 @@ const ROLE = 'Software Engineer';
 const DOMAIN = 'alisabondar.com';
 
 export default async function OpengraphImage() {
-  const [paper, inkloom, florascape, playfair, manrope, marker] = await Promise.all([
+  const [paper, inkloom, florascape, playfair, garamond, playball] = await Promise.all([
     asset('og-paper.jpg'),
     asset('og-inkloom.jpg'),
     asset('og-florascape.jpg'),
     loadGoogleFont('Playfair+Display', 700, NAME + ROLE),
-    loadGoogleFont('Manrope', 500, DOMAIN),
-    loadGoogleFont('Permanent+Marker', 400, 'FlorascapeInkloom'),
+    loadGoogleFont('EB+Garamond', 500, DOMAIN),
+    loadGoogleFont('Playball', 400, 'FlorascapeInkloom'),
   ]);
 
   const fonts = [
     ...(playfair ? [{ name: 'Playfair Display', data: playfair, weight: 700 as const }] : []),
-    ...(manrope ? [{ name: 'Manrope', data: manrope, weight: 500 as const }] : []),
-    ...(marker ? [{ name: 'Marker', data: marker, weight: 400 as const }] : []),
+    ...(garamond ? [{ name: 'EB Garamond', data: garamond, weight: 500 as const }] : []),
+    ...(playball ? [{ name: 'Playball', data: playball, weight: 400 as const }] : []),
   ];
 
   const polaroid = (src: string, caption: string, style: Record<string, string | number>) => (
@@ -56,7 +56,7 @@ export default async function OpengraphImage() {
       }}
     >
       <img src={src} width={280} height={168} alt="" style={{ objectFit: 'cover' }} />
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 0 14px', fontFamily: 'Marker', fontSize: 22 }}>
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '10px 0 14px', fontFamily: 'Playball', fontSize: 30 }}>
         {caption}
       </div>
     </div>
@@ -99,7 +99,7 @@ export default async function OpengraphImage() {
           <div style={{ marginTop: 22, fontSize: 36, fontWeight: 700, letterSpacing: '-0.03em', color: 'rgb(226 104 96)' }}>
             {ROLE}
           </div>
-          <div style={{ marginTop: 30, fontSize: 24, color: 'rgba(0,0,0,0.55)', letterSpacing: '-0.01em', fontFamily: 'Manrope' }}>{DOMAIN}</div>
+          <div style={{ marginTop: 30, fontSize: 24, color: 'rgba(0,0,0,0.55)', letterSpacing: '-0.01em', fontFamily: 'EB Garamond' }}>{DOMAIN}</div>
         </div>
       </div>
     ),

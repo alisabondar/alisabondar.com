@@ -161,7 +161,6 @@
   text-align: center;
   font-family: var(--font-handwriting), cursive, sans-serif;
   font-weight: 400;
-  text-transform: uppercase;
   border-radius: 2px;
   box-sizing: border-box;
 }
@@ -208,7 +207,7 @@
 
 .stickyTitle {
   font-family: inherit;
-  font-size: 1.1rem;
+  font-size: calc(1.1rem * var(--handwriting-scale, 1));
   font-weight: 400;
   margin: 0;
   letter-spacing: normal;
@@ -227,7 +226,7 @@
 }
 
 .stickyYear {
-  font-size: 0.9rem;
+  font-size: calc(0.9rem * var(--handwriting-scale, 1));
   font-weight: 400;
   margin: 0.4em 0 0;
   color: #4b5563;
@@ -240,7 +239,7 @@
   }
 
   .stickyTitle {
-    font-size: 1.25rem;
+    font-size: calc(1.25rem * var(--handwriting-scale, 1));
   }
 
   .stickyDescription {

@@ -27,7 +27,7 @@
 
 .hobby {
   font-family: var(--font-handwriting), cursive, sans-serif;
-  font-size: 1.15em;
+  font-size: calc(1.15em * var(--handwriting-scale, 1));
   color: rgb(226 104 96);
   opacity: 0;
   transition: opacity 0.5s ease-out 0.2s;
