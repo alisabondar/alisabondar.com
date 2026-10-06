@@ -1,0 +1,9 @@
+.journeySpacer {
+  min-height: var(--journey-height-desktop);
+}
+
+@media (max-width: 639px) {
+  .journeySpacer {
+    min-height: var(--journey-height-mobile);
+  }
+}

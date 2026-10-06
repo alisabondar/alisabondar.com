@@ -1,9 +1,16 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { getTimelineMultiplier, SCROLL_DESENSITIZE } from '../utils/responsive';
-import { SECTIONS, HEADER_OFFSET_PX, SECTION_TOP_PADDING_PX, SMOOTH_SCROLL_DURATION_MS, BREAKPOINTS, MOBILE_SCROLL_SLOWDOWN } from '../constants';
+import { isMobileViewport, measureJourneyEnd, progressToScroll } from '../utils/scrollTimeline';
+import { SECTIONS, HEADER_OFFSET_PX, SECTION_TOP_PADDING_PX, SMOOTH_SCROLL_DURATION_MS } from '../constants';
 import styles from './TableOfContents.module.css';
+
+/** scrollProgress the Journey link jumps to: the header is settled and the first cards are in view. */
+const JOURNEY_TARGET_PROGRESS = 0.25;
+
+function scrollBehavior(): ScrollBehavior {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth';
+}
 
 export const TableOfContents = () => {
   const [activeSection, setActiveSection] = useState<string>('about');
@@ -72,29 +79,17 @@ export const TableOfContents = () => {
     isScrollingRef.current = true;
 
     if (sectionId === 'journey') {
-      const windowHeight = window.innerHeight;
-      const isMobile = window.innerWidth < BREAKPOINTS.MOBILE;
-      const timelineMultiplier = getTimelineMultiplier(isMobile);
-      const scrollDesensitize = isMobile ? SCROLL_DESENSITIZE.MOBILE : SCROLL_DESENSITIZE.DESKTOP;
-      let effectiveScrollRange = windowHeight * timelineMultiplier * scrollDesensitize;
-      if (isMobile) effectiveScrollRange *= MOBILE_SCROLL_SLOWDOWN;
-      const targetScrollProgress = 0.25;
-      const targetTop = (targetScrollProgress / 1.2) * effectiveScrollRange;
-
       window.scrollTo({
-        top: targetTop,
-        behavior: 'smooth',
+        top: progressToScroll(JOURNEY_TARGET_PROGRESS, window.innerHeight, measureJourneyEnd(), isMobileViewport()),
+        behavior: scrollBehavior(),
       });
     } else {
       const element = document.getElementById(sectionId);
       if (element) {
-        const elementPosition = element.getBoundingClientRect().top;
-        const sectionTopInDoc = elementPosition + window.pageYOffset;
-        const offsetPosition = sectionTopInDoc + SECTION_TOP_PADDING_PX - HEADER_OFFSET_PX;
-
+        const sectionTopInDoc = element.getBoundingClientRect().top + window.scrollY;
         window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth',
+          top: sectionTopInDoc + SECTION_TOP_PADDING_PX - HEADER_OFFSET_PX,
+          behavior: scrollBehavior(),
         });
       }
     }
@@ -105,7 +100,7 @@ export const TableOfContents = () => {
   };
 
   return (
-    <nav className={styles.nav}>
+    <nav className={styles.nav} aria-label="Sections">
       <ul className={styles.list}>
         {SECTIONS.map((section) => {
           const isActive = activeSection === section.id;
@@ -115,6 +110,7 @@ export const TableOfContents = () => {
                 onClick={() => handleClick(section.id)}
                 className={`${styles.button} ${isActive ? styles.buttonActive : styles.buttonInactive}`}
                 aria-label={`Navigate to ${section.label} section`}
+                aria-current={isActive ? 'location' : undefined}
               >
                 <span className={styles.label}>{section.label}</span>
                 {isActive && (
