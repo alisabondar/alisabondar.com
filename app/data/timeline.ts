@@ -11,22 +11,22 @@ export const timelineItems: TimelineItem[] = [
     year: 'May 2020',
   },
   {
-    title: 'First job!',
+    title: 'First job: support tech in cardiac surgery!',
     year: 'May 2020',
     picture: 'CVOR-event.webp',
   },
   {
-    title: 'Skiied out west! 🎿',
+    title: 'Skied out west! 🎿',
     year: 'December 2020',
     picture: 'colorado-event.webp',
   },
   {
-    title: 'Scrubbed in to assist open heart surgery',
+    title: 'Scrubbed in on my first open-heart surgery',
     year: 'March 2021',
     picture: 'scrub-event.webp',
   },
   {
-    title: 'Ditching the contacts post LASIK surgery 🤯',
+    title: 'Ditched my contacts after LASIK 🤯',
     year: 'June 2022',
   },
   {
@@ -35,11 +35,11 @@ export const timelineItems: TimelineItem[] = [
     picture: 'maine-event.webp',
   },
   {
-    title: 'Bye bye CVOR, hello eICU',
+    title: 'Bye bye OR, hello ICU',
     year: 'August 2022',
   },
   {
-    title: 'Began studying javascript and python',
+    title: 'Started learning JavaScript and Python',
     year: 'March 2023',
   },
   {
@@ -48,27 +48,27 @@ export const timelineItems: TimelineItem[] = [
     picture: 'bike-event.webp',
   },
   {
-    title: 'Enrolled into Hack Reactor 💻',
+    title: 'Enrolled in Hack Reactor 💻',
     year: 'June 2023',
     picture: 'hackreactor-event.webp',
   },
   {
-    title: 'Graduated Hack Reactor 📓',
+    title: 'Graduated Hack Reactor as class speaker 🎤',
     year: 'August 2023',
     picture: 'graduation-event.webp',
   },
   {
-    title: 'First lease signed! 🌃',
+    title: 'Signed my first lease! 🌃',
     year: 'December 2023',
     picture: 'nyc-event.webp',
   },
   {
-    title: 'First software engineering gig!',
+    title: 'Landed my first engineering role at AlphaSights!',
     year: 'January 2024',
     picture: 'alphasights-event.webp',
   },
   {
-    title: 'Ran a marathon! ',
+    title: 'Ran my first marathon! 🏃',
     year: 'March 2025',
     picture: 'marathon-event.webp',
   },
@@ -77,7 +77,7 @@ export const timelineItems: TimelineItem[] = [
     year: 'August 2025',
   },
   {
-    title: 'Visited Boston',
+    title: 'Visited Boston 🦞',
     year: 'September 2025',
     picture: 'boston.webp',
   },
