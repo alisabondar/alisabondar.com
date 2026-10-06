@@ -130,7 +130,7 @@ export const Journey = ({ scrollProgress }: JourneyProps) => {
 
   return (
     <div
-      className={`fixed left-4 right-4 sm:right-20 md:right-24 sm:left-1/2 sm:-translate-x-1/2 h-screen z-40 pointer-events-none transition-all duration-500 ease-out ${styles.journeyViewport}`}
+      className={`await-background fixed left-4 right-4 sm:right-20 md:right-24 sm:left-1/2 sm:-translate-x-1/2 h-screen z-40 pointer-events-none transition-all duration-500 ease-out ${styles.journeyViewport}`}
       style={{
         opacity: overlayOpacity,
         visibility: overlayOpacity <= 0 ? 'hidden' : 'visible',

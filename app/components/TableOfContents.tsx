@@ -79,7 +79,7 @@ export const TableOfContents = () => {
   };
 
   return (
-    <nav className={styles.nav} aria-label="Sections">
+    <nav className={`${styles.nav} await-background`} aria-label="Sections">
       <ul className={styles.list}>
         {SECTIONS.map((section) => {
           const isActive = activeSection === section.id;

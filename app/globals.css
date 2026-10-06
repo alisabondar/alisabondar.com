@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  /* Paper tone sampled from the collage background, so the instant before it loads isn't stark white. */
+  --background: #f9f0dd;
   --foreground: #171717;
 }
 
@@ -33,6 +34,15 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.05em;
+}
+
+/* Content waits for the paper background (see the gate script in layout.tsx), then fades in. */
+.await-background {
+  transition: opacity 0.6s ease-out;
+}
+
+html[data-bg-pending] .await-background {
+  opacity: 0 !important;
 }
 
 /* Honor the OS "reduce motion" setting: stop looping/decorative animation and smooth scrolling. */

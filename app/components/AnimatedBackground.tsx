@@ -38,7 +38,7 @@ export const AnimatedBackground = memo(function AnimatedBackground() {
       <div className={styles.svgBackground} aria-hidden />
 
       <div
-        className={styles.iconsWrap}
+        className={`${styles.iconsWrap} await-background`}
           aria-hidden
           style={{ visibility: iconsReady ? 'visible' : 'hidden' }}
         >

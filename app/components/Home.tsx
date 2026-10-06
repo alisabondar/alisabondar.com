@@ -76,7 +76,7 @@ export function Home({ contributionYears }: HomeProps) {
       <AnimatedBackground />
       <Journey scrollProgress={scrollProgress} isPastJourney={isPastJourney} />
 
-      <main className="relative z-20">
+      <main className="await-background relative z-20">
         <section id="about" className="relative flex min-h-screen items-center justify-center font-sans z-10 px-4">
           <div className="relative z-10 text-center">
             <div
