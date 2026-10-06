@@ -159,7 +159,7 @@
   align-items: center;
   padding: 0.75rem;
   text-align: center;
-  font-family: var(--font-permanent-marker), cursive, sans-serif;
+  font-family: var(--font-handwriting), cursive, sans-serif;
   font-weight: 400;
   text-transform: uppercase;
   border-radius: 2px;
@@ -207,6 +207,7 @@
 }
 
 .stickyTitle {
+  font-family: inherit;
   font-size: 1.1rem;
   font-weight: 400;
   margin: 0;

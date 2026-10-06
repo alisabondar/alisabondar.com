@@ -26,7 +26,7 @@
 }
 
 .hobby {
-  font-family: var(--font-permanent-marker), cursive, sans-serif;
+  font-family: var(--font-handwriting), cursive, sans-serif;
   font-size: 1.15em;
   color: rgb(226 104 96);
   opacity: 0;

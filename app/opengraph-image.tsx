@@ -28,16 +28,18 @@ const ROLE = 'Software Engineer';
 const DOMAIN = 'alisabondar.com';
 
 export default async function OpengraphImage() {
-  const [paper, inkloom, florascape, geist, marker] = await Promise.all([
+  const [paper, inkloom, florascape, playfair, manrope, marker] = await Promise.all([
     asset('og-paper.jpg'),
     asset('og-inkloom.jpg'),
     asset('og-florascape.jpg'),
-    loadGoogleFont('Geist', 700, NAME + ROLE + DOMAIN),
+    loadGoogleFont('Playfair+Display', 700, NAME + ROLE),
+    loadGoogleFont('Manrope', 500, DOMAIN),
     loadGoogleFont('Permanent+Marker', 400, 'FlorascapeInkloom'),
   ]);
 
   const fonts = [
-    ...(geist ? [{ name: 'Geist', data: geist, weight: 700 as const }] : []),
+    ...(playfair ? [{ name: 'Playfair Display', data: playfair, weight: 700 as const }] : []),
+    ...(manrope ? [{ name: 'Manrope', data: manrope, weight: 500 as const }] : []),
     ...(marker ? [{ name: 'Marker', data: marker, weight: 400 as const }] : []),
   ];
 
@@ -62,7 +64,7 @@ export default async function OpengraphImage() {
 
   return new ImageResponse(
     (
-      <div style={{ width: '100%', height: '100%', display: 'flex', position: 'relative', fontFamily: 'Geist' }}>
+      <div style={{ width: '100%', height: '100%', display: 'flex', position: 'relative', fontFamily: 'Playfair Display' }}>
         <img src={paper} width={1200} height={630} alt="" style={{ position: 'absolute', inset: 0 }} />
 
         {polaroid(florascape, 'Florascape', { right: 300, top: 90, transform: 'rotate(-6deg)' })}
@@ -97,7 +99,7 @@ export default async function OpengraphImage() {
           <div style={{ marginTop: 22, fontSize: 36, fontWeight: 700, letterSpacing: '-0.03em', color: 'rgb(226 104 96)' }}>
             {ROLE}
           </div>
-          <div style={{ marginTop: 30, fontSize: 24, color: 'rgba(0,0,0,0.55)', letterSpacing: '-0.01em' }}>{DOMAIN}</div>
+          <div style={{ marginTop: 30, fontSize: 24, color: 'rgba(0,0,0,0.55)', letterSpacing: '-0.01em', fontFamily: 'Manrope' }}>{DOMAIN}</div>
         </div>
       </div>
     ),

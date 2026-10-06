@@ -72,7 +72,7 @@
 
 .title {
   margin: 0;
-  font-family: var(--font-permanent-marker), cursive, sans-serif;
+  font-family: var(--font-handwriting), cursive, sans-serif;
   font-weight: 400;
   font-size: 1.35rem;
   letter-spacing: normal;
@@ -184,7 +184,7 @@
   padding: 0.3rem 0.7rem 0.25rem;
   background: rgb(246 132 124);
   color: #fff;
-  font-family: var(--font-permanent-marker), cursive, sans-serif;
+  font-family: var(--font-handwriting), cursive, sans-serif;
   font-size: 0.85rem;
   letter-spacing: 0.02em;
   border-radius: 0.25rem;

@@ -1,24 +1,24 @@
 import type { Metadata } from "next";
-import { Geist, Story_Script, Permanent_Marker } from "next/font/google";
+import { Playfair_Display, Manrope, Permanent_Marker } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import { TableOfContents } from "./components/TableOfContents";
 import { contactLinks } from "./data/career";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Each font is exposed as a role-named CSS variable (--font-heading, --font-body, --font-handwriting).
+const headingFont = Playfair_Display({
+  variable: "--font-heading",
   subsets: ["latin"],
 });
 
-const storyScript = Story_Script({
-  weight: "400",
-  variable: "--font-story-script",
+const bodyFont = Manrope({
+  variable: "--font-body",
   subsets: ["latin"],
 });
 
-const permanentMarker = Permanent_Marker({
+const handwritingFont = Permanent_Marker({
   weight: "400",
-  variable: "--font-permanent-marker",
+  variable: "--font-handwriting",
   subsets: ["latin"],
 });
 
@@ -74,7 +74,7 @@ export default function RootLayout({
     // suppressHydrationWarning: the gate script toggles a data attribute on <html> before React hydrates.
     <html
       lang="en"
-      className={`${geistSans.variable} ${storyScript.variable} ${permanentMarker.variable}`}
+      className={`${headingFont.variable} ${bodyFont.variable} ${handwritingFont.variable}`}
       suppressHydrationWarning
     >
       <head>

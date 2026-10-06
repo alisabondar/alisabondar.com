@@ -64,7 +64,7 @@ export const Polaroid = memo(function Polaroid({
                 <div
                   className={styles.placeholder}
                   style={{
-                    fontFamily: 'var(--font-permanent-marker), cursive, sans-serif',
+                    fontFamily: 'var(--font-handwriting), cursive, sans-serif',
                     letterSpacing: 'normal',
                   }}
                 >

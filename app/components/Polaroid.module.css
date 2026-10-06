@@ -161,7 +161,7 @@
 
 .polaroidCaption {
   color: #171717;
-  font-family: var(--font-permanent-marker), cursive, sans-serif;
+  font-family: var(--font-handwriting), cursive, sans-serif;
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: normal;
@@ -193,6 +193,7 @@
 }
 
 .polaroidTitle {
+  font-family: inherit;
   font-size: 1.1rem;
   font-weight: 400;
   margin: 0;

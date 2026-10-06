@@ -92,6 +92,7 @@
 
 .value {
   display: inline-block;
+  font-family: var(--font-heading), Georgia, serif;
   font-size: 2rem;
   font-weight: 700;
   line-height: 1;
