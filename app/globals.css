@@ -1,11 +1,31 @@
 @import "tailwindcss";
 
+/* Registered so Journey cards can transition their paper veil smoothly (see Journey.tsx). */
+@property --card-veil {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
 :root {
   /* Paper tone sampled from the collage background, so the instant before it loads isn't stark white. */
   --background: #f9f0dd;
   --foreground: #171717;
   /* Playball runs small for its point size; every handwritten element multiplies its font size by this. */
   --handwriting-scale: 1.35;
+  /* Faint paper fiber texture, layered over the photo prints and the post-its. */
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.3 0 0 0 0 0.24 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* Instant-film print: cream stock with a faint paper grain, and a layered shadow of a print lying on paper.
+     Shared by the polaroid front (Polaroid.module.css) and the project card's back (ProjectCard.module.css). */
+  --print-stock:
+    var(--paper-grain),
+    linear-gradient(165deg, #fffdf9 0%, #f8f4ec 55%, #efe9de 100%);
+  --print-shadow:
+    0 0 0 1px rgb(0 0 0 / 0.04),
+    0 1px 1px rgb(0 0 0 / 0.08),
+    0 3px 6px rgb(0 0 0 / 0.08),
+    0 12px 24px -6px rgb(0 0 0 / 0.22),
+    0 28px 48px -18px rgb(0 0 0 / 0.28);
 }
 
 @theme inline {

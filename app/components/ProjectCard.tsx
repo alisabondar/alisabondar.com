@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { Polaroid } from './Polaroid';
+import { ConstructionSign } from './ConstructionSign';
 import type { Project } from '../data/projects';
 import styles from './ProjectCard.module.css';
 
@@ -14,28 +15,43 @@ function ExternalArrow() {
 }
 
 /**
- * A project polaroid. Projects with `details` flip over to show the pitch:
+ * A project polaroid. Projects with `details` flip over to show the pitch; a dog-eared corner hints at it.
  * - mouse/trackpad: on hover (CSS, see ProjectCard.module.css)
  * - touch: tap toggles
- * - keyboard: tabbing onto the Live/Code links (which live on the back) flips it via :focus-within
+ * - keyboard: focus flips it via :focus-within (the Live/Code links live on the back; a card with no links
+ *   is focusable itself)
  */
 export function ProjectCard({ project }: { project: Project }) {
   const [flipped, setFlipped] = useState(false);
   const lastPointerType = useRef<string>('');
   const { details } = project;
+  const photo = project.art === 'construction' ? <ConstructionSign label={`${project.title}: under construction`} /> : undefined;
 
   if (!details) {
     return (
       <a href={project.url} target="_blank" rel="noopener noreferrer" className={styles.plainLink}>
-        <Polaroid variant="project" title={project.title} image={project.screenshot} enableMouseTilt />
+        {/* No back side yet, so the name is written on the print. */}
+        <Polaroid
+          variant="project"
+          title={project.title}
+          image={project.screenshot}
+          liveUrl={project.url}
+          photo={photo}
+          tape="none"
+          enableMouseTilt
+        />
       </a>
     );
   }
+
+  const hasLinks = Boolean(project.url || details.codeUrl);
 
   return (
     <div
       className={styles.card}
       data-flipped={flipped}
+      tabIndex={hasLinks ? undefined : 0}
+      aria-label={hasLinks ? undefined : `${project.title}: ${details.status ?? ''} ${details.pitch}`.trim()}
       onPointerDown={(e) => {
         lastPointerType.current = e.pointerType;
       }}
@@ -48,24 +64,19 @@ export function ProjectCard({ project }: { project: Project }) {
     >
       <div className={styles.flipper}>
         <div className={`${styles.face} ${styles.front}`}>
-          <Polaroid variant="project" title={project.title} image={project.screenshot} />
-          <span className={styles.flipHint} aria-hidden>
-            <svg className={styles.flipIcon} viewBox="0 0 16 16" fill="none">
-              <path
-                d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v2.8h-2.8"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span className={styles.hintHover}>hover to flip</span>
-            <span className={styles.hintTouch}>tap to flip</span>
-          </span>
+          <Polaroid
+            variant="project"
+            title={project.title}
+            image={project.screenshot}
+            liveUrl={project.url}
+            photo={photo}
+            showCaption={false}
+            tape="none"
+            cornerFold
+          />
         </div>
 
-        <div className={`${styles.face} ${styles.back}`}>
-          <div className={styles.tape} aria-hidden />
+        <div className={`${styles.face} ${styles.back} ${hasLinks || details.stack?.length ? '' : styles.backCompact}`}>
           <div className={styles.header}>
             <h3 className={styles.title}>{project.title}</h3>
             {details.status ? <span className={styles.status}>{details.status}</span> : null}
@@ -77,25 +88,31 @@ export function ProjectCard({ project }: { project: Project }) {
               {details.underTheHood}
             </p>
           ) : null}
-          <ul className={styles.stack} aria-label="Built with">
-            {details.stack.map((tech) => (
-              <li key={tech} className={styles.chip}>
-                {tech}
-              </li>
-            ))}
-          </ul>
-          <div className={styles.actions}>
-            <a href={project.url} target="_blank" rel="noopener noreferrer" className={`${styles.button} ${styles.buttonPrimary}`}>
-              Live site <ExternalArrow />
-              <span className="sr-only">: {project.title}</span>
-            </a>
-            {details.codeUrl ? (
-              <a href={details.codeUrl} target="_blank" rel="noopener noreferrer" className={styles.button}>
-                Code <ExternalArrow />
-                <span className="sr-only">: {project.title} on GitHub</span>
-              </a>
-            ) : null}
-          </div>
+          {details.stack?.length ? (
+            <ul className={styles.stack} aria-label="Built with">
+              {details.stack.map((tech) => (
+                <li key={tech} className={styles.chip}>
+                  {tech}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          {hasLinks ? (
+            <div className={styles.actions}>
+              {project.url ? (
+                <a href={project.url} target="_blank" rel="noopener noreferrer" className={`${styles.button} ${styles.buttonPrimary}`}>
+                  Live site <ExternalArrow />
+                  <span className="sr-only">: {project.title}</span>
+                </a>
+              ) : null}
+              {details.codeUrl ? (
+                <a href={details.codeUrl} target="_blank" rel="noopener noreferrer" className={styles.button}>
+                  Code <ExternalArrow />
+                  <span className="sr-only">: {project.title} on GitHub</span>
+                </a>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

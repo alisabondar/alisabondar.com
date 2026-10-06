@@ -3,15 +3,19 @@ export interface TimelineItem {
   title: string;
   year?: string;
   picture?: string;
+  /** Career milestone: held up with coral washi tape instead of clear tape. */
+  career?: boolean;
 }
 
 export const timelineItems: TimelineItem[] = [
   {
     title: 'Graduated Virginia Tech with a double major!',
+    career: true,
     year: 'May 2020',
   },
   {
     title: 'First job: support tech in cardiac surgery!',
+    career: true,
     year: 'May 2020',
     picture: 'CVOR-event.webp',
   },
@@ -22,6 +26,7 @@ export const timelineItems: TimelineItem[] = [
   },
   {
     title: 'Scrubbed in on my first open-heart surgery',
+    career: true,
     year: 'March 2021',
     picture: 'scrub-event.webp',
   },
@@ -36,10 +41,12 @@ export const timelineItems: TimelineItem[] = [
   },
   {
     title: 'Bye bye OR, hello ICU',
+    career: true,
     year: 'August 2022',
   },
   {
     title: 'Started learning JavaScript and Python',
+    career: true,
     year: 'March 2023',
   },
   {
@@ -49,11 +56,13 @@ export const timelineItems: TimelineItem[] = [
   },
   {
     title: 'Enrolled in Hack Reactor 💻',
+    career: true,
     year: 'June 2023',
     picture: 'hackreactor-event.webp',
   },
   {
     title: 'Graduated Hack Reactor as class speaker 🎤',
+    career: true,
     year: 'August 2023',
     picture: 'graduation-event.webp',
   },
@@ -64,6 +73,7 @@ export const timelineItems: TimelineItem[] = [
   },
   {
     title: 'Landed my first engineering role at AlphaSights!',
+    career: true,
     year: 'January 2024',
     picture: 'alphasights-event.webp',
   },

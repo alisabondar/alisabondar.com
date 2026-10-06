@@ -3,15 +3,18 @@ export interface ProjectDetails {
   pitch: string;
   /** The engineering detail worth noticing. Hidden on the smallest screens. */
   underTheHood?: string;
-  stack: string[];
+  stack?: string[];
   status?: string;
   codeUrl?: string;
 }
 
 export interface Project {
   title: string;
-  url: string;
+  /** Live site. Projects without one (not deployed yet) show `art` instead of a live preview. */
+  url?: string;
   screenshot?: string;
+  /** Illustration for the photo area when there's no site to preview yet. */
+  art?: 'construction';
   /** When present, the card flips over to show these on hover/tap. */
   details?: ProjectDetails;
 }
@@ -42,8 +45,11 @@ export const projects: Project[] = [
     },
   },
   {
-    title: 'Lumka',
-    url: 'https://lumka-game.vercel.app/',
-    screenshot: '/lumka.webp',
+    title: 'OpenToWork',
+    art: 'construction',
+    details: {
+      pitch: 'A self-hosted job-search copilot.',
+      status: 'Building the MVP',
+    },
   },
 ];

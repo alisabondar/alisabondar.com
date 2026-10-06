@@ -39,8 +39,10 @@
   z-index: 100;
 }
 
-.polaroidWrapper:hover .polaroidInner {
-  transform: scale(1.08);
+.polaroidWrapper:hover .polaroidInner,
+.polaroidWrapper:focus-within .polaroidInner,
+.polaroidWrapper:has([data-flipped='true']) .polaroidInner {
+  transform: scale(1.1);
 }
 
 .polaroidWrapper:nth-child(1) {
