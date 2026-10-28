@@ -60,27 +60,3 @@ app/
 ```
 
 Content lives in `app/data/`, so updating the site usually means editing one of those files.
-
-## Running locally
-
-```bash
-bun install
-bun dev
-```
-
-To pull live GitHub contributions, add a token to `.env.local`:
-
-```bash
-GITHUB_TOKEN=github_pat_...   # fine-grained token, no extra scopes needed (public data)
-```
-
-Without a token, the graph uses the snapshot in `app/data/githubContributions*.ts`.
-
-## Scripts
-
-| Command | What it does |
-| --- | --- |
-| `bun dev` | Start the dev server |
-| `bun run build` | Production build |
-| `bun run lint` | ESLint |
-| `bun run typecheck` | `tsc --noEmit` |
