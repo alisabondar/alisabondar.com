@@ -56,7 +56,7 @@
 /* Wide-format film for project screenshots: proportionally slimmer border and strip. */
 .project {
   --frame: 4.5%;
-  width: 21rem;
+  width: 20rem;
 }
 
 .project .photo {

@@ -200,7 +200,7 @@
   }
 }
 
-/* The smallest card (21rem wide) only has room for the essentials. */
+/* The smallest card (20rem wide) only has room for the essentials. */
 @media (max-width: 640px) {
   .back {
     gap: 0.4rem;

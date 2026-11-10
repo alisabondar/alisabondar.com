@@ -550,26 +550,36 @@
   position: relative;
   z-index: 10;
   display: flex;
-  gap: 0.5rem;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
+/* The button is a 24px tap target; the visible dot is drawn by ::before. */
 .testimonialDot {
-  width: 0.5rem;
-  height: 0.5rem;
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
   padding: 0;
   border: none;
   border-radius: 9999px;
-  background: rgb(0 0 0 / 0.18);
+  background: none;
   cursor: pointer;
+}
+
+.testimonialDot::before {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: rgb(0 0 0 / 0.18);
   transition: background 0.3s, transform 0.3s;
 }
 
-.testimonialDot:hover {
+.testimonialDot:hover::before {
   background: rgb(0 0 0 / 0.4);
 }
 
-.testimonialDotActive {
+.testimonialDotActive::before {
   background: rgb(246 132 124);
   transform: scale(1.25);
 }
