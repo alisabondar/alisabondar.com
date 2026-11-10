@@ -77,7 +77,7 @@ export const JOURNEY_CARD_SCROLL_VH = {
 export const JOURNEY_END_PROGRESS = 1.2;
 
 /** How long (in viewport heights of scrolling) the last Journey card holds before the Journey scrolls away. */
-export const JOURNEY_EXIT_HOLD_VH = 0.3;
+export const JOURNEY_EXIT_HOLD_VH = 0;
 
 export const PHASE_TIMING = {
   MOBILE: {
