@@ -5,12 +5,11 @@ import { GitHubActivityGraph, type YearData } from './GitHubActivityGraph';
 import { ImpactStats } from './ImpactStats';
 import { Testimonials } from './Testimonials';
 import { ContactIcon } from './ContactIcon';
-import { useIsMobile, calculateFadeOpacity, useViewportFade } from '../utils/responsive';
+import { useViewportFade } from '../utils/responsive';
 import { contactLinks, jobs } from '../data/career';
 import styles from './Impact.module.css';
 
 export interface ImpactProps {
-  scrollProgress: number;
   contributionYears: YearData[];
 }
 
@@ -32,8 +31,7 @@ function sameValues(a: number[], b: number[]) {
   return a.length === b.length && a.every((v, i) => v === b[i]);
 }
 
-export const Impact = ({ scrollProgress, contributionYears }: ImpactProps) => {
-  const isMobile = useIsMobile();
+export const Impact = ({ contributionYears }: ImpactProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const achievementRefs = useRef<(HTMLLIElement | null)[]>([]);
   const headerRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -45,9 +43,9 @@ export const Impact = ({ scrollProgress, contributionYears }: ImpactProps) => {
   const animationIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const animationTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
 
-  const scrollFade = calculateFadeOpacity(scrollProgress, 1.2, 0.2);
+  // Fades by where the section is on screen (like Projects), so it follows Projects at any layout.
   const viewportFade = useViewportFade(sectionRef, { startAt: 0.88, fullAt: 0.5 });
-  const opacity = isMobile ? viewportFade.opacity : scrollFade.opacity;
+  const opacity = viewportFade.opacity;
   const sentimentOpacity = 1 - lastJobOpacity;
 
   useEffect(() => {

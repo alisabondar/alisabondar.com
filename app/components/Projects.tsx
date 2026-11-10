@@ -5,22 +5,27 @@ import { useIsMobile, useViewportFade } from '../utils/responsive';
 import { ProjectCard } from './ProjectCard';
 import styles from './Projects.module.css';
 import { projects } from '../data/projects';
+import { getJourneyExitProgress } from '../utils/scrollTimeline';
+import { JOURNEY_EXIT_FADE } from '../constants';
 
-export const Projects = () => {
+export const Projects = ({ scrollProgress }: { scrollProgress: number }) => {
   const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
-  const cardsContainerRef = useRef<HTMLDivElement>(null);
 
   // Fades in by where the section actually is on screen. It rises into view right behind the Journey as
   // that scrolls away, so tying the fade to position (not scroll progress) keeps the two in step.
-  const sectionFade = useViewportFade(
-    sectionRef,
-    { startAt: isMobile ? 0.48 : 0.92, fullAt: isMobile ? 0.2 : 0.5 }
-  );
-  const cardsViewportFade = useViewportFade(cardsContainerRef, { startAt: 0.5, fullAt: 0.25 });
+  const sectionFade = useViewportFade(sectionRef, { startAt: 0.92, fullAt: 0.5 });
 
-  const sectionOpacity = sectionFade.opacity;
-  const cardsContainerOpacity = isMobile ? cardsViewportFade.opacity : undefined;
+  // Held back until the last Journey card has faded out, then fades in over the next stretch of the exit.
+  const handoff = Math.max(
+    0,
+    Math.min(
+      1,
+      (getJourneyExitProgress(scrollProgress) - JOURNEY_EXIT_FADE.CARDS_OUT_END) /
+        (JOURNEY_EXIT_FADE.PROJECTS_IN_END - JOURNEY_EXIT_FADE.CARDS_OUT_END)
+    )
+  );
+  const sectionOpacity = Math.min(sectionFade.opacity, handoff);
 
   return (
     <section
@@ -31,6 +36,8 @@ export const Projects = () => {
         opacity: sectionOpacity,
         // Stay focusable while transparent (focus scrolls it into view), but don't catch stray clicks.
         pointerEvents: sectionOpacity < 0.05 ? 'none' : undefined,
+        // The last Journey card ends ~30vh down its 100vh layer; pull Projects up into that empty space.
+        marginTop: '-40vh',
         ...(isMobile && { minHeight: '100vh' }),
       }}
     >
@@ -38,11 +45,7 @@ export const Projects = () => {
         Projects
       </h2>
 
-      <div
-        ref={cardsContainerRef}
-        className={`${styles.section} ${styles.polaroidsContainer}`}
-        style={isMobile ? { opacity: cardsContainerOpacity } : undefined}
-      >
+      <div className={`${styles.section} ${styles.polaroidsContainer}`}>
         {projects.map((project) => (
           <div key={project.title} className={styles.polaroidWrapper}>
             <div className={styles.polaroidInner}>
