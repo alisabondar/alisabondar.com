@@ -6,11 +6,11 @@ import { Journey } from './Journey';
 import { Projects } from './Projects';
 import { Impact } from './Impact';
 import type { YearData } from './GitHubActivityGraph';
-import { useIsMobile } from '../utils/responsive';
 import { getJourneySectionVh, isMobileViewport, measureJourneyEnd, scrollToProgress } from '../utils/scrollTimeline';
 import { scrollToSection } from '../utils/scrollToSection';
 import { useRandomHobby } from '../utils/useRandomHobby';
-import { JOURNEY_SHOW_START, CROSSFADE_END } from '../constants';
+import { JOURNEY_SHOW_START, CROSSFADE_END, MOBILE_HERO_FADE_SHARE } from '../constants';
+import { useIsMobile } from '../utils/responsive';
 import styles from './Home.module.css';
 
 // Both heights are known at render time, so the CSS media query can pick one before hydration.
@@ -67,12 +67,8 @@ export function Home({ contributionYears }: HomeProps) {
     };
   }, []);
 
-  const heroOpacity =
-    scrollProgress < JOURNEY_SHOW_START
-      ? 1
-      : isMobile || scrollProgress > CROSSFADE_END
-        ? 0
-        : 1 - (scrollProgress - JOURNEY_SHOW_START) / (CROSSFADE_END - JOURNEY_SHOW_START);
+  const crossfade = Math.max(0, Math.min(1, (scrollProgress - JOURNEY_SHOW_START) / (CROSSFADE_END - JOURNEY_SHOW_START)));
+  const heroOpacity = 1 - (isMobile ? Math.min(1, crossfade / MOBILE_HERO_FADE_SHARE) : crossfade);
 
   return (
     <>
@@ -125,8 +121,8 @@ export function Home({ contributionYears }: HomeProps) {
           <section id="journey" aria-label="Journey" className={`relative z-10 ${styles.journeySpacer}`} style={journeyHeightVars} />
         </div>
 
-        <Projects />
-        <Impact scrollProgress={scrollProgress} contributionYears={contributionYears} />
+        <Projects scrollProgress={scrollProgress} />
+        <Impact contributionYears={contributionYears} />
       </main>
     </>
   );

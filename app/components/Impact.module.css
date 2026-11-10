@@ -255,7 +255,7 @@
 .achievementItem {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 1rem;
   transition: opacity 0.7s ease-out;
 }
@@ -268,6 +268,10 @@
 
 .bulletWrap {
   flex-shrink: 0;
+  /* One text line tall, so the marker sits on the first line of a wrapped achievement. */
+  font-size: 1rem;
+  line-height: 1.625;
+  height: 1lh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -307,13 +311,15 @@
 }
 
 @media (min-width: 640px) {
-  .achievementText {
+  .achievementText,
+  .bulletWrap {
     font-size: 1.125rem;
   }
 }
 
 @media (min-width: 768px) {
-  .achievementText {
+  .achievementText,
+  .bulletWrap {
     font-size: 1.25rem;
   }
 }
@@ -364,29 +370,18 @@
    section + block padding take 8rem. Fixed 3.75rem/4.5rem sizes overflowed the page at 768px and 1024px. */
 @media (min-width: 768px) {
   .signatureHeading {
-    font-size: clamp(2.25rem, calc((100vw - 8rem) / 13.2), 4.5rem);
+    /* The 19px offsets make the line 20px narrower (it renders ~13.9em wide). */
+    font-size: clamp(2.25rem, calc((100vw - 8rem - 19px) / 13.2), calc(4.5rem - 19px / 13.2));
     margin-bottom: 3rem;
   }
 }
 
 .signatureWrap {
-  padding-top: 2rem;
   display: flex;
   justify-content: flex-end;
   color: rgb(0 0 0);
 }
 
-@media (min-width: 640px) {
-  .signatureWrap {
-    padding-top: 2.5rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .signatureWrap {
-    padding-top: 3rem;
-  }
-}
 
 .signatureSvg {
   stroke: currentColor;

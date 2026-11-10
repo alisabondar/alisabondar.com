@@ -69,8 +69,8 @@ export function LivePreview({ url, title, poster }: LivePreviewProps) {
             referrerPolicy="no-referrer"
             loading="lazy"
             tabIndex={-1}
-            // Give the app a beat to hydrate and paint before revealing it.
-            onLoad={() => setTimeout(() => setLoaded(true), 400)}
+            // Give the app time to hydrate and finish its own intro fade before revealing it.
+            onLoad={() => setTimeout(() => setLoaded(true), 1500)}
           />
         </div>
       ) : null}
@@ -80,6 +80,8 @@ export function LivePreview({ url, title, poster }: LivePreviewProps) {
           alt={`Screenshot of ${title}`}
           fill
           sizes="(max-width: 640px) 320px, 480px"
+          // Eager: a lazy poster shows an empty white frame when the reader jumps straight to Projects.
+          loading="eager"
           className={`${styles.poster} ${loaded ? styles.posterHidden : ''}`}
         />
       ) : null}
