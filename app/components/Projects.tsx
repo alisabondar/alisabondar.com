@@ -9,18 +9,12 @@ import { projects } from '../data/projects';
 export const Projects = () => {
   const isMobile = useIsMobile();
   const sectionRef = useRef<HTMLElement>(null);
-  const cardsContainerRef = useRef<HTMLDivElement>(null);
 
   // Fades in by where the section actually is on screen. It rises into view right behind the Journey as
   // that scrolls away, so tying the fade to position (not scroll progress) keeps the two in step.
-  const sectionFade = useViewportFade(
-    sectionRef,
-    { startAt: isMobile ? 0.48 : 0.92, fullAt: isMobile ? 0.2 : 0.5 }
-  );
-  const cardsViewportFade = useViewportFade(cardsContainerRef, { startAt: 0.5, fullAt: 0.25 });
+  const sectionFade = useViewportFade(sectionRef, { startAt: 0.92, fullAt: 0.5 });
 
   const sectionOpacity = sectionFade.opacity;
-  const cardsContainerOpacity = isMobile ? cardsViewportFade.opacity : undefined;
 
   return (
     <section
@@ -38,11 +32,7 @@ export const Projects = () => {
         Projects
       </h2>
 
-      <div
-        ref={cardsContainerRef}
-        className={`${styles.section} ${styles.polaroidsContainer}`}
-        style={isMobile ? { opacity: cardsContainerOpacity } : undefined}
-      >
+      <div className={`${styles.section} ${styles.polaroidsContainer}`}>
         {projects.map((project) => (
           <div key={project.title} className={styles.polaroidWrapper}>
             <div className={styles.polaroidInner}>
