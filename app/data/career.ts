@@ -43,7 +43,7 @@ export const jobs: Job[] = [
   {
     company: 'AlphaSights',
     role: 'Software Engineer',
-    period: '2024 - 2026',
+    period: '2024–2026',
     achievements: [
       'Designed and built the company\'s first LLM-powered outreach workflow, increasing associate productivity and credit revenue by 2x.',
       'Developed a responsive, accessible customer-facing product used by 30K+ users and generating $200K+ in revenue.',
@@ -58,7 +58,7 @@ export const jobs: Job[] = [
   {
     company: 'Inova Health System',
     role: 'Data Assistant',
-    period: '2022 - 2023',
+    period: '2022–2023',
     achievements: [
       'Organized 50+ patient transfer requests per shift for intensivists and nurses, supporting informed decisions during overnight shifts.',
       'Created daily critical care capacity reports across 200+ beds for senior leadership to support hospital staffing and capacity decisions.',
@@ -68,7 +68,7 @@ export const jobs: Job[] = [
   {
     company: 'Virginia Hospital Center',
     role: 'Support Technician',
-    period: '2020 - 2023',
+    period: '2020–2023',
     achievements: [
       'Assisted in 75 open heart surgeries as a second scrub, constantly communicating and adapting to changing needs in a high-stakes environment.',
       'Coordinated with 20+ vendors and neighboring hospitals during COVID-19 to source backordered surgical supplies and maintain critical inventory.',

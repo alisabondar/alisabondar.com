@@ -72,7 +72,7 @@ export const timelineItems: TimelineItem[] = [
     picture: 'nyc-event.webp',
   },
   {
-    title: 'Landed my first engineering role at AlphaSights!',
+    title: 'Landed my first eng role at AlphaSights!',
     career: true,
     year: 'January 2024',
     picture: 'alphasights-event.webp',

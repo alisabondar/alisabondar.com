@@ -61,6 +61,8 @@ export const Polaroid = memo(function Polaroid({
                   width={isProject ? 480 : 304}
                   height={isProject ? 300 : 304}
                   className={styles.photoImage}
+                  // Journey prints fly into a sticky parallax and would pop in gray if lazy-loaded.
+                  loading={isProject ? 'lazy' : 'eager'}
                 />
               ) : null}
             </div>

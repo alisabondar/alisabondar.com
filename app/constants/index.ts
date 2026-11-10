@@ -6,11 +6,16 @@ import type { Section } from '../types';
 /** Page / scroll (hero crossfade) */
 export const JOURNEY_SHOW_START = 0.08;
 export const CROSSFADE_END = 0.22;
+/** Phones have no slide-up to separate them, so the hero fades out over this share of the crossfade and the
+ *  Journey fades in over the rest, after the hero is gone. */
+export const MOBILE_HERO_FADE_SHARE = 0.7;
 
 /** Journey section */
 export const EVENT_HEIGHT_VH = 20;
 export const INTRO_EVENTS = 4;
-export const STRIP_TOP_OFFSET_VH = 30;
+export const STRIP_TOP_OFFSET_VH = 35;
+/** Phones: center of the first card in px from the top (header ends ~90px down, card is ~236px tall). */
+export const MOBILE_FIRST_CARD_CENTER_PX = 250;
 export const STRIP_END_PADDING_VH = 80;
 export const FOCUS_MULTIPLIER = 1.0;
 
@@ -77,7 +82,14 @@ export const JOURNEY_CARD_SCROLL_VH = {
 export const JOURNEY_END_PROGRESS = 1.2;
 
 /** How long (in viewport heights of scrolling) the last Journey card holds before the Journey scrolls away. */
-export const JOURNEY_EXIT_HOLD_VH = 0.3;
+export const JOURNEY_EXIT_HOLD_VH = 0;
+
+/** Hand-off from the Journey to Projects, as shares of the Journey's exit scroll (0 = last card in place,
+ *  1 = Journey gone): the last card fades out first, then Projects fades in. */
+export const JOURNEY_EXIT_FADE = {
+  CARDS_OUT_END: 0.12,
+  PROJECTS_IN_END: 0.24,
+} as const;
 
 export const PHASE_TIMING = {
   MOBILE: {

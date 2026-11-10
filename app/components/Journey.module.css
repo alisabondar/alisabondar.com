@@ -62,7 +62,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  overflow: hidden;
+  /* Clip only top and bottom: the column is narrower than the screen and cards hang over its sides. */
+  clip-path: inset(0 -100vw);
 }
 
 .eventsScroll {

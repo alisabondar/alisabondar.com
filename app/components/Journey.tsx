@@ -6,10 +6,14 @@ import { useTilt } from '../utils/useTilt';
 import { Polaroid } from './Polaroid';
 import styles from './Journey.module.css';
 import { timelineItems, type TimelineItem } from '../data/timeline';
+import { getJourneyExitProgress } from '../utils/scrollTimeline';
 import {
   EVENT_HEIGHT_VH,
   INTRO_EVENTS,
   STRIP_TOP_OFFSET_VH,
+  MOBILE_FIRST_CARD_CENTER_PX,
+  MOBILE_HERO_FADE_SHARE,
+  JOURNEY_EXIT_FADE,
   STRIP_END_PADDING_VH,
   FOCUS_MULTIPLIER,
   EVENT_PLACEMENTS,
@@ -70,8 +74,9 @@ export const Journey = ({ scrollProgress }: JourneyProps) => {
 
   const enterProgress = Math.max(0, Math.min(1, (scrollProgress - JOURNEY_SHOW_START) / ENTRANCE_DURATION));
   const entranceTranslateY = (1 - enterProgress) * 80;
-  const effectiveEnterProgress = isMobile ? (heroScrolledPast ? 1 : 0) : enterProgress;
-  const effectiveEntranceTranslateY = isMobile ? (heroScrolledPast ? 0 : 80) : entranceTranslateY;
+  // Mobile crossfades with the hero like desktop, without the slide up (it fights the phone's own scrolling).
+  const effectiveEnterProgress = enterProgress;
+  const effectiveEntranceTranslateY = isMobile ? 0 : entranceTranslateY;
 
   const headerFrozenDuration = isMobile ? HEADER_FROZEN_DURATION_MOBILE : HEADER_FROZEN_DURATION;
   const parallaxStart = ENTRANCE_DURATION + headerFrozenDuration;
@@ -96,18 +101,27 @@ export const Journey = ({ scrollProgress }: JourneyProps) => {
   const headerFadeOutOpacity = Math.max(0, 1 - parallaxProgress * 2);
   const headerOpacity = isIntroPhase ? headerFadeInOpacity : headerFadeOutOpacity;
 
-  const stripHeight = STRIP_TOP_OFFSET_VH + totalEvents * EVENT_HEIGHT_VH + STRIP_END_PADDING_VH;
-  const atLastEvent = !isIntroPhase && rawFocus >= totalEvents - 0.5;
-  const displayRawFocus = atLastEvent ? totalEvents - 1 : rawFocus;
+  // The header is fixed in px, so on phones the first card is placed in px too (converted to vh), keeping the
+  // same gap under the header on short and tall screens alike.
+  const stripTopOffsetVh = isMobile
+    ? (MOBILE_FIRST_CARD_CENTER_PX / window.innerHeight) * 100
+    : STRIP_TOP_OFFSET_VH;
+
+  const stripHeight = stripTopOffsetVh + totalEvents * EVENT_HEIGHT_VH + STRIP_END_PADDING_VH;
+  // The strip keeps moving past the last card (no clamp), so it flows straight into the Journey's exit scroll.
+  const displayRawFocus = rawFocus;
   const displayFocusIndex = heroScrolledPast
     ? Math.min(totalEvents - 1, Math.max(0, Math.floor(displayRawFocus)))
     : 0;
 
   const baseStripY = Math.max(
     -(stripHeight - 100),
-    Math.min(0, -(STRIP_TOP_OFFSET_VH + displayRawFocus * EVENT_HEIGHT_VH - 50))
+    Math.min(0, -(stripTopOffsetVh + displayRawFocus * EVENT_HEIGHT_VH - 50))
   );
   const stripTranslateY = baseStripY;
+
+  // The last card fades out before Projects fades in (see Projects.tsx).
+  const exitOpacity = 1 - Math.min(1, getJourneyExitProgress(scrollProgress) / JOURNEY_EXIT_FADE.CARDS_OUT_END);
 
   const headerTranslateY = baseStripY * 8;
 
@@ -120,7 +134,10 @@ export const Journey = ({ scrollProgress }: JourneyProps) => {
           className="absolute inset-0 transition-opacity duration-500 ease-out"
           style={{
             transform: `translateY(${effectiveEntranceTranslateY}vh)`,
-            opacity: Math.min(1, effectiveEnterProgress * 2),
+            opacity:
+              (isMobile
+                ? Math.max(0, (effectiveEnterProgress - MOBILE_HERO_FADE_SHARE) / (1 - MOBILE_HERO_FADE_SHARE))
+                : Math.min(1, effectiveEnterProgress * 2)) * exitOpacity,
             transition: isMobile ? 'none' : 'transform 0.2s ease-out',
           }}
         >
@@ -176,13 +193,12 @@ export const Journey = ({ scrollProgress }: JourneyProps) => {
 
             const isFocused = Math.abs(index - displayFocusIndex) < 0.5;
             const scale = isFocused ? 1.1 : 0.95;
-            // Stack by distance from the focused card: it's always on top, nearer cards sit above farther ones,
-            // and on a tie the earlier (already seen) card goes underneath. Hover still lifts any card to the
-            // top (.eventCardOuter:hover).
-            const focusDistance = Math.abs(index - displayFocusIndex);
-            const zIndexValue = 1000 - focusDistance * 2 + (index > displayFocusIndex ? 1 : 0);
+            // Stack in timeline order: the newest card to arrive is always on top, even while it's still
+            // scrolling in and an earlier card holds focus. Hover still lifts any card to the top
+            // (.eventCardOuter:hover).
+            const zIndexValue = 1000 + index;
 
-            const topValue = STRIP_TOP_OFFSET_VH + index * EVENT_HEIGHT_VH;
+            const topValue = stripTopOffsetVh + index * EVENT_HEIGHT_VH;
 
             return (
               <div

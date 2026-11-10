@@ -29,6 +29,12 @@ function localToProgress(local: number) {
   return JOURNEY_SHOW_START + (local * (1 - JOURNEY_SHOW_START)) / JOURNEY_END_PROGRESS;
 }
 
+/** 0 → 1 across the Journey's exit band (after the last card takes focus, until the Journey is gone). */
+export function getJourneyExitProgress(scrollProgress: number) {
+  const start = localToProgress(1);
+  return Math.max(0, Math.min(1, (scrollProgress - start) / (JOURNEY_END_PROGRESS - start)));
+}
+
 export function isMobileViewport() {
   return window.innerWidth < BREAKPOINTS.MOBILE;
 }

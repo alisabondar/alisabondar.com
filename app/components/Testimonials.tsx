@@ -43,7 +43,7 @@ export function Testimonials() {
       <div className={styles.testimonialViewport} aria-live={isRotating ? 'off' : 'polite'}>
         <div key={activeIndex} className={styles.testimonialSlide}>
           <blockquote className={styles.testimonialQuote}>&ldquo;{active.quote}&rdquo;</blockquote>
-          <p className={styles.testimonialAttribution}>- {active.attribution}</p>
+          <p className={styles.testimonialAttribution}>— {active.attribution}</p>
         </div>
       </div>
       <div className={styles.testimonialDots}>
