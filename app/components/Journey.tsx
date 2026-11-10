@@ -97,8 +97,8 @@ export const Journey = ({ scrollProgress }: JourneyProps) => {
   const headerOpacity = isIntroPhase ? headerFadeInOpacity : headerFadeOutOpacity;
 
   const stripHeight = STRIP_TOP_OFFSET_VH + totalEvents * EVENT_HEIGHT_VH + STRIP_END_PADDING_VH;
-  const atLastEvent = !isIntroPhase && rawFocus >= totalEvents - 0.5;
-  const displayRawFocus = atLastEvent ? totalEvents - 1 : rawFocus;
+  // The strip keeps moving past the last card (no clamp), so it flows straight into the Journey's exit scroll.
+  const displayRawFocus = rawFocus;
   const displayFocusIndex = heroScrolledPast
     ? Math.min(totalEvents - 1, Math.max(0, Math.floor(displayRawFocus)))
     : 0;
