@@ -23,7 +23,7 @@ export const projects: Project[] = [
   {
     title: 'Florascape',
     url: 'https://florascaper.vercel.app/',
-    screenshot: '/florascape.webp',
+    screenshot: '/florascape.png',
     details: {
       pitch: "Turns your yard's size, sunlight, and ZIP code into an editable pixel-art garden and a deck of plant cards for beginner gardeners.",
       underTheHood: 'Real frost dates and hardiness zones ground the AI’s picks; deterministic code owns every bed’s geometry, so model coordinates are never trusted.',
@@ -35,7 +35,7 @@ export const projects: Project[] = [
   {
     title: 'Inkloom',
     url: 'https://inkloom.vercel.app/',
-    screenshot: '/inkloom.webp',
+    screenshot: '/inkloom.png',
     details: {
       pitch: 'Describe an idea or upload a photo and get a ready-to-paint template: line art, a value study, a grid, a palette, and a step-by-step plan.',
       underTheHood: 'After one AI concept, everything is computed in a Web Worker (edge detection, posterization, k-means palettes), so the sliders redraw instantly.',
