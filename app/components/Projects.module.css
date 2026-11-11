@@ -7,7 +7,7 @@
 .polaroidsContainer {
   position: relative;
   width: 100%;
-  min-height: 85vh;
+  min-height: 110vh;
 }
 
 .polaroidWrapper {
@@ -28,6 +28,10 @@
   z-index: 3;
 }
 
+.polaroidWrapper:nth-child(4) {
+  z-index: 4;
+}
+
 .polaroidInner {
   transition: transform 0.3s ease-out;
 }
@@ -46,19 +50,25 @@
 }
 
 .polaroidWrapper:nth-child(1) {
-  top: 25%;
+  top: 20%;
   left: 30%;
   transform: translate(-50%, -50%) rotate(-3deg);
 }
 
 .polaroidWrapper:nth-child(2) {
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(1deg);
+  top: 38%;
+  left: 68%;
+  transform: translate(-50%, -50%) rotate(2deg);
 }
 
 .polaroidWrapper:nth-child(3) {
-  top: 75%;
+  top: 60%;
+  left: 34%;
+  transform: translate(-50%, -50%) rotate(1deg);
+}
+
+.polaroidWrapper:nth-child(4) {
+  top: 80%;
   left: 70%;
   transform: translate(-50%, -50%) rotate(-2deg);
 }
@@ -82,7 +92,8 @@
 
   .polaroidWrapper:nth-child(1),
   .polaroidWrapper:nth-child(2),
-  .polaroidWrapper:nth-child(3) {
+  .polaroidWrapper:nth-child(3),
+  .polaroidWrapper:nth-child(4) {
     top: auto !important;
     left: auto !important;
     transform: none !important;
