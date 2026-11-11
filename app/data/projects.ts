@@ -45,6 +45,17 @@ export const projects: Project[] = [
     },
   },
   {
+    title: 'Daily Diff',
+    screenshot: '/daily-diff-v2.png',
+    details: {
+      pitch: 'A local-first daily AI & tech briefing: it reads your feeds, groups and ranks the stories with the LLM of your choice, and serves a short front page.',
+      underTheHood: 'Runs entirely on your machine with any provider (Anthropic, OpenAI, Google, Bedrock, or a local Ollama), and builds each day’s digest the first time you open it.',
+      stack: ['TypeScript', 'Node.js', 'LLMs'],
+      status: 'MVP',
+      codeUrl: 'https://github.com/alisabondar/daily-diff',
+    },
+  },
+  {
     title: 'OpenToWork',
     art: 'construction',
     details: {
