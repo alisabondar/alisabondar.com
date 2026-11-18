@@ -63,7 +63,7 @@ export const timelineItems: TimelineItem[] = [
   {
     title: 'Graduated Hack Reactor as class speaker 🎤',
     career: true,
-    year: 'August 2023',
+    year: 'September 2023',
     picture: 'graduation-event.webp',
   },
   {
