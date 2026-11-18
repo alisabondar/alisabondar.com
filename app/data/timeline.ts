@@ -110,5 +110,15 @@ export const timelineItems: TimelineItem[] = [
     title: 'Moved out west to Colorado!',
     picture: 'west.webp',
     year: 'May 2026',
-  }
+  },
+  {
+    title: 'Spent the summer exploring the Rockies 🏔️',
+    picture: 'rockies-event.jpg',
+    year: 'August 2026',
+  },
+  {
+    title: 'Maid of honor for my best friend! 💐',
+    picture: 'moh-event.jpg',
+    year: 'November 2026',
+  },
 ];
