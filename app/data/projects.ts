@@ -22,7 +22,7 @@ export interface Project {
 export const projects: Project[] = [
   {
     title: 'Pulse',
-    art: 'construction',
+    screenshot: '/pulse.webp',
     details: {
       pitch: 'A clinician-facing patient dashboard built HIPAA-ready: encrypted, searchable records, role-based access, and an audit trail on every view. All data is synthetic.',
       underTheHood: 'AI summaries are de-identified and leak-checked both ways before anything reaches the model; load-tested at 50 concurrent staff on 30K patients with p95 under 100 ms.',
