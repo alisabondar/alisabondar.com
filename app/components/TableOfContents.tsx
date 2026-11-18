@@ -102,6 +102,17 @@ export const TableOfContents = () => {
             </li>
           );
         })}
+        <li>
+          <a
+            href="/resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`${styles.button} ${styles.buttonInactive}`}
+            aria-label="Open resume (PDF, new tab)"
+          >
+            <span className={styles.label}>Resume ↗</span>
+          </a>
+        </li>
       </ul>
     </nav>
   );

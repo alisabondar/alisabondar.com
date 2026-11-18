@@ -1,6 +1,6 @@
 /*
  * Headline numbers: one panel, three centered columns divided by hairlines, each a big number over its
- * description. The product stat merges two numbers ("30K+ & $200K+"), so its column is wider. On phones the
+ * description. The product stat merges two numbers ("30K+ & $225K+"), so its column is wider. On phones the
  * two single stats share the first row and the merged one takes a full-width row below.
  */
 .panel {
@@ -112,7 +112,7 @@
     padding: 0 1.25rem;
   }
 
-  /* Scales with the panel's width so the merged "30K+ & $200K+" always fits its column. */
+  /* Scales with the panel's width so the merged "30K+ & $225K+" always fits its column. */
   .figures,
   .value {
     font-size: clamp(1.9rem, 5.5cqi, 3rem);

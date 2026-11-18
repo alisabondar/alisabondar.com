@@ -325,11 +325,13 @@ export const Impact = ({ contributionYears }: ImpactProps) => {
                 key={link.url}
                 href={link.url}
                 {...(isMailto ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
-                className={styles.contactLink}
-                aria-label={link.label}
+                className={styles.contactItem}
                 title={link.label}
               >
-                <ContactIcon icon={link.icon} />
+                <span className={styles.contactLink}>
+                  <ContactIcon icon={link.icon} />
+                </span>
+                <span className={styles.contactLabel}>{link.label}</span>
               </a>
             );
           })}

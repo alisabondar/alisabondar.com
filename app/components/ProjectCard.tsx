@@ -115,6 +115,11 @@ export function ProjectCard({ project }: { project: Project }) {
           ) : null}
         </div>
       </div>
+      {/* Touch screens can't hover to flip, so name the print underneath. */}
+      <p className={styles.touchCaption} aria-hidden>
+        {project.title}
+        {details.status ? ` · ${details.status}` : ''} <span className={styles.touchHint}>(tap to flip)</span>
+      </p>
     </div>
   );
 }

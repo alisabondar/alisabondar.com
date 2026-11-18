@@ -229,3 +229,27 @@
     font-size: 0.85rem;
   }
 }
+
+/* Touch screens only: a caption under each print, since the name is on the back. */
+.touchCaption {
+  display: none;
+}
+
+@media (hover: none) {
+  .touchCaption {
+    display: block;
+    margin-top: 0.75rem;
+    text-align: center;
+    font-family: var(--font-heading), Georgia, serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgb(0 0 0 / 0.8);
+  }
+
+  .touchHint {
+    font-family: var(--font-body, inherit);
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: rgb(0 0 0 / 0.5);
+  }
+}

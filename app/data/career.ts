@@ -42,23 +42,23 @@ export const contactLinks: ContactLink[] = [
 export const jobs: Job[] = [
   {
     company: 'AlphaSights',
-    role: 'Software Engineer',
+    role: 'Full Stack Software Engineer',
     period: '2024–2026',
     achievements: [
-      'Designed and launched the company\'s first LLM-powered outreach workflow, doubling associate productivity and credit revenue.',
-      'Shipped a responsive, accessible customer-facing web app used by 30K+ users and generating $200K+ in revenue.',
-      'Decomposed a Ruby monolith into domain-aligned Kotlin microservices, contributing to 2x faster deployments.',
+      'Designed and launched the company\'s first LLM-powered outreach workflow, doubling outreach emails sent per associate per day.',
+      'Shipped a responsive, accessible customer-facing web app grown to 30K+ users and $225K+ in revenue in its first two quarters.',
+      'Decomposed a Ruby monolith into domain-aligned Kotlin microservices, doubling the team\'s weekly deployments.',
       'Built an automated structured data capture flow, increasing usable data volume 1.8x for downstream products.',
-      'Implemented AWS Cognito auth with magic link, Google, and LinkedIn login, streamlining onboarding and supporting 30% user retention at 60 days.',
+      'Implemented AWS Cognito auth with magic link, Google, and LinkedIn login, streamlining onboarding and raising 60-day retention from 5% to 30%.',
       'Led API and analytics design across 8 repositories, standardizing service contracts and product instrumentation.',
-      'Eliminated production crashes on a page used by 2K daily users by optimizing a 150+ field query and splitting data retrieval into targeted endpoints.',
+      'Eliminated timeouts on a page used by ~2K associates by optimizing a 150+ field query and splitting data retrieval into targeted endpoints.',
       'Authored technical design docs for 10+ shipped initiatives, defining implementation plans and aligning stakeholders.',
       'Integrated Claude Code across the SDLC, from design docs and refactors to test writing, PR review, and production debugging, catching bugs earlier and raising code quality.',
     ],
   },
   {
     company: 'Inova Health System',
-    role: 'Data Assistant',
+    role: 'eICU Data Assistant',
     period: '2022–2023',
     achievements: [
       'Managed 50+ patient transfer requests per overnight shift, organizing case details so intensivists and nurses could make timely decisions.',
@@ -67,7 +67,7 @@ export const jobs: Job[] = [
     ],
   },
   {
-    company: 'Virginia Hospital Center',
+    company: 'VHC Health',
     role: 'Support Technician',
     period: '2020–2023',
     achievements: [
@@ -118,13 +118,13 @@ export interface ImpactStat {
 
 /** Headline numbers shown above the work history. Each one is backed by an AlphaSights bullet in `jobs`. */
 export const impactStats: ImpactStat[] = [
-  { figures: [{ value: 2, suffix: '×' }], label: 'credit revenue from an LLM outreach workflow' },
+  { figures: [{ value: 2, suffix: '×' }], label: 'outreach emails per associate from an LLM workflow I led' },
   {
     figures: [
       { value: 30, suffix: 'K+' },
-      { value: 200, prefix: '$', suffix: 'K+' },
+      { value: 225, prefix: '$', suffix: 'K+' },
     ],
-    label: 'users & revenue from a customer-facing product I built',
+    label: 'users & revenue from a customer-facing product I co-built',
   },
-  { figures: [{ value: 2, suffix: '×' }], label: 'faster deploys after a Kotlin migration' },
+  { figures: [{ value: 2, suffix: '×' }], label: 'weekly deploys after a Kotlin migration' },
 ];

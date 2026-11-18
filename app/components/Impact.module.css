@@ -511,6 +511,23 @@
   color: rgb(0 0 0);
 }
 
+/* Icon plus a small label: phones have no table of contents, so this row is how they find the resume. */
+.contactItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  color: rgb(0 0 0 / 0.7);
+  text-decoration: none;
+}
+
+.contactLabel {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.contactItem:hover .contactLink,
 .contactLink:hover {
   border-color: rgb(0 0 0 / 0.4);
   box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.1);

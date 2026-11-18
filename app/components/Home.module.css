@@ -18,6 +18,15 @@
   }
 }
 
+/* The headshot: a small taped print, tilted like the Journey photos. */
+.headshot {
+  display: flex;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  transform: rotate(-3deg) scale(0.72);
+  margin-block: -2.5rem -1rem;
+}
+
 .tagline {
   max-width: 34rem;
   margin: 0 auto;

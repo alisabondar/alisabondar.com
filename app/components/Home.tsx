@@ -5,6 +5,7 @@ import { AnimatedBackground } from './AnimatedBackground';
 import { Journey } from './Journey';
 import { Projects } from './Projects';
 import { Impact } from './Impact';
+import { Polaroid } from './Polaroid';
 import type { YearData } from './GitHubActivityGraph';
 import { getJourneySectionVh, isMobileViewport, measureJourneyEnd, scrollToProgress } from '../utils/scrollTimeline';
 import { scrollToSection } from '../utils/scrollToSection';
@@ -89,6 +90,9 @@ export function Home({ contributionYears }: HomeProps) {
                 className="transition-opacity duration-500 ease-out"
                 style={{ opacity: heroOpacity, visibility: heroOpacity <= 0 ? 'hidden' : 'visible' }}
               >
+                <div className={styles.headshot}>
+                  <Polaroid variant="portrait" title="Alisa Bondar" image="/headshot.jpg" showCaption={false} />
+                </div>
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-black mb-4">
                   Hi, I&apos;m Alisa.
                 </h1>
